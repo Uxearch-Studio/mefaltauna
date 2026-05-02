@@ -1,15 +1,15 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { SignInForm } from "./SignInForm";
+import { PhonePinForm } from "./PhonePinForm";
 
 export default async function SignInPage({
   params,
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ next?: string; error?: string }>;
+  searchParams: Promise<{ next?: string }>;
 }) {
   const { locale } = await params;
-  const { next, error } = await searchParams;
+  const { next } = await searchParams;
   setRequestLocale(locale);
   const t = await getTranslations("signIn");
 
@@ -28,7 +28,7 @@ export default async function SignInPage({
           </p>
         </div>
 
-        <SignInForm locale={locale} next={next} initialError={error} />
+        <PhonePinForm locale={locale} next={next} />
 
         <p className="text-xs text-muted-foreground text-center">
           {t("disclaimer")}

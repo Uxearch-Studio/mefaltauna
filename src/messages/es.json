@@ -266,25 +266,26 @@
   },
   "signIn": {
     "kicker": "Entrar al álbum",
-    "title": "Iniciar sesión",
-    "subtitle": "Te enviamos un enlace mágico al correo. No necesitas contraseña.",
-    "emailLabel": "Correo electrónico",
-    "submit": "Enviar enlace",
-    "sending": "Enviando…",
-    "disclaimer": "Al continuar aceptas los términos de uso. Sin spam, sin anuncios.",
+    "title": "Tu WhatsApp y un PIN",
+    "subtitle": "Igual que Nequi. Si es la primera vez, creas tu PIN ahora.",
+    "phoneLabel": "WhatsApp",
+    "pinLabel": "PIN de 6 dígitos",
+    "pinNewLabel": "Crea tu PIN (6 dígitos)",
+    "pinConfirmLabel": "Repite tu PIN",
+    "newAccountNotice": "Es tu primera vez aquí. Crea un PIN que recuerdes — lo necesitas cada vez que entres.",
+    "continue": "Continuar",
+    "createAccount": "Crear cuenta",
+    "pending": "Verificando…",
+    "disclaimer": "Al continuar aceptas los términos. Tus datos quedan privados.",
     "errors": {
-      "invalid_email": "Correo no válido. Revisa que esté bien escrito.",
-      "send_failed": "No pudimos enviar el enlace. Intenta de nuevo en un momento.",
-      "not_configured": "Auth aún no está configurada. Contacta al equipo de mefaltauna.",
-      "callback_failed": "El enlace expiró o ya se usó. Pide uno nuevo abajo."
+      "invalid_phone": "Número de WhatsApp no válido. Debe ser de 10 dígitos.",
+      "invalid_pin": "El PIN debe ser de 6 números.",
+      "pins_mismatch": "Los PIN no coinciden. Vuelve a escribirlos.",
+      "wrong_pin": "El PIN no coincide con el que tienes guardado para este número.",
+      "signup_failed": "No pudimos crear la cuenta. Intenta de nuevo.",
+      "auth_error": "Algo falló. Intenta de nuevo.",
+      "not_configured": "Servicio no disponible."
     }
-  },
-  "checkEmail": {
-    "kicker": "Pitazo enviado",
-    "title": "Revisa tu correo",
-    "body": "Te mandamos un enlace mágico. Ábrelo desde el mismo dispositivo donde estás navegando.",
-    "hint": "Si no aparece en bandeja de entrada, revisa spam o promociones.",
-    "back": "← Usar otro correo"
   },
   "userMenu": {
     "signedInAs": "Sesión iniciada como",

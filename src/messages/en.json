@@ -266,25 +266,26 @@
   },
   "signIn": {
     "kicker": "Enter the album",
-    "title": "Sign in",
-    "subtitle": "We'll email you a magic link. No password to remember.",
-    "emailLabel": "Email",
-    "submit": "Send link",
-    "sending": "Sending…",
-    "disclaimer": "By continuing you accept the terms of use. No spam, no ads.",
+    "title": "Your WhatsApp and a PIN",
+    "subtitle": "Like Nequi. First time? You create your PIN right now.",
+    "phoneLabel": "WhatsApp",
+    "pinLabel": "6-digit PIN",
+    "pinNewLabel": "Create your PIN (6 digits)",
+    "pinConfirmLabel": "Repeat your PIN",
+    "newAccountNotice": "First time here. Pick a PIN you'll remember — you'll need it every time you sign in.",
+    "continue": "Continue",
+    "createAccount": "Create account",
+    "pending": "Verifying…",
+    "disclaimer": "By continuing you accept the terms. Your data stays private.",
     "errors": {
-      "invalid_email": "Invalid email. Double-check the spelling.",
-      "send_failed": "Couldn't send the link. Try again in a moment.",
-      "not_configured": "Auth isn't configured yet. Contact the mefaltauna team.",
-      "callback_failed": "The link expired or was already used. Request a new one below."
+      "invalid_phone": "Invalid WhatsApp number. Should be 10 digits.",
+      "invalid_pin": "PIN must be 6 digits.",
+      "pins_mismatch": "PINs don't match. Type them again.",
+      "wrong_pin": "PIN doesn't match the one saved for this number.",
+      "signup_failed": "Couldn't create the account. Try again.",
+      "auth_error": "Something failed. Try again.",
+      "not_configured": "Service unavailable."
     }
-  },
-  "checkEmail": {
-    "kicker": "Whistle blown",
-    "title": "Check your email",
-    "body": "We sent a magic link. Open it from the same device you're browsing on.",
-    "hint": "Not in your inbox? Check spam or promotions.",
-    "back": "← Use a different email"
   },
   "userMenu": {
     "signedInAs": "Signed in as",

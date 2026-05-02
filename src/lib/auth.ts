@@ -8,6 +8,52 @@ export type AuthUser = {
 };
 
 /**
+ * Phone numbers act as the user's identity. Supabase auth requires an
+ * email, so we encode the phone as a fake email under our domain. The
+ * mailbox doesn't exist — Supabase never sends to it because we
+ * disabled email confirmations at the project level.
+ */
+const PHONE_DOMAIN = "phone.mefaltauna.app";
+const COL_PREFIX = "57";
+
+export function normalizePhone(input: string): string {
+  const digits = input.replace(/\D/g, "");
+  // 10-digit Colombian mobile (starts with 3) → prefix with 57
+  if (digits.length === 10 && digits.startsWith("3")) {
+    return COL_PREFIX + digits;
+  }
+  return digits;
+}
+
+export function phoneToEmail(input: string): string {
+  return `${normalizePhone(input)}@${PHONE_DOMAIN}`;
+}
+
+export function emailToPhone(email: string | null): string | null {
+  if (!email || !email.endsWith(`@${PHONE_DOMAIN}`)) return null;
+  const digits = email.split("@")[0];
+  return digits.startsWith(COL_PREFIX) ? digits.slice(COL_PREFIX.length) : digits;
+}
+
+export function formatPhoneDisplay(phone: string): string {
+  const digits = phone.replace(/\D/g, "");
+  // 10 digit COL: 300 123 4567
+  if (digits.length === 10) {
+    return `${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6)}`;
+  }
+  return digits;
+}
+
+export function isValidPhone(phone: string): boolean {
+  const digits = normalizePhone(phone);
+  return digits.length >= 10 && digits.length <= 15;
+}
+
+export function isValidPin(pin: string): boolean {
+  return /^\d{6}$/.test(pin);
+}
+
+/**
  * Reads the current authenticated user from cookies.
  * Returns null when no session exists or Supabase isn't configured.
  */
@@ -36,7 +82,7 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
   return {
     id: user.id,
     email: user.email ?? null,
-    username,
+    username: username ?? emailToPhone(user.email ?? null),
   };
 }
 
