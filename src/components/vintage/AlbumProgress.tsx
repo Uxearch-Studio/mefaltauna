@@ -31,7 +31,7 @@ export function AlbumProgress({ owned, total }: Props) {
             / {total} · {pct}%
           </span>
         </div>
-        <div className="flex items-center gap-1.5 px-3 h-7 rounded-full bg-accent/15 text-accent">
+        <div className="flex items-center gap-1.5 px-3 h-7 rounded-full bg-highlight/15 text-highlight">
           <span className="text-[10px] uppercase tracking-wider font-semibold">XP</span>
           <span className="text-sm font-semibold tabular-nums">
             {xp.toLocaleString("es-CO")}
@@ -47,7 +47,7 @@ export function AlbumProgress({ owned, total }: Props) {
         aria-valuemax={100}
       >
         <div
-          className="h-full bg-accent rounded-full transition-[width] duration-500 ease-out"
+          className="h-full bg-highlight rounded-full transition-[width] duration-500 ease-out"
           style={{ width: `${pct}%` }}
         />
         {MILESTONES.slice(0, -1).map((m) => (
@@ -69,7 +69,7 @@ export function AlbumProgress({ owned, total }: Props) {
         </p>
       )}
       {!nextMilestone && (
-        <p className="text-xs font-medium text-accent">{t("complete")}</p>
+        <p className="text-xs font-medium text-highlight">{t("complete")}</p>
       )}
     </div>
   );

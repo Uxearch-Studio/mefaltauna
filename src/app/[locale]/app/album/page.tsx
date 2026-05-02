@@ -40,7 +40,7 @@ export default async function AlbumPage({
           dupCount > 0 ? (
             <Link
               href="/app/publish"
-              className="inline-flex items-center h-9 px-3 rounded-full bg-accent text-accent-foreground text-xs font-medium hover:opacity-90 transition-opacity"
+              className="inline-flex items-center h-9 px-3 rounded-full bg-highlight text-highlight-foreground text-xs font-medium hover:opacity-90 transition-opacity"
             >
               {t("publishDup", { count: dupCount })}
             </Link>

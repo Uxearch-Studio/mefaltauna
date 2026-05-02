@@ -37,7 +37,7 @@ export function Pricing() {
               )}
             >
               {plan.featured && (
-                <span className="absolute -top-3 left-6 px-3 py-1 rounded-full bg-accent text-accent-foreground text-[10px] font-semibold uppercase tracking-wide">
+                <span className="absolute -top-3 left-6 px-3 py-1 rounded-full bg-highlight text-highlight-foreground text-[10px] font-semibold uppercase tracking-wide">
                   {t("popular")}
                 </span>
               )}
@@ -74,7 +74,7 @@ export function Pricing() {
                 className={cn(
                   "mt-auto h-11 px-4 rounded-full text-sm font-medium transition-opacity",
                   plan.featured
-                    ? "bg-accent text-accent-foreground hover:opacity-90"
+                    ? "bg-highlight text-highlight-foreground hover:opacity-90"
                     : "bg-foreground text-background hover:opacity-90",
                 )}
               >

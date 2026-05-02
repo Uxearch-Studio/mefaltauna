@@ -15,7 +15,7 @@ export function FinalCta() {
         </h2>
         <Link
           href="/sign-in"
-          className="mt-4 h-12 px-6 inline-flex items-center justify-center rounded-full bg-accent text-accent-foreground text-sm font-medium hover:opacity-90 transition-opacity"
+          className="mt-4 h-12 px-6 inline-flex items-center justify-center rounded-full bg-highlight text-highlight-foreground text-sm font-medium hover:opacity-90 transition-opacity"
         >
           {t("cta")}
         </Link>

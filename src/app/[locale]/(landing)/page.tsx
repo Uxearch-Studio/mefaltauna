@@ -4,6 +4,7 @@ import { Pricing } from "@/components/vintage/Pricing";
 import { StickerPreview } from "@/components/vintage/StickerPreview";
 import { FinalCta } from "@/components/vintage/FinalCta";
 import { Countdown } from "@/components/vintage/Countdown";
+import { PitchLines } from "@/components/vintage/PitchLines";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth";
 
@@ -23,7 +24,11 @@ export default async function HomePage({
   return (
     <main>
       <section className="relative overflow-hidden border-b border-border">
-        <div className="mx-auto max-w-6xl px-6 pt-24 pb-32 flex flex-col items-center text-center gap-7">
+        <PitchLines
+          aria-hidden
+          className="absolute inset-0 w-full h-full -z-10"
+        />
+        <div className="relative mx-auto max-w-6xl px-6 pt-24 pb-32 flex flex-col items-center text-center gap-7">
           <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/15 text-accent text-xs font-semibold uppercase tracking-wide">
             <span className="size-1.5 rounded-full bg-accent" />
             {t("kicker")}

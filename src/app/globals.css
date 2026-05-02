@@ -5,6 +5,10 @@
    Apple-clean direction · single saffron accent
    ───────────────────────────────────────────── */
 
+/* Vintage navy primary (WC98 Adidas Tricolore) + trophy gold accent.
+   Navy carries the structure (buttons, links, focus, active state).
+   Highlight is reserved for trophy/MVP/featured moments only. */
+
 :root {
   --background: #fafaf7;
   --foreground: #1c1c1a;
@@ -12,8 +16,11 @@
   --muted-foreground: #767470;
   --border: #e7e4dc;
 
-  --accent: #e8a02c;
-  --accent-foreground: #1a1a18;
+  --accent: #173554;
+  --accent-foreground: #fafaf7;
+
+  --highlight: #c89b3c;
+  --highlight-foreground: #1c1c1a;
 
   --radius: 10px;
   --radius-lg: 14px;
@@ -21,13 +28,15 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #131311;
-    --foreground: #fafaf7;
-    --muted: #232220;
-    --muted-foreground: #9a9890;
-    --border: #2a2825;
-    --accent: #f0b13d;
-    --accent-foreground: #131311;
+    --background: #0d1620;
+    --foreground: #f3f0e8;
+    --muted: #16222e;
+    --muted-foreground: #8a929c;
+    --border: #1d2935;
+    --accent: #4d80b8;
+    --accent-foreground: #0d1620;
+    --highlight: #d4a64a;
+    --highlight-foreground: #0d1620;
   }
 }
 
@@ -37,18 +46,22 @@
   --muted: #f1f0ea;
   --muted-foreground: #767470;
   --border: #e7e4dc;
-  --accent: #e8a02c;
-  --accent-foreground: #1a1a18;
+  --accent: #173554;
+  --accent-foreground: #fafaf7;
+  --highlight: #c89b3c;
+  --highlight-foreground: #1c1c1a;
 }
 
 [data-theme="dark"] {
-  --background: #131311;
-  --foreground: #fafaf7;
-  --muted: #232220;
-  --muted-foreground: #9a9890;
-  --border: #2a2825;
-  --accent: #f0b13d;
-  --accent-foreground: #131311;
+  --background: #0d1620;
+  --foreground: #f3f0e8;
+  --muted: #16222e;
+  --muted-foreground: #8a929c;
+  --border: #1d2935;
+  --accent: #4d80b8;
+  --accent-foreground: #0d1620;
+  --highlight: #d4a64a;
+  --highlight-foreground: #0d1620;
 }
 
 @theme inline {
@@ -59,6 +72,8 @@
   --color-border: var(--border);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-highlight: var(--highlight);
+  --color-highlight-foreground: var(--highlight-foreground);
 
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);

@@ -58,7 +58,7 @@ export function BottomNav() {
                   isPublish
                     ? active
                       ? "bg-foreground text-background"
-                      : "bg-accent text-accent-foreground hover:bg-foreground hover:text-background"
+                      : "bg-highlight text-highlight-foreground hover:bg-foreground hover:text-background"
                     : active
                       ? "bg-foreground text-background"
                       : "text-muted-foreground hover:text-foreground hover:bg-muted",

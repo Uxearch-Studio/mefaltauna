@@ -184,7 +184,7 @@ function PageBlock({
         </div>
         <div className="flex items-center gap-2">
           {complete && (
-            <span className="text-xs font-medium text-accent">✓ Completa</span>
+            <span className="text-xs font-medium text-highlight">★ Completa</span>
           )}
           <span className="text-xs tabular-nums text-muted-foreground">
             {owned}/{total}
@@ -251,7 +251,7 @@ function StickerTile({
           {sticker.number ?? glyphFor(sticker.type)}
         </span>
         {dup && (
-          <span className="absolute top-1 right-1 size-5 flex items-center justify-center bg-accent text-accent-foreground rounded-full text-[10px] font-bold">
+          <span className="absolute top-1 right-1 size-5 flex items-center justify-center bg-highlight text-highlight-foreground rounded-full text-[10px] font-bold">
             {count}
           </span>
         )}
@@ -261,7 +261,7 @@ function StickerTile({
         <span
           key={p.key}
           aria-hidden
-          className="absolute inset-x-0 -top-1 mx-auto w-fit text-sm font-bold text-accent pointer-events-none animate-pop"
+          className="absolute inset-x-0 -top-1 mx-auto w-fit text-sm font-bold text-highlight pointer-events-none animate-pop"
         >
           {p.text}
         </span>
