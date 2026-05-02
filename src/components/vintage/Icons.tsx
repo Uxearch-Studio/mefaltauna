@@ -10,48 +10,81 @@ function base(className?: string) {
 }
 
 // ─────────────────────────────────────────────
-// Bottom-nav icons (24×24)
+// Bottom-nav icons (24×24) — football themed
 // ─────────────────────────────────────────────
 
+/**
+ * Feed → top-down pitch (rectangle + center line + center circle).
+ * Reads as "the live game".
+ */
 export function FeedIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" className={base(className)} fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" />
-      <circle cx="20" cy="4" r="2.2" fill="currentColor" stroke="none" />
+      <rect x="3" y="5" width="18" height="14" rx="1.5" />
+      <line x1="12" y1="5" x2="12" y2="19" />
+      <circle cx="12" cy="12" r="3" />
+      <line x1="3" y1="9" x2="6" y2="9" />
+      <line x1="3" y1="15" x2="6" y2="15" />
+      <line x1="6" y1="9" x2="6" y2="15" />
+      <line x1="18" y1="9" x2="21" y2="9" />
+      <line x1="18" y1="15" x2="21" y2="15" />
+      <line x1="18" y1="9" x2="18" y2="15" />
     </svg>
   );
 }
 
+/**
+ * Album → 3×2 sticker grid with one slot dashed (the brand mark in
+ * miniature). Same idea as the logo so the metaphor stays consistent.
+ */
 export function AlbumIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" className={base(className)} fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="4" y="4" width="16" height="16" rx="2" />
-      <path d="M4 9h16M4 15h16M9 4v16M15 4v16" />
+      <rect x="3" y="4"  width="5" height="6" rx="1" />
+      <rect x="9.5" y="4"  width="5" height="6" rx="1" />
+      <rect x="16" y="4"  width="5" height="6" rx="1" />
+      <rect x="3" y="14" width="5" height="6" rx="1" />
+      <rect x="16" y="14" width="5" height="6" rx="1" />
+      <rect x="9.5" y="14" width="5" height="6" rx="1" strokeDasharray="1.6 1.4" />
     </svg>
   );
 }
 
+/**
+ * Publish → camera (since publishing now includes a photo capture).
+ * Stays unmistakable as a "create" action via the saffron bg.
+ */
 export function PublishIcon({ className }: IconProps) {
   return (
-    <svg viewBox="0 0 24 24" className={base(className)} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 5v14M5 12h14" />
+    <svg viewBox="0 0 24 24" className={base(className)} fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 7h3l1.5-2h7L17 7h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1Z" />
+      <circle cx="12" cy="13" r="3.5" />
+      <path d="M12 11.5v3M10.5 13h3" />
     </svg>
   );
 }
 
+/**
+ * Inbox → speech bubble with a tiny ball inside (the "talk about a
+ * sticker" idea).
+ */
 export function InboxIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" className={base(className)} fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M5 5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-3l-4 4-4-4H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" />
+      <path d="M4 6h16a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-9l-4 3v-3H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1Z" />
+      <circle cx="11" cy="11.5" r="2.4" />
+      <path d="M11 9.1v4.8M8.6 11.5h4.8" />
     </svg>
   );
 }
 
+/**
+ * Profile → jersey shape with a crew neck.
+ */
 export function ProfileIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" className={base(className)} fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="9" r="3.5" />
-      <path d="M5 20a7 7 0 0 1 14 0" />
+      <path d="M9 4 L4 6.5 L5.5 11 L8 10 V20 H16 V10 L18.5 11 L20 6.5 L15 4 A3 3 0 0 1 9 4 Z" />
     </svg>
   );
 }

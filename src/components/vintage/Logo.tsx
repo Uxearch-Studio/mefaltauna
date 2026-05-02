@@ -10,7 +10,7 @@ export function Logo({ className, showWordmark = true }: LogoProps) {
     <span className={cn("inline-flex items-center gap-2", className)}>
       <LogoMark className="size-7" />
       {showWordmark && (
-        <span className="font-semibold tracking-tight leading-none text-base">
+        <span className="font-display tracking-tight leading-none text-lg lowercase">
           mefaltauna
         </span>
       )}

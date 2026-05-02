@@ -2,8 +2,9 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import { AppTopBar } from "@/components/vintage/AppTopBar";
 import { requireUser } from "@/lib/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { fetchCatalog, fetchInventory } from "@/lib/db";
+import { fetchCatalog, fetchInventory, fetchOwnContact } from "@/lib/db";
 import { PublishFlow } from "./PublishFlow";
+import { ProfileCompletionForm } from "./ProfileCompletionForm";
 
 export default async function PublishPage({
   params,
@@ -17,6 +18,20 @@ export default async function PublishPage({
   const user = await requireUser({ locale, next: `/${locale}/app/publish` });
   const supabase = await createSupabaseServerClient();
   if (!supabase) return null;
+
+  const contact = await fetchOwnContact(supabase, user.id);
+
+  // Block publishing until the user has completed their contact info.
+  if (!contact) {
+    return (
+      <>
+        <AppTopBar title={t("title")} />
+        <div className="mx-auto max-w-md px-4 py-6 flex flex-col gap-4">
+          <ProfileCompletionForm locale={locale} />
+        </div>
+      </>
+    );
+  }
 
   const [catalog, inventory] = await Promise.all([
     fetchCatalog(supabase),

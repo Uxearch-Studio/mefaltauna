@@ -87,28 +87,32 @@
   },
   "pricing": {
     "kicker": "Planes",
-    "title": "Paga solo cuando publicas.",
-    "subtitle": "Crear cuenta es gratis. Solo cobramos cuando vas a publicar tus láminas para venta o intercambio. Cero comisión por trade.",
-    "popular": "Más vendido",
+    "title": "Activa tu pase. Paga, intercambia, completa.",
+    "subtitle": "Tres pases por tiempo. Mientras esté activo, publicas láminas ilimitadas y puedes escribir por chat para comprar o cambiar.",
+    "popular": "Más elegido",
     "cta": "Elegir plan",
-    "slots": "{count} láminas publicadas",
-    "oneShot": "Pago único, sin renovación",
+    "daysAccess": "{count} días de acceso completo",
+    "unlimitedListings": "Láminas ilimitadas para publicar",
+    "chatToBuy": "Chatea para comprar o cambiar",
     "noCommission": "0% comisión por intercambio",
-    "chat": "Chat seguro con la otra persona",
     "disclaimer": "Pagos en pesos colombianos vía Wompi · Próximamente",
+    "free": {
+      "label": "Gratis",
+      "title": "Sin pase activo también ves todo",
+      "body": "Explora el feed, marca tu álbum y ve qué láminas hay disponibles. Para escribirle a alguien y comprar o cambiar, necesitas un pase."
+    },
     "plans": {
       "banca": {
         "name": "Banca",
-        "tagline": "Para quien apenas empieza"
+        "tagline": "Para arrancar y cerrar un trato rápido"
       },
       "titular": {
         "name": "Titular",
-        "tagline": "El plan que usan la mayoría"
+        "tagline": "Lo que usan la mayoría"
       },
       "mvp": {
         "name": "MVP",
-        "tagline": "Para coleccionistas en serio",
-        "slots": "Láminas ilimitadas"
+        "tagline": "Cobertura total hasta que termine la jornada"
       }
     }
   },
@@ -182,6 +186,27 @@
       "missing_price": "Pon un precio válido en COP.",
       "invalid_wants": "Selecciona qué buscas a cambio.",
       "db_error": "No pudimos publicar. Intenta de nuevo."
+    }
+  },
+  "contact": {
+    "title": "Antes de publicar, completa tu ficha",
+    "body": "Es para que la otra persona sepa con quién está cerrando el trato. Solo tú ves estos datos — los compartimos únicamente cuando confirmas un cambio o venta.",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "nationalId": "Cédula",
+    "nationalIdHint": "Solo números",
+    "city": "Ciudad",
+    "whatsapp": "WhatsApp",
+    "submit": "Guardar y continuar",
+    "saving": "Guardando…",
+    "privacy": "Tus datos son privados. Solo se comparten cuando aceptas un trato.",
+    "errors": {
+      "not_configured": "Servicio no configurado.",
+      "unauthenticated": "Inicia sesión.",
+      "missing_fields": "Completa todos los campos.",
+      "invalid_id": "Cédula no válida (entre 6 y 12 dígitos).",
+      "invalid_phone": "Número de WhatsApp no válido.",
+      "db_error": "No pudimos guardar. Intenta de nuevo."
     }
   },
   "photo": {

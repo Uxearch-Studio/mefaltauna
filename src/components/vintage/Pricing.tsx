@@ -2,9 +2,9 @@ import { useTranslations } from "next-intl";
 import { cn } from "@/lib/cn";
 
 const PLANS = [
-  { id: "banca", price: 3000, slots: 5, featured: false },
-  { id: "titular", price: 10000, slots: 20, featured: true },
-  { id: "mvp", price: 50000, slots: -1, featured: false },
+  { id: "banca", price: 19000, days: 8, featured: false },
+  { id: "titular", price: 25000, days: 15, featured: true },
+  { id: "mvp", price: 30000, days: 30, featured: false },
 ] as const;
 
 const COP = new Intl.NumberFormat("es-CO");
@@ -25,6 +25,21 @@ export function Pricing() {
           <p className="text-base text-muted-foreground leading-relaxed">
             {t("subtitle")}
           </p>
+        </div>
+
+        {/* Free tier callout */}
+        <div className="mb-6 surface-card p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex flex-col gap-1">
+            <p className="text-sm font-semibold tracking-tight">
+              {t("free.title")}
+            </p>
+            <p className="text-xs text-muted-foreground leading-relaxed max-w-md">
+              {t("free.body")}
+            </p>
+          </div>
+          <span className="self-start sm:self-auto px-3 py-1 rounded-full bg-foreground text-background text-[10px] font-semibold uppercase tracking-wide whitespace-nowrap">
+            {t("free.label")}
+          </span>
         </div>
 
         <div className="grid md:grid-cols-3 gap-4">
@@ -60,13 +75,11 @@ export function Pricing() {
 
               <ul className="flex flex-col gap-2.5 text-sm">
                 <Feature>
-                  {plan.slots === -1
-                    ? t("plans.mvp.slots")
-                    : t("slots", { count: plan.slots })}
+                  {t("daysAccess", { count: plan.days })}
                 </Feature>
-                <Feature>{t("oneShot")}</Feature>
+                <Feature>{t("unlimitedListings")}</Feature>
+                <Feature>{t("chatToBuy")}</Feature>
                 <Feature>{t("noCommission")}</Feature>
-                <Feature>{t("chat")}</Feature>
               </ul>
 
               <button

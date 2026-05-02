@@ -16,6 +16,74 @@ export type PublishState = {
     | "db_error";
 };
 
+export type ContactState = {
+  error?:
+    | "not_configured"
+    | "unauthenticated"
+    | "missing_fields"
+    | "invalid_id"
+    | "invalid_phone"
+    | "db_error";
+};
+
+export async function saveContactAction(
+  prev: ContactState | undefined,
+  formData: FormData,
+): Promise<ContactState> {
+  const supabase = await createSupabaseServerClient();
+  if (!supabase) return { error: "not_configured" };
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "unauthenticated" };
+
+  const firstName = String(formData.get("first_name") ?? "").trim();
+  const lastName = String(formData.get("last_name") ?? "").trim();
+  const nationalId = String(formData.get("national_id") ?? "").trim();
+  const city = String(formData.get("city") ?? "").trim();
+  const whatsapp = String(formData.get("whatsapp") ?? "").trim();
+  const locale = String(formData.get("locale") ?? "es");
+
+  if (!firstName || !lastName || !nationalId || !city || !whatsapp) {
+    return { error: "missing_fields" };
+  }
+
+  // Light validation — Colombian cédulas are 6-12 digits.
+  const idDigits = nationalId.replace(/\D/g, "");
+  if (idDigits.length < 6 || idDigits.length > 12) {
+    return { error: "invalid_id" };
+  }
+
+  const phoneDigits = whatsapp.replace(/\D/g, "");
+  if (phoneDigits.length < 7) {
+    return { error: "invalid_phone" };
+  }
+
+  const { error } = await supabase.from("profile_contact").upsert(
+    {
+      user_id: user.id,
+      first_name: firstName,
+      last_name: lastName,
+      national_id: idDigits,
+      whatsapp: whatsapp,
+      city,
+    },
+    { onConflict: "user_id" },
+  );
+  if (error) return { error: "db_error" };
+
+  // Mirror the city onto the public profile so reputation/match
+  // pages can use it without exposing PII.
+  await supabase
+    .from("profiles")
+    .update({ city, display_name: `${firstName} ${lastName.charAt(0)}.` })
+    .eq("id", user.id);
+
+  revalidatePath(`/${locale}/app/publish`);
+  return {};
+}
+
 const VALID_TYPES = ["trade", "sale", "both"] as const;
 type ListingType = (typeof VALID_TYPES)[number];
 

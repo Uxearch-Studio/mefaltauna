@@ -30,6 +30,28 @@ export type InventoryRow = {
   count: number;
 };
 
+export type ProfileContact = {
+  user_id: string;
+  first_name: string;
+  last_name: string;
+  national_id: string;
+  whatsapp: string;
+  city: string;
+};
+
+export async function fetchOwnContact(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<ProfileContact | null> {
+  const { data, error } = await supabase
+    .from("profile_contact")
+    .select("user_id, first_name, last_name, national_id, whatsapp, city")
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (error) return null;
+  return (data as ProfileContact | null) ?? null;
+}
+
 export type ListingType = "trade" | "sale" | "both";
 export type ListingStatus = "active" | "sold" | "cancelled";
 
