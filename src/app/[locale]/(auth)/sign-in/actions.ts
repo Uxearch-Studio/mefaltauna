@@ -3,7 +3,6 @@
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import {
-  isValidPhone,
   isValidPin,
   normalizePhone,
   phoneToEmail,
@@ -34,16 +33,20 @@ export async function phonePinAction(
   const locale = String(formData.get("locale") ?? "es");
   const next = String(formData.get("next") ?? `/${locale}/app/feed`);
 
-  // Diagnostic — surfaces in `vercel logs` so we can see what arrives
-  // when validation rejects inputs that look right to the user.
   console.log("[phonePinAction]", {
     phoneRaw: phoneInput,
+    phoneLen: phoneInput.length,
     phoneDigits: phoneInput.replace(/\D/g, ""),
     pinLen: pin.length,
     pinConfirmLen: pinConfirm.length,
+    formKeys: [...formData.keys()],
   });
 
-  if (!isValidPhone(phoneInput)) {
+  // Minimal phone gate — accept anything with at least 7 digits.
+  // Detailed validation moved to UI hints. The bottleneck is the
+  // signin/signup attempt below.
+  const phoneDigitsOnly = phoneInput.replace(/\D/g, "");
+  if (phoneDigitsOnly.length < 7) {
     return { phone: phoneInput, error: "invalid_phone" };
   }
   if (!isValidPin(pin)) {
