@@ -9,6 +9,12 @@
     "pricing": "Planes",
     "signIn": "Entrar"
   },
+  "theme": {
+    "label": "Cambiar tema",
+    "light": "Claro",
+    "dark": "Oscuro",
+    "auto": "Auto"
+  },
   "home": {
     "hero": {
       "kicker": "Mundial 2026",
@@ -16,11 +22,62 @@
       "subtitle": "Intercambia y compra las láminas que necesitas para completar tu álbum Panini. Hecho en Colombia, para coleccionistas reales.",
       "ctaPrimary": "Empezar gratis",
       "ctaSecondary": "Ver cómo funciona"
-    },
-    "stats": {
-      "stickers": "láminas oficiales",
-      "comingSoon": "próximamente"
     }
+  },
+  "how": {
+    "kicker": "Manual de instrucciones",
+    "title": "Tres pasos. Sin vueltas.",
+    "mark": {
+      "title": "Marca tu álbum",
+      "body": "Indica qué láminas tienes y cuáles te faltan. Tu álbum digital se sincroniza al instante."
+    },
+    "match": {
+      "title": "Encuentra a quien tiene lo tuyo",
+      "body": "El sistema cruza tu lista con la de otros coleccionistas y te muestra los matches perfectos."
+    },
+    "trade": {
+      "title": "Intercambia o compra",
+      "body": "Habla por chat, acuerda el envío o el encuentro, y completa tu álbum una lámina a la vez."
+    }
+  },
+  "pricing": {
+    "kicker": "Planes",
+    "title": "Paga solo cuando publicas.",
+    "subtitle": "Crear cuenta es gratis. Solo cobramos cuando vas a publicar tus láminas para venta o intercambio. Cero comisión por trade.",
+    "popular": "Más vendido",
+    "cta": "Elegir plan",
+    "slots": "{count} láminas publicadas",
+    "oneShot": "Pago único, sin renovación",
+    "noCommission": "0% comisión por intercambio",
+    "chat": "Chat seguro con la otra persona",
+    "disclaimer": "Pagos en pesos colombianos vía Wompi · Próximamente",
+    "plans": {
+      "banca": {
+        "name": "Banca",
+        "tagline": "Para quien apenas empieza"
+      },
+      "titular": {
+        "name": "Titular",
+        "tagline": "El plan que usan la mayoría"
+      },
+      "mvp": {
+        "name": "MVP",
+        "tagline": "Para coleccionistas en serio",
+        "slots": "Láminas ilimitadas"
+      }
+    }
+  },
+  "preview": {
+    "kicker": "Cómo se ve una lámina",
+    "title": "Cada lámina, una historia.",
+    "body": "Tipografía estilo álbum vintage, datos verificados de cada jugador, y un click para cambiarla o comprarla.",
+    "ctaTrade": "Cambiar",
+    "ctaBuy": "Comprar"
+  },
+  "finalCta": {
+    "kicker": "Última jugada",
+    "title": "¿Listo para completar el álbum?",
+    "cta": "Crear cuenta gratis"
   },
   "footer": {
     "tagline": "Podemos ayudar a cualquier persona o negocio a crear software a la medida con UX y AI para programación, haciendo que todo se lance más rápido.",

@@ -9,6 +9,12 @@
     "pricing": "Pricing",
     "signIn": "Sign in"
   },
+  "theme": {
+    "label": "Change theme",
+    "light": "Light",
+    "dark": "Dark",
+    "auto": "Auto"
+  },
   "home": {
     "hero": {
       "kicker": "World Cup 2026",
@@ -16,11 +22,62 @@
       "subtitle": "Trade and buy the stickers you need to complete your Panini album. Built in Colombia, for real collectors.",
       "ctaPrimary": "Start free",
       "ctaSecondary": "See how it works"
-    },
-    "stats": {
-      "stickers": "official stickers",
-      "comingSoon": "coming soon"
     }
+  },
+  "how": {
+    "kicker": "Instruction manual",
+    "title": "Three steps. No fluff.",
+    "mark": {
+      "title": "Mark your album",
+      "body": "Tell us which stickers you have and which you're missing. Your digital album syncs instantly."
+    },
+    "match": {
+      "title": "Find someone with your missing one",
+      "body": "We match your list against other collectors and surface the perfect trades."
+    },
+    "trade": {
+      "title": "Trade or buy",
+      "body": "Chat in-app, agree on shipping or meet-up, and complete your album one sticker at a time."
+    }
+  },
+  "pricing": {
+    "kicker": "Plans",
+    "title": "Pay only when you publish.",
+    "subtitle": "Creating an account is free. We only charge when you're ready to list stickers for trade or sale. Zero commission per trade.",
+    "popular": "Most popular",
+    "cta": "Choose plan",
+    "slots": "{count} listed stickers",
+    "oneShot": "One-time payment, no renewal",
+    "noCommission": "0% trade commission",
+    "chat": "Secure in-app chat",
+    "disclaimer": "Payments in Colombian pesos via Wompi · Coming soon",
+    "plans": {
+      "banca": {
+        "name": "Banca",
+        "tagline": "For someone just starting out"
+      },
+      "titular": {
+        "name": "Titular",
+        "tagline": "The plan most collectors pick"
+      },
+      "mvp": {
+        "name": "MVP",
+        "tagline": "For serious collectors",
+        "slots": "Unlimited stickers"
+      }
+    }
+  },
+  "preview": {
+    "kicker": "How a sticker looks",
+    "title": "Every sticker, a story.",
+    "body": "Vintage album typography, verified player data, and one click to trade or buy it.",
+    "ctaTrade": "Trade",
+    "ctaBuy": "Buy"
+  },
+  "finalCta": {
+    "kicker": "Final play",
+    "title": "Ready to complete the album?",
+    "cta": "Create free account"
   },
   "footer": {
     "tagline": "We help any person or business build custom software with UX and AI-driven engineering, shipping faster than ever.",

@@ -4,6 +4,7 @@ import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
+import { themeBootScript } from "@/components/vintage/ThemeSwitcher";
 import "../globals.css";
 
 const inter = Inter({
@@ -56,6 +57,9 @@ export default async function LocaleLayout({
       lang={locale}
       className={`${inter.variable} ${jetbrains.variable} ${bowlby.variable} h-full antialiased`}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
+      </head>
       <body className="min-h-full bg-background text-foreground font-sans">
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
       </body>
