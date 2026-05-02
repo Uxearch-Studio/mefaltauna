@@ -6,6 +6,7 @@
   "nav": {
     "explore": "Explorar",
     "howItWorks": "Cómo funciona",
+    "matches": "Partidos",
     "pricing": "Planes",
     "signIn": "Entrar"
   },
@@ -21,24 +22,60 @@
       "title": "¿Cuánto te falta?",
       "subtitle": "Intercambia y compra las láminas que necesitas para completar tu álbum Panini. Hecho en Colombia, para coleccionistas reales.",
       "ctaPrimary": "Empezar gratis",
-      "ctaSecondary": "Ver cómo funciona"
+      "ctaSecondary": "Ver partidos"
     }
+  },
+  "countdown": {
+    "kickoff": "Falta para el pitazo inicial",
+    "live": "El Mundial está en marcha",
+    "days": "Días",
+    "hours": "Horas",
+    "minutes": "Min",
+    "seconds": "Seg",
+    "location": "11 jun 2026 · Estadio Azteca, Ciudad de México"
   },
   "how": {
     "kicker": "Manual de instrucciones",
     "title": "Tres pasos. Sin vueltas.",
+    "intro": "Crear cuenta es gratis. Solo pagas cuando vas a publicar tus láminas para venta o intercambio. Cero comisión por trade.",
     "mark": {
       "title": "Marca tu álbum",
-      "body": "Indica qué láminas tienes y cuáles te faltan. Tu álbum digital se sincroniza al instante."
+      "body": "Indica qué láminas tienes y cuáles te faltan. Tu álbum digital se sincroniza al instante.",
+      "detail": "Funciona offline. Marca repetidas con un toque, y las láminas que necesitas con doble toque. Tu progreso se sube cuando vuelves a tener señal."
     },
     "match": {
       "title": "Encuentra a quien tiene lo tuyo",
-      "body": "El sistema cruza tu lista con la de otros coleccionistas y te muestra los matches perfectos."
+      "body": "El sistema cruza tu lista con la de otros coleccionistas y te muestra los matches perfectos.",
+      "detail": "Filtra por ciudad, reputación o tipo de lámina (jugador, escudo, legend, brillante). Te avisamos por notificación cuando alguien cerca tiene una lámina que necesitas."
     },
     "trade": {
       "title": "Intercambia o compra",
-      "body": "Habla por chat, acuerda el envío o el encuentro, y completa tu álbum una lámina a la vez."
-    }
+      "body": "Habla por chat, acuerda el envío o el encuentro, y completa tu álbum una lámina a la vez.",
+      "detail": "El chat es seguro y queda registrado. Si ambos confirman el intercambio o la compra, las dos partes ganan reputación y tu perfil sube de nivel."
+    },
+    "faqKicker": "Preguntas frecuentes",
+    "faqTitle": "Lo que más nos preguntan",
+    "faq": {
+      "payment": {
+        "q": "¿Cómo se paga?",
+        "a": "Por ahora estamos integrando Wompi para que pagues en pesos colombianos con tarjeta, PSE o Nequi. Mientras tanto, crear cuenta y usar la app es totalmente gratis."
+      },
+      "shipping": {
+        "q": "¿Cómo se envían las láminas?",
+        "a": "Cada usuario decide. Lo más común en LATAM es entrega en persona en sitio público o envío por servipostal/Servientrega. mefaltauna no se responsabiliza del envío, pero la reputación protege a quienes cumplen."
+      },
+      "safety": {
+        "q": "¿Cómo me protegen del fraude?",
+        "a": "Cada usuario tiene reputación pública basada en intercambios completados. Puedes reportar a alguien que no cumpla y bloquearlo. Los usuarios de baja reputación se filtran por defecto."
+      },
+      "panini": {
+        "q": "¿Funciona con cualquier álbum Panini 2026?",
+        "a": "Sí, el catálogo cubre las láminas oficiales del álbum Panini Mundial FIFA 2026 — jugadores, escudos, legends y especiales brillantes."
+      }
+    },
+    "ctaKicker": "Sin vueltas",
+    "ctaTitle": "Listo para completar el álbum.",
+    "cta": "Crear cuenta gratis"
   },
   "pricing": {
     "kicker": "Planes",
@@ -73,6 +110,21 @@
     "body": "Tipografía estilo álbum vintage, datos verificados de cada jugador, y un click para cambiarla o comprarla.",
     "ctaTrade": "Cambiar",
     "ctaBuy": "Comprar"
+  },
+  "matches": {
+    "kicker": "Calendario · Mundial 2026",
+    "title": "Cada partido. Cada equipo.",
+    "subtitle": "Filtra por equipo o por grupo. Hora local de Colombia (UTC-5).",
+    "noticeTitle": "Preview",
+    "notice": "Calendario en integración con la fuente oficial de FIFA. Lo que ves abajo es una muestra estructural — los datos definitivos llegan antes del lanzamiento.",
+    "filterTeam": "Equipo",
+    "filterGroup": "Grupo",
+    "allTeams": "Todos los equipos",
+    "allGroups": "Todos los grupos",
+    "group": "Grupo",
+    "clear": "Limpiar",
+    "count": "{count, plural, =0 {0 partidos} =1 {1 partido} other {# partidos}}",
+    "empty": "No hay partidos con ese filtro. Prueba con otro equipo o grupo."
   },
   "finalCta": {
     "kicker": "Última jugada",

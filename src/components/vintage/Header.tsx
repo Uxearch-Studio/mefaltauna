@@ -14,15 +14,21 @@ export function Header() {
           <Logo />
         </Link>
 
-        <nav className="hidden md:flex items-center gap-6 font-mono text-xs uppercase tracking-widest">
-          <a href="#how" className="hover:text-accent transition-colors">
+        <nav className="hidden md:flex items-center gap-6 font-pixel text-[10px] uppercase">
+          <Link
+            href="/how-it-works"
+            className="hover:text-accent transition-colors"
+          >
             {t("howItWorks")}
-          </a>
-          <a href="#pricing" className="hover:text-accent transition-colors">
+          </Link>
+          <Link
+            href="/matches"
+            className="hover:text-accent transition-colors"
+          >
+            {t("matches")}
+          </Link>
+          <a href="/#pricing" className="hover:text-accent transition-colors">
             {t("pricing")}
-          </a>
-          <a href="#explore" className="hover:text-accent transition-colors">
-            {t("explore")}
           </a>
         </nav>
 
@@ -31,7 +37,7 @@ export function Header() {
           <ThemeSwitcher />
           <button
             type="button"
-            className="hidden sm:inline-flex items-center h-9 px-3 font-mono text-xs uppercase tracking-widest bg-foreground text-background border-2 border-border hover:bg-accent hover:text-accent-foreground transition-colors"
+            className="hidden sm:inline-flex items-center h-9 px-3 font-pixel text-[10px] uppercase bg-foreground text-background border-2 border-border hover:bg-accent hover:text-accent-foreground transition-colors"
           >
             {t("signIn")}
           </button>

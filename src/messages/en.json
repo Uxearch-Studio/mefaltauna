@@ -6,6 +6,7 @@
   "nav": {
     "explore": "Explore",
     "howItWorks": "How it works",
+    "matches": "Matches",
     "pricing": "Pricing",
     "signIn": "Sign in"
   },
@@ -21,24 +22,60 @@
       "title": "How many are you missing?",
       "subtitle": "Trade and buy the stickers you need to complete your Panini album. Built in Colombia, for real collectors.",
       "ctaPrimary": "Start free",
-      "ctaSecondary": "See how it works"
+      "ctaSecondary": "See matches"
     }
+  },
+  "countdown": {
+    "kickoff": "Until the opening whistle",
+    "live": "The World Cup is live",
+    "days": "Days",
+    "hours": "Hours",
+    "minutes": "Min",
+    "seconds": "Sec",
+    "location": "11 Jun 2026 · Estadio Azteca, Mexico City"
   },
   "how": {
     "kicker": "Instruction manual",
     "title": "Three steps. No fluff.",
+    "intro": "Creating an account is free. You only pay when you're ready to list stickers for trade or sale. Zero commission per trade.",
     "mark": {
       "title": "Mark your album",
-      "body": "Tell us which stickers you have and which you're missing. Your digital album syncs instantly."
+      "body": "Tell us which stickers you have and which you're missing. Your digital album syncs instantly.",
+      "detail": "Works offline. Mark duplicates with one tap, missing ones with a double tap. Your progress uploads as soon as you're back online."
     },
     "match": {
       "title": "Find someone with your missing one",
-      "body": "We match your list against other collectors and surface the perfect trades."
+      "body": "We match your list against other collectors and surface the perfect trades.",
+      "detail": "Filter by city, reputation, or sticker type (player, badge, legend, foil). We notify you when someone nearby has a sticker you need."
     },
     "trade": {
       "title": "Trade or buy",
-      "body": "Chat in-app, agree on shipping or meet-up, and complete your album one sticker at a time."
-    }
+      "body": "Chat in-app, agree on shipping or meet-up, and complete your album one sticker at a time.",
+      "detail": "Chat is secure and logged. When both parties confirm the trade or purchase, both gain reputation and your profile levels up."
+    },
+    "faqKicker": "FAQ",
+    "faqTitle": "Most asked questions",
+    "faq": {
+      "payment": {
+        "q": "How do I pay?",
+        "a": "We're integrating Wompi so you can pay in Colombian pesos with card, PSE or Nequi. Until then, signing up and using the app is free."
+      },
+      "shipping": {
+        "q": "How are stickers shipped?",
+        "a": "Each user decides. The most common option in LATAM is in-person delivery in a public spot or shipping via Servientrega. mefaltauna doesn't handle shipping itself — reputation protects users who deliver."
+      },
+      "safety": {
+        "q": "How do you protect me from fraud?",
+        "a": "Every user has public reputation built from completed trades. You can report and block anyone who doesn't deliver. Low-reputation accounts are filtered by default."
+      },
+      "panini": {
+        "q": "Does it work with any Panini 2026 album?",
+        "a": "Yes — the catalog covers the official FIFA World Cup 2026 Panini sticker album: players, badges, legends and shiny specials."
+      }
+    },
+    "ctaKicker": "No fluff",
+    "ctaTitle": "Ready to complete the album.",
+    "cta": "Create free account"
   },
   "pricing": {
     "kicker": "Plans",
@@ -73,6 +110,21 @@
     "body": "Vintage album typography, verified player data, and one click to trade or buy it.",
     "ctaTrade": "Trade",
     "ctaBuy": "Buy"
+  },
+  "matches": {
+    "kicker": "Schedule · World Cup 2026",
+    "title": "Every match. Every team.",
+    "subtitle": "Filter by team or by group. Local time in Colombia (UTC-5).",
+    "noticeTitle": "Preview",
+    "notice": "Schedule being integrated with the official FIFA source. What you see below is a structural sample — final data lands before launch.",
+    "filterTeam": "Team",
+    "filterGroup": "Group",
+    "allTeams": "All teams",
+    "allGroups": "All groups",
+    "group": "Group",
+    "clear": "Clear",
+    "count": "{count, plural, =0 {0 matches} =1 {1 match} other {# matches}}",
+    "empty": "No matches with that filter. Try another team or group."
   },
   "finalCta": {
     "kicker": "Final play",
