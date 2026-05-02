@@ -8,6 +8,8 @@
     "howItWorks": "Cómo funciona",
     "matches": "Partidos",
     "pricing": "Planes",
+    "album": "Mi Álbum",
+    "feed": "En Vivo",
     "signIn": "Entrar"
   },
   "theme": {
@@ -110,6 +112,35 @@
     "body": "Tipografía estilo álbum vintage, datos verificados de cada jugador, y un click para cambiarla o comprarla.",
     "ctaTrade": "Cambiar",
     "ctaBuy": "Comprar"
+  },
+  "album": {
+    "kicker": "Tu álbum",
+    "title": "Mi Álbum",
+    "subtitle": "Toca una lámina para sumarla. Toca de nuevo para marcar repetidas. Las repetidas las puedes ofrecer al instante.",
+    "filters": {
+      "all": "Todas",
+      "owned": "Tengo",
+      "missing": "Me faltan",
+      "duplicates": "Repetidas"
+    },
+    "progress": {
+      "nextMilestone": "{count} para llegar al {pct}%",
+      "complete": "★ Álbum completo · MVP del Mundial"
+    }
+  },
+  "feed": {
+    "kicker": "En vivo",
+    "title": "Lo que se está publicando",
+    "subtitle": "Cada lámina nueva que alguien ofrece para cambio o venta aparece acá al instante.",
+    "live": "Conectado en vivo",
+    "connecting": "Conectando…",
+    "empty": "Aún no hay publicaciones. Sé el primero — ofrece una repetida desde tu álbum.",
+    "someone": "Alguien",
+    "actions": {
+      "trade": "ofreció para cambio",
+      "sale": "puso a la venta",
+      "both": "publicó para cambio o venta"
+    }
   },
   "matches": {
     "kicker": "Calendario · Mundial 2026",

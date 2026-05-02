@@ -8,6 +8,8 @@
     "howItWorks": "How it works",
     "matches": "Matches",
     "pricing": "Pricing",
+    "album": "My Album",
+    "feed": "Live",
     "signIn": "Sign in"
   },
   "theme": {
@@ -110,6 +112,35 @@
     "body": "Vintage album typography, verified player data, and one click to trade or buy it.",
     "ctaTrade": "Trade",
     "ctaBuy": "Buy"
+  },
+  "album": {
+    "kicker": "Your album",
+    "title": "My Album",
+    "subtitle": "Tap a sticker to add it. Tap again to mark duplicates. Duplicates can be offered instantly.",
+    "filters": {
+      "all": "All",
+      "owned": "Have",
+      "missing": "Missing",
+      "duplicates": "Duplicates"
+    },
+    "progress": {
+      "nextMilestone": "{count} to hit {pct}%",
+      "complete": "★ Album complete · World Cup MVP"
+    }
+  },
+  "feed": {
+    "kicker": "Live",
+    "title": "What's being listed",
+    "subtitle": "Every sticker someone offers for trade or sale shows up here instantly.",
+    "live": "Connected live",
+    "connecting": "Connecting…",
+    "empty": "No listings yet. Be the first — offer a duplicate from your album.",
+    "someone": "Someone",
+    "actions": {
+      "trade": "offered for trade",
+      "sale": "listed for sale",
+      "both": "listed for trade or sale"
+    }
   },
   "matches": {
     "kicker": "Schedule · World Cup 2026",

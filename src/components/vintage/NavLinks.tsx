@@ -5,8 +5,10 @@ import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/cn";
 
 const ROUTES = [
-  { href: "/how-it-works" as const, key: "howItWorks" },
+  { href: "/album" as const, key: "album" },
+  { href: "/feed" as const, key: "feed" },
   { href: "/matches" as const, key: "matches" },
+  { href: "/how-it-works" as const, key: "howItWorks" },
 ];
 
 export function NavLinks() {
@@ -14,7 +16,7 @@ export function NavLinks() {
   const pathname = usePathname();
 
   return (
-    <nav className="hidden md:flex items-center gap-6 font-pixel text-[10px] uppercase">
+    <nav className="hidden md:flex items-center gap-5 font-pixel text-[10px] uppercase">
       {ROUTES.map((route) => {
         const active =
           pathname === route.href || pathname.startsWith(`${route.href}/`);
@@ -43,12 +45,6 @@ export function NavLinks() {
           </Link>
         );
       })}
-      <a
-        href="/#pricing"
-        className="text-foreground hover:text-accent transition-colors"
-      >
-        {t("pricing")}
-      </a>
     </nav>
   );
 }
