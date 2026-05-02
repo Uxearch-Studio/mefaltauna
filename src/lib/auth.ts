@@ -45,8 +45,10 @@ export function formatPhoneDisplay(phone: string): string {
 }
 
 export function isValidPhone(phone: string): boolean {
-  const digits = normalizePhone(phone);
-  return digits.length >= 10 && digits.length <= 15;
+  const digits = phone.replace(/\D/g, "");
+  // Permissive: 7-15 digits. Local Colombia mobiles are 10, with
+  // country code 12, others vary.
+  return digits.length >= 7 && digits.length <= 15;
 }
 
 export function isValidPin(pin: string): boolean {

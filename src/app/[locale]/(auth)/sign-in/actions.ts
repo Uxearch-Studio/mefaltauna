@@ -34,8 +34,17 @@ export async function phonePinAction(
   const locale = String(formData.get("locale") ?? "es");
   const next = String(formData.get("next") ?? `/${locale}/app/feed`);
 
+  // Diagnostic — surfaces in `vercel logs` so we can see what arrives
+  // when validation rejects inputs that look right to the user.
+  console.log("[phonePinAction]", {
+    phoneRaw: phoneInput,
+    phoneDigits: phoneInput.replace(/\D/g, ""),
+    pinLen: pin.length,
+    pinConfirmLen: pinConfirm.length,
+  });
+
   if (!isValidPhone(phoneInput)) {
-    return { error: "invalid_phone" };
+    return { phone: phoneInput, error: "invalid_phone" };
   }
   if (!isValidPin(pin)) {
     return { phone: phoneInput, error: "invalid_pin" };
