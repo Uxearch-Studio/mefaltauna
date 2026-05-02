@@ -88,54 +88,56 @@ export function PhotoCapture({ value, onChange }: Props) {
       />
 
       {value ? (
-        <div className="flex flex-col gap-2">
-          <div className="relative">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={value}
-              alt=""
-              className="w-full max-h-96 object-cover rounded-xl border border-border"
-            />
-            <button
-              type="button"
-              onClick={clear}
-              aria-label={t("remove")}
-              className="absolute top-2 right-2 size-8 rounded-full bg-foreground/85 text-background flex items-center justify-center hover:bg-foreground transition-colors"
-            >
-              <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M6 6l12 12M6 18L18 6" />
-              </svg>
-            </button>
+        <div className="flex items-center gap-3 surface-card p-2.5">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={value}
+            alt=""
+            className="size-16 shrink-0 object-cover rounded-lg"
+          />
+          <div className="flex flex-col gap-0.5 min-w-0 flex-1">
+            <p className="text-sm font-medium">{t("attached")}</p>
+            <div className="flex items-center gap-3 text-xs">
+              <button
+                type="button"
+                onClick={trigger}
+                disabled={uploading}
+                className="text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
+              >
+                {uploading ? t("uploading") : t("retake")}
+              </button>
+              <span className="text-border">·</span>
+              <button
+                type="button"
+                onClick={clear}
+                disabled={uploading}
+                className="text-muted-foreground hover:text-accent transition-colors disabled:opacity-50"
+              >
+                {t("remove")}
+              </button>
+            </div>
           </div>
-          <button
-            type="button"
-            onClick={trigger}
-            disabled={uploading}
-            className="text-xs text-muted-foreground hover:text-foreground self-start transition-colors"
-          >
-            {uploading ? t("uploading") : t("retake")}
-          </button>
         </div>
       ) : (
         <button
           type="button"
           onClick={trigger}
           disabled={uploading}
-          className="w-full aspect-[4/3] rounded-xl border-2 border-dashed border-border bg-muted/40 hover:bg-muted hover:border-accent transition-colors flex flex-col items-center justify-center gap-2 disabled:opacity-50"
+          className="flex items-center gap-3 self-start h-11 px-4 rounded-full border border-border bg-background hover:bg-muted hover:border-accent transition-colors disabled:opacity-50"
         >
           {uploading ? (
             <>
-              <span className="size-6 rounded-full border-2 border-accent border-t-transparent animate-spin" />
+              <span className="size-4 rounded-full border-2 border-accent border-t-transparent animate-spin" />
               <span className="text-sm text-muted-foreground">{t("uploading")}</span>
             </>
           ) : (
             <>
               <svg
                 viewBox="0 0 24 24"
-                className="size-8 text-muted-foreground"
+                className="size-4 text-muted-foreground"
                 fill="none"
                 stroke="currentColor"
-                strokeWidth="1.6"
+                strokeWidth="1.7"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
@@ -143,7 +145,6 @@ export function PhotoCapture({ value, onChange }: Props) {
                 <circle cx="12" cy="13" r="4" />
               </svg>
               <span className="text-sm font-medium">{t("takePhoto")}</span>
-              <span className="text-xs text-muted-foreground">{t("hint")}</span>
             </>
           )}
         </button>

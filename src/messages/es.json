@@ -186,10 +186,10 @@
   },
   "photo": {
     "takePhoto": "Tomar foto",
-    "hint": "Cámara o galería · se comprime automáticamente",
+    "attached": "Foto añadida",
     "uploading": "Subiendo…",
     "retake": "Tomar otra",
-    "remove": "Quitar foto",
+    "remove": "Quitar",
     "errors": {
       "not_configured": "Servicio no configurado.",
       "unauthenticated": "Inicia sesión para subir fotos.",

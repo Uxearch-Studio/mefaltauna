@@ -186,10 +186,10 @@
   },
   "photo": {
     "takePhoto": "Take a photo",
-    "hint": "Camera or gallery · auto-compressed",
+    "attached": "Photo attached",
     "uploading": "Uploading…",
-    "retake": "Take another",
-    "remove": "Remove photo",
+    "retake": "Retake",
+    "remove": "Remove",
     "errors": {
       "not_configured": "Service not configured.",
       "unauthenticated": "Sign in to upload photos.",
