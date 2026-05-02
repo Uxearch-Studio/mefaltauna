@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState, useEffect, useRef } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { phonePinAction, type AuthState } from "./actions";
 
@@ -15,33 +15,24 @@ export function PhonePinForm({ locale, next }: Props) {
   const t = useTranslations("signIn");
   const [state, action, pending] = useActionState(phonePinAction, INITIAL);
 
-  const [phone, setPhone] = useState("");
-  const [pin, setPin] = useState("");
-  const [pinConfirm, setPinConfirm] = useState("");
-
+  const formRef = useRef<HTMLFormElement>(null);
   const pinRef = useRef<HTMLInputElement>(null);
   const pinConfirmRef = useRef<HTMLInputElement>(null);
 
-  // When the server tells us we need confirmation, focus the new field
-  // and reset both PIN inputs so the user retypes.
+  // After a "needs confirm" bounce, clear the PIN fields and focus the
+  // first one — server gave us back the phone, keep it.
   useEffect(() => {
     if (state.needsConfirm) {
-      setPin("");
-      setPinConfirm("");
+      if (pinRef.current) pinRef.current.value = "";
+      if (pinConfirmRef.current) pinConfirmRef.current.value = "";
       pinRef.current?.focus();
     }
   }, [state.needsConfirm]);
 
-  // When phone is echoed from server (e.g. on error) prefill it so the
-  // user doesn't lose their digits.
-  useEffect(() => {
-    if (state.phone && !phone) setPhone(state.phone);
-  }, [state.phone, phone]);
-
   const showConfirm = state.needsConfirm === true;
 
   return (
-    <form action={action} className="flex flex-col gap-4">
+    <form ref={formRef} action={action} className="flex flex-col gap-4">
       <input type="hidden" name="locale" value={locale} />
       {next && <input type="hidden" name="next" value={next} />}
 
@@ -56,13 +47,11 @@ export function PhonePinForm({ locale, next }: Props) {
             required
             autoComplete="tel-national"
             inputMode="numeric"
+            pattern="[0-9 ]*"
+            maxLength={13}
             placeholder="300 000 0000"
-            value={phone}
-            onChange={(e) =>
-              setPhone(e.target.value.replace(/[^\d ]/g, "").slice(0, 13))
-            }
-            disabled={showConfirm}
-            className="flex-1 px-3 bg-transparent text-base focus:outline-none disabled:text-muted-foreground"
+            defaultValue={state.phone ?? ""}
+            className="flex-1 px-3 bg-transparent text-base focus:outline-none"
           />
         </div>
       </Field>
@@ -74,17 +63,11 @@ export function PhonePinForm({ locale, next }: Props) {
           name="pin"
           required
           inputMode="numeric"
+          pattern="[0-9]{6}"
           maxLength={6}
+          minLength={6}
           autoComplete={showConfirm ? "new-password" : "current-password"}
           placeholder="••••••"
-          value={pin}
-          onChange={(e) => {
-            const digits = e.target.value.replace(/\D/g, "").slice(0, 6);
-            setPin(digits);
-            if (digits.length === 6 && showConfirm) {
-              pinConfirmRef.current?.focus();
-            }
-          }}
           className="h-12 px-4 rounded-xl bg-background border border-border text-base text-center tracking-[0.5em] font-mono focus:outline-none focus:border-accent"
         />
       </Field>
@@ -97,13 +80,11 @@ export function PhonePinForm({ locale, next }: Props) {
             name="pin_confirm"
             required
             inputMode="numeric"
+            pattern="[0-9]{6}"
             maxLength={6}
+            minLength={6}
             autoComplete="new-password"
             placeholder="••••••"
-            value={pinConfirm}
-            onChange={(e) =>
-              setPinConfirm(e.target.value.replace(/\D/g, "").slice(0, 6))
-            }
             className="h-12 px-4 rounded-xl bg-background border border-border text-base text-center tracking-[0.5em] font-mono focus:outline-none focus:border-accent"
           />
         </Field>
