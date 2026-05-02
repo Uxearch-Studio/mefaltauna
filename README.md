@@ -18,11 +18,27 @@ PWA para intercambio y venta de láminas del álbum **Panini Mundial 2026**.
 
 ```bash
 pnpm install
-pnpm dev          # http://localhost:3000
+cp .env.local.example .env.local   # llenar con valores reales de Supabase
+pnpm dev                            # http://localhost:3000
 pnpm typecheck
 pnpm lint
 pnpm build
 ```
+
+## Setup de Supabase
+
+1. Crea un proyecto en [app.supabase.com](https://app.supabase.com).
+2. Copia `Project URL` y `anon` key a `.env.local`
+   (`NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_ANON_KEY`).
+3. Aplica las migraciones SQL en orden desde el SQL editor de Supabase:
+   - `supabase/migrations/0001_profiles.sql` — tabla `profiles` con RLS
+     y trigger que la pobla automáticamente cuando un usuario se
+     registra.
+4. En **Authentication → URL Configuration**, agrega
+   `http://localhost:3000/auth/callback` como redirect URL durante
+   desarrollo (y la URL de producción cuando deployes).
+5. (Opcional) En **Authentication → Email Templates**, personaliza el
+   correo del magic link para que diga "mefaltauna".
 
 ## Estructura
 

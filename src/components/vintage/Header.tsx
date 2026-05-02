@@ -1,11 +1,14 @@
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
+import { getCurrentUser } from "@/lib/auth";
 import { Logo } from "./Logo";
 import { LocaleSwitcher } from "./LocaleSwitcher";
 import { ThemeSwitcher } from "./ThemeSwitcher";
+import { UserMenu } from "./UserMenu";
 
-export function Header() {
-  const t = useTranslations("nav");
+export async function Header() {
+  const t = await getTranslations("nav");
+  const user = await getCurrentUser();
 
   return (
     <header className="sticky top-0 z-40 border-b-2 border-border bg-background/85 backdrop-blur">
@@ -35,12 +38,16 @@ export function Header() {
         <div className="flex items-center gap-2">
           <LocaleSwitcher />
           <ThemeSwitcher />
-          <button
-            type="button"
-            className="hidden sm:inline-flex items-center h-9 px-3 font-pixel text-[10px] uppercase bg-foreground text-background border-2 border-border hover:bg-accent hover:text-accent-foreground transition-colors"
-          >
-            {t("signIn")}
-          </button>
+          {user ? (
+            <UserMenu user={user} />
+          ) : (
+            <Link
+              href="/sign-in"
+              className="hidden sm:inline-flex items-center h-9 px-3 font-pixel text-[10px] uppercase bg-foreground text-background border-2 border-border hover:bg-accent hover:text-accent-foreground transition-colors"
+            >
+              {t("signIn")}
+            </Link>
+          )}
         </div>
       </div>
     </header>

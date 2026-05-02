@@ -126,6 +126,32 @@
     "count": "{count, plural, =0 {0 partidos} =1 {1 partido} other {# partidos}}",
     "empty": "No hay partidos con ese filtro. Prueba con otro equipo o grupo."
   },
+  "signIn": {
+    "kicker": "Entrar al álbum",
+    "title": "Iniciar sesión",
+    "subtitle": "Te enviamos un enlace mágico al correo. No necesitas contraseña.",
+    "emailLabel": "Correo electrónico",
+    "submit": "Enviar enlace",
+    "sending": "Enviando…",
+    "disclaimer": "Al continuar aceptas los términos de uso. Sin spam, sin anuncios.",
+    "errors": {
+      "invalid_email": "Correo no válido. Revisa que esté bien escrito.",
+      "send_failed": "No pudimos enviar el enlace. Intenta de nuevo en un momento.",
+      "not_configured": "Auth aún no está configurada. Contacta al equipo de mefaltauna.",
+      "callback_failed": "El enlace expiró o ya se usó. Pide uno nuevo abajo."
+    }
+  },
+  "checkEmail": {
+    "kicker": "Pitazo enviado",
+    "title": "Revisa tu correo",
+    "body": "Te mandamos un enlace mágico. Ábrelo desde el mismo dispositivo donde estás navegando.",
+    "hint": "Si no aparece en bandeja de entrada, revisa spam o promociones.",
+    "back": "← Usar otro correo"
+  },
+  "userMenu": {
+    "signedInAs": "Sesión iniciada como",
+    "signOut": "Cerrar sesión"
+  },
   "finalCta": {
     "kicker": "Última jugada",
     "title": "¿Listo para completar el álbum?",

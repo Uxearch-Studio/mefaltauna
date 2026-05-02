@@ -126,6 +126,32 @@
     "count": "{count, plural, =0 {0 matches} =1 {1 match} other {# matches}}",
     "empty": "No matches with that filter. Try another team or group."
   },
+  "signIn": {
+    "kicker": "Enter the album",
+    "title": "Sign in",
+    "subtitle": "We'll email you a magic link. No password to remember.",
+    "emailLabel": "Email",
+    "submit": "Send link",
+    "sending": "Sending…",
+    "disclaimer": "By continuing you accept the terms of use. No spam, no ads.",
+    "errors": {
+      "invalid_email": "Invalid email. Double-check the spelling.",
+      "send_failed": "Couldn't send the link. Try again in a moment.",
+      "not_configured": "Auth isn't configured yet. Contact the mefaltauna team.",
+      "callback_failed": "The link expired or was already used. Request a new one below."
+    }
+  },
+  "checkEmail": {
+    "kicker": "Whistle blown",
+    "title": "Check your email",
+    "body": "We sent a magic link. Open it from the same device you're browsing on.",
+    "hint": "Not in your inbox? Check spam or promotions.",
+    "back": "← Use a different email"
+  },
+  "userMenu": {
+    "signedInAs": "Signed in as",
+    "signOut": "Sign out"
+  },
   "finalCta": {
     "kicker": "Final play",
     "title": "Ready to complete the album?",
