@@ -25,6 +25,7 @@ export function UserMenu({ user }: Props) {
   }, []);
 
   const label = user.username ?? user.email?.split("@")[0] ?? "user";
+  const initial = label.charAt(0).toUpperCase();
 
   return (
     <div ref={ref} className="relative">
@@ -33,28 +34,26 @@ export function UserMenu({ user }: Props) {
         onClick={() => setOpen((o) => !o)}
         aria-haspopup="menu"
         aria-expanded={open}
-        className="inline-flex items-center h-9 px-3 font-pixel text-[10px] uppercase bg-foreground text-background border-2 border-border hover:bg-accent hover:text-accent-foreground transition-colors"
+        className="inline-flex items-center justify-center size-9 rounded-full bg-foreground text-background text-sm font-medium hover:opacity-90 transition-opacity"
       >
-        <span className="max-w-[8rem] truncate">{label}</span>
+        {initial}
       </button>
 
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-full mt-2 min-w-[12rem] bg-background border-2 border-border border-sticker z-50"
+          className="absolute right-0 top-full mt-2 min-w-[14rem] surface-card overflow-hidden z-50 animate-fade-in"
         >
-          <div className="px-3 py-3 border-b-2 border-border">
-            <p className="font-pixel text-[10px] uppercase text-muted-foreground">
-              {t("signedInAs")}
-            </p>
-            <p className="font-mono text-sm truncate">{user.email}</p>
+          <div className="px-4 py-3 border-b border-border">
+            <p className="text-xs text-muted-foreground">{t("signedInAs")}</p>
+            <p className="text-sm font-medium truncate">{user.email}</p>
           </div>
 
           <form method="post" action={`/${locale}/sign-out`}>
             <button
               type="submit"
               role="menuitem"
-              className="w-full text-left px-3 py-3 font-pixel text-[10px] uppercase hover:bg-foreground hover:text-background transition-colors"
+              className="w-full text-left px-4 py-3 text-sm hover:bg-muted transition-colors"
             >
               {t("signOut")}
             </button>

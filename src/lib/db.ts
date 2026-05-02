@@ -94,12 +94,14 @@ export async function fetchActiveListings(
   // profiles.id has no direct FK to listings.user_id (both reference
   // auth.users) so we fetch usernames in a second batched query and
   // merge in JS.
+  // Two FKs link listings → sticker_catalog (sticker_id and wants_sticker_id),
+  // so PostgREST needs the explicit constraint name to disambiguate.
   const { data, error } = await supabase
     .from("listings")
     .select(
       `
       id, user_id, sticker_id, type, price_cop, status, created_at,
-      sticker:sticker_catalog ( code, name, team_code, type, number )
+      sticker:sticker_catalog!listings_sticker_id_fkey ( code, name, team_code, type, number )
       `,
     )
     .eq("status", "active")

@@ -17,6 +17,27 @@ function applyTheme(theme: Theme) {
   }
 }
 
+const ICONS: Record<Theme, React.ReactNode> = {
+  light: (
+    <svg viewBox="0 0 20 20" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="10" cy="10" r="3.5" />
+      <path d="M10 2v1.5M10 16.5V18M2 10h1.5M16.5 10H18M4.2 4.2l1.1 1.1M14.7 14.7l1.1 1.1M4.2 15.8l1.1-1.1M14.7 5.3l1.1-1.1" />
+    </svg>
+  ),
+  dark: (
+    <svg viewBox="0 0 20 20" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M16 11.4A7 7 0 1 1 8.6 4a5.6 5.6 0 0 0 7.4 7.4Z" />
+    </svg>
+  ),
+  auto: (
+    <svg viewBox="0 0 20 20" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="10" cy="10" r="6.5" />
+      <path d="M10 3.5v13" />
+      <path d="M10 3.5a6.5 6.5 0 0 1 0 13" fill="currentColor" />
+    </svg>
+  ),
+};
+
 export function ThemeSwitcher() {
   const t = useTranslations("theme");
   const [theme, setTheme] = useState<Theme>("auto");
@@ -42,22 +63,15 @@ export function ThemeSwitcher() {
       aria-label={t("label")}
       title={mounted ? t(theme) : undefined}
       className={cn(
-        "inline-flex items-center justify-center size-9",
-        "border-2 border-border bg-background text-foreground",
-        "hover:bg-foreground hover:text-background transition-colors",
+        "inline-flex items-center justify-center size-9 rounded-full border border-border",
+        "text-muted-foreground hover:text-foreground hover:bg-muted transition-colors",
       )}
     >
-      <span className="font-mono text-xs leading-none" suppressHydrationWarning>
-        {!mounted ? "·" : theme === "light" ? "☼" : theme === "dark" ? "☾" : "⊙"}
-      </span>
+      <span suppressHydrationWarning>{ICONS[mounted ? theme : "auto"]}</span>
     </button>
   );
 }
 
-/**
- * Inline script content used in <head> to apply the stored theme
- * before paint, preventing FOUC.
- */
 export const themeBootScript = `
 (function(){
   try {

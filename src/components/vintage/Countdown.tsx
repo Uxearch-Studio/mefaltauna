@@ -2,12 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { cn } from "@/lib/cn";
 
-/**
- * Mundial 2026 — opening match: 11 June 2026, Estadio Azteca, México.
- * Kickoff approx. 16:00 UTC-6 → 22:00 UTC.
- */
 const TARGET = new Date("2026-06-11T22:00:00Z").getTime();
 
 type Parts = { d: number; h: number; m: number; s: number; over: boolean };
@@ -39,57 +34,35 @@ export function Countdown() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      <p className="font-pixel text-[10px] md:text-xs uppercase tracking-widest text-accent crt-glow">
+    <div className="flex flex-col items-center gap-5">
+      <p className="text-xs font-semibold uppercase tracking-wider text-accent">
         {parts?.over ? t("live") : t("kickoff")}
       </p>
 
-      <div className="flex items-stretch gap-2 md:gap-3">
+      <div className="grid grid-cols-4 gap-3 md:gap-4">
         <Cell value={parts ? pad(parts.d, 3) : "···"} label={t("days")} />
-        <Sep />
         <Cell value={parts ? pad(parts.h) : "··"} label={t("hours")} />
-        <Sep />
         <Cell value={parts ? pad(parts.m) : "··"} label={t("minutes")} />
-        <Sep />
         <Cell value={parts ? pad(parts.s) : "··"} label={t("seconds")} />
       </div>
 
-      <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-        {t("location")}
-      </p>
+      <p className="text-xs text-muted-foreground">{t("location")}</p>
     </div>
   );
 }
 
 function Cell({ value, label }: { value: string; label: string }) {
   return (
-    <div
-      className={cn(
-        "flex flex-col items-center gap-2",
-        "min-w-[4rem] md:min-w-[5.5rem] px-2 md:px-3 py-3 md:py-4",
-        "bg-foreground text-background border-2 border-border border-sticker",
-      )}
-    >
+    <div className="surface-card p-4 md:p-5 flex flex-col items-center gap-2 min-w-[4.5rem] md:min-w-[6rem]">
       <span
-        className="font-pixel text-2xl md:text-4xl leading-none tabular-nums crt-glow text-accent"
+        className="text-3xl md:text-5xl font-bold tabular-nums leading-none tracking-tight"
         suppressHydrationWarning
       >
         {value}
       </span>
-      <span className="font-pixel text-[8px] md:text-[10px] uppercase tracking-widest text-background/70">
+      <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
         {label}
       </span>
     </div>
-  );
-}
-
-function Sep() {
-  return (
-    <span
-      aria-hidden
-      className="self-center font-pixel text-2xl md:text-4xl text-accent leading-none animate-pulse"
-    >
-      :
-    </span>
   );
 }

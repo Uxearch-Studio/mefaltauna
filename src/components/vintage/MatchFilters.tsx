@@ -34,12 +34,12 @@ export function MatchFilters({ matches, locale }: Props) {
 
   return (
     <>
-      <div className="grid sm:grid-cols-[1fr_1fr_auto] gap-3 mb-8">
+      <div className="grid sm:grid-cols-[1fr_1fr_auto] gap-3 mb-6">
         <Field label={t("filterTeam")}>
           <select
             value={team}
             onChange={(e) => setTeam(e.target.value)}
-            className="w-full h-11 px-3 bg-background border-2 border-border font-mono text-sm focus:outline-none focus:border-accent"
+            className="w-full h-11 px-3 rounded-xl bg-background border border-border text-sm focus:outline-none focus:border-accent"
           >
             <option value="all">{t("allTeams")}</option>
             {teamsSorted.map((tm) => (
@@ -54,7 +54,7 @@ export function MatchFilters({ matches, locale }: Props) {
           <select
             value={group}
             onChange={(e) => setGroup(e.target.value)}
-            className="w-full h-11 px-3 bg-background border-2 border-border font-mono text-sm focus:outline-none focus:border-accent"
+            className="w-full h-11 px-3 rounded-xl bg-background border border-border text-sm focus:outline-none focus:border-accent"
           >
             <option value="all">{t("allGroups")}</option>
             {GROUPS.map((g) => (
@@ -71,22 +71,22 @@ export function MatchFilters({ matches, locale }: Props) {
             setTeam("all");
             setGroup("all");
           }}
-          className="h-11 px-4 self-end font-pixel text-[10px] uppercase border-2 border-border bg-background hover:bg-foreground hover:text-background transition-colors"
+          className="h-11 px-4 self-end rounded-full text-xs font-medium border border-border bg-background hover:bg-muted transition-colors"
         >
           {t("clear")}
         </button>
       </div>
 
-      <p className="font-pixel text-[10px] uppercase text-muted-foreground mb-4">
+      <p className="text-xs text-muted-foreground mb-4">
         {t("count", { count: filtered.length })}
       </p>
 
       {filtered.length === 0 ? (
-        <p className="font-mono text-sm text-muted-foreground py-12 text-center border-2 border-dashed border-border">
+        <p className="text-sm text-muted-foreground py-12 text-center surface-card">
           {t("empty")}
         </p>
       ) : (
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid md:grid-cols-2 gap-3">
           {filtered.map((m) => (
             <MatchCard key={m.id} match={m} locale={locale} />
           ))}
@@ -99,7 +99,7 @@ export function MatchFilters({ matches, locale }: Props) {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="flex flex-col gap-1.5">
-      <span className="font-pixel text-[10px] uppercase text-muted-foreground">
+      <span className="text-xs uppercase tracking-wide text-muted-foreground">
         {label}
       </span>
       {children}

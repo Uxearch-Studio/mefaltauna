@@ -8,9 +8,15 @@
     "howItWorks": "Cómo funciona",
     "matches": "Partidos",
     "pricing": "Planes",
-    "album": "Mi Álbum",
-    "feed": "En Vivo",
-    "signIn": "Entrar"
+    "signIn": "Entrar",
+    "openApp": "Abrir app"
+  },
+  "appNav": {
+    "feed": "En vivo",
+    "album": "Álbum",
+    "publish": "Publicar",
+    "inbox": "Mensajes",
+    "profile": "Perfil"
   },
   "theme": {
     "label": "Cambiar tema",
@@ -116,7 +122,8 @@
   "album": {
     "kicker": "Tu álbum",
     "title": "Mi Álbum",
-    "subtitle": "Toca una lámina para sumarla. Toca de nuevo para marcar repetidas. Las repetidas las puedes ofrecer al instante.",
+    "subtitle": "Toca una lámina para sumarla. Toca de nuevo para marcar repetidas.",
+    "publishDup": "{count, plural, =1 {Publicar 1 repetida} other {Publicar # repetidas}}",
     "filters": {
       "all": "Todas",
       "owned": "Tengo",
@@ -128,13 +135,72 @@
       "complete": "★ Álbum completo · MVP del Mundial"
     }
   },
+  "publish": {
+    "title": "Publicar lámina",
+    "subtitle": "Solo puedes publicar láminas que tienes repetidas. Elige qué buscas a cambio o el precio.",
+    "noDuplicates": {
+      "title": "Aún no tienes repetidas",
+      "body": "Vuelve a tu álbum y toca dos veces una lámina que tengas duplicada para activar el botón de publicar.",
+      "cta": "Ir a mi álbum"
+    },
+    "step1": {
+      "title": "1 · Elige una repetida",
+      "subtitle": "Solo aparecen las que tienes en duplicado o más."
+    },
+    "step2": {
+      "title": "2 · ¿Cómo la publicas?",
+      "subtitle": "Cambio, venta, o las dos.",
+      "types": {
+        "trade": "Cambio",
+        "sale": "Venta",
+        "both": "Ambos"
+      }
+    },
+    "step3": {
+      "priceTitle": "Precio",
+      "priceSubtitle": "En pesos colombianos. Sin comisión de mefaltauna.",
+      "wantsTitle": "¿Qué buscas a cambio?",
+      "wantsSubtitle": "Puedes dejarlo abierto, pedir cualquiera de un equipo, o pedir una específica.",
+      "wantsModes": {
+        "any": "Cualquier lámina",
+        "team": "De un equipo",
+        "specific": "Una específica"
+      }
+    },
+    "submit": "Publicar",
+    "submitting": "Publicando…",
+    "errors": {
+      "not_configured": "Servicio no configurado.",
+      "unauthenticated": "Tienes que iniciar sesión.",
+      "no_duplicates": "Esa lámina ya no la tienes en duplicado.",
+      "missing_sticker": "Selecciona una lámina.",
+      "missing_type": "Selecciona si es cambio, venta o ambos.",
+      "missing_price": "Pon un precio válido en COP.",
+      "invalid_wants": "Selecciona qué buscas a cambio.",
+      "db_error": "No pudimos publicar. Intenta de nuevo."
+    }
+  },
+  "inbox": {
+    "title": "Mensajes",
+    "emptyTitle": "Aún no tienes mensajes",
+    "emptyBody": "Cuando alguien te escriba sobre una lámina del feed o cuando tú escribas a alguien, las conversaciones aparecerán acá."
+  },
+  "profile": {
+    "title": "Perfil",
+    "noUsername": "Sin nombre de usuario",
+    "language": "Idioma",
+    "appearance": "Apariencia",
+    "signOut": "Cerrar sesión"
+  },
   "feed": {
     "kicker": "En vivo",
-    "title": "Lo que se está publicando",
-    "subtitle": "Cada lámina nueva que alguien ofrece para cambio o venta aparece acá al instante.",
+    "title": "En vivo",
+    "subtitle": "Cada lámina nueva que alguien publica aparece aquí al instante.",
     "live": "Conectado en vivo",
     "connecting": "Conectando…",
-    "empty": "Aún no hay publicaciones. Sé el primero — ofrece una repetida desde tu álbum.",
+    "empty": "Aún no hay publicaciones. Sé el primero.",
+    "publishFirst": "Publicar lámina",
+    "contact": "Escribir",
     "someone": "Alguien",
     "actions": {
       "trade": "ofreció para cambio",

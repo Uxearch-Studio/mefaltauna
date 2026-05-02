@@ -16,7 +16,7 @@ export async function sendMagicLinkAction(
 ): Promise<SignInState> {
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const locale = String(formData.get("locale") ?? "es");
-  const next = String(formData.get("next") ?? `/${locale}`);
+  const next = String(formData.get("next") ?? `/${locale}/app/feed`);
 
   if (!EMAIL_RE.test(email)) {
     return { error: "invalid_email" };

@@ -15,7 +15,6 @@ const INITIAL: SignInState = {};
 export function SignInForm({ locale, next, initialError }: Props) {
   const t = useTranslations("signIn");
   const [state, action, pending] = useActionState(sendMagicLinkAction, INITIAL);
-
   const error = state.error ?? initialError;
 
   return (
@@ -24,7 +23,7 @@ export function SignInForm({ locale, next, initialError }: Props) {
       {next && <input type="hidden" name="next" value={next} />}
 
       <label className="flex flex-col gap-2">
-        <span className="font-pixel text-[10px] uppercase text-muted-foreground">
+        <span className="text-xs uppercase tracking-wide text-muted-foreground">
           {t("emailLabel")}
         </span>
         <input
@@ -33,20 +32,20 @@ export function SignInForm({ locale, next, initialError }: Props) {
           required
           autoComplete="email"
           placeholder="hola@correo.com"
-          className="h-12 px-3 bg-background border-2 border-border font-mono text-base focus:outline-none focus:border-accent"
+          className="h-12 px-4 rounded-xl bg-background border border-border text-base focus:outline-none focus:border-accent"
         />
       </label>
 
       <button
         type="submit"
         disabled={pending}
-        className="h-12 px-4 font-pixel text-[10px] uppercase bg-foreground text-background border-2 border-border hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed border-sticker"
+        className="h-12 px-5 rounded-full bg-foreground text-background font-medium hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
       >
         {pending ? t("sending") : t("submit")}
       </button>
 
       {error && (
-        <p className="font-mono text-sm text-accent border-2 border-accent p-3 bg-accent/5">
+        <p className="text-sm text-accent border border-accent rounded-xl p-3 bg-accent/5">
           {t(`errors.${error}`)}
         </p>
       )}

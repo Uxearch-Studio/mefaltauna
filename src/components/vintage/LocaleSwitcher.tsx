@@ -14,7 +14,7 @@ export function LocaleSwitcher() {
     <div
       role="group"
       aria-label="Language"
-      className="inline-flex border-2 border-border h-9"
+      className="inline-flex h-9 rounded-full border border-border overflow-hidden"
     >
       {routing.locales.map((locale) => {
         const active = locale === current;
@@ -25,10 +25,10 @@ export function LocaleSwitcher() {
             onClick={() => router.replace(pathname, { locale })}
             aria-pressed={active}
             className={cn(
-              "px-2 font-mono text-xs uppercase tracking-widest transition-colors",
+              "px-3 text-xs font-medium uppercase tracking-wide transition-colors",
               active
                 ? "bg-foreground text-background"
-                : "bg-background text-foreground hover:bg-foreground/10",
+                : "text-muted-foreground hover:text-foreground",
             )}
           >
             {locale}

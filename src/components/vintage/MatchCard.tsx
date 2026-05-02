@@ -22,9 +22,9 @@ export function MatchCard({ match, locale }: Props) {
   });
 
   return (
-    <article className="bg-background border-2 border-border p-4 flex flex-col gap-4 hover:border-sticker transition-shadow">
-      <header className="flex items-center justify-between text-[10px] font-pixel uppercase">
-        <span className="text-accent">
+    <article className="surface-card p-4 flex flex-col gap-4">
+      <header className="flex items-center justify-between text-xs">
+        <span className="font-semibold uppercase tracking-wide text-accent">
           {match.stage === "group" ? `Grupo ${match.group}` : match.stage}
         </span>
         <span className="text-muted-foreground tabular-nums">
@@ -34,13 +34,13 @@ export function MatchCard({ match, locale }: Props) {
 
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
         <TeamSide team={home} align="end" />
-        <span className="font-pixel text-xs text-muted-foreground">VS</span>
+        <span className="text-xs font-semibold uppercase text-muted-foreground">VS</span>
         <TeamSide team={away} align="start" />
       </div>
 
-      <footer className="border-t-2 border-border pt-3 flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
-        <span>{match.venue}</span>
-        <span>{match.city}</span>
+      <footer className="border-t border-border pt-3 flex items-center justify-between text-xs text-muted-foreground">
+        <span className="truncate">{match.venue}</span>
+        <span className="shrink-0">{match.city}</span>
       </footer>
     </article>
   );
@@ -66,8 +66,8 @@ function TeamSide({
         </span>
       )}
       <div className="flex flex-col">
-        <span className="font-display text-base leading-none">{team.code}</span>
-        <span className="font-mono text-[10px] text-muted-foreground truncate">
+        <span className="text-base font-bold leading-none">{team.code}</span>
+        <span className="text-[10px] text-muted-foreground truncate">
           {team.name}
         </span>
       </div>
