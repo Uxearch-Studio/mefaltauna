@@ -4,9 +4,9 @@ import { Footer } from "@/components/vintage/Footer";
 import { PixelBall, PixelTrophy, PixelStadium } from "@/components/vintage/PixelArt";
 
 const STEPS = [
-  { id: "mark", icon: PixelBall },
-  { id: "match", icon: PixelStadium },
-  { id: "trade", icon: PixelTrophy },
+  { id: "mark", icon: PixelBall, anim: "anim-bounce" },
+  { id: "match", icon: PixelStadium, anim: "anim-blink" },
+  { id: "trade", icon: PixelTrophy, anim: "anim-shimmer" },
 ] as const;
 
 const FAQ_KEYS = ["payment", "shipping", "safety", "panini"] as const;
@@ -39,34 +39,34 @@ export default async function HowItWorksPage({
         </section>
 
         <section className="bg-muted/40 border-b-2 border-border">
-          <div className="mx-auto max-w-6xl px-6 py-20 grid gap-8">
-            {STEPS.map((step, i) => {
-              const Icon = step.icon;
-              return (
-                <article
-                  key={step.id}
-                  className="grid md:grid-cols-[auto_1fr] gap-8 items-start bg-background border-2 border-border p-8"
-                >
-                  <div className="flex flex-col items-center gap-3">
+          <div className="mx-auto max-w-6xl px-6 py-20">
+            <div className="grid md:grid-cols-3 gap-6">
+              {STEPS.map((step, i) => {
+                const Icon = step.icon;
+                return (
+                  <article
+                    key={step.id}
+                    className="flex flex-col items-center text-center gap-5 bg-background border-2 border-border p-8"
+                  >
                     <span className="font-pixel text-xs text-accent crt-glow">
                       {String(i + 1).padStart(2, "0")}
                     </span>
-                    <Icon className="size-24 text-foreground" />
-                  </div>
-                  <div className="flex flex-col gap-3">
-                    <h2 className="font-display text-3xl md:text-5xl leading-tight">
+                    <Icon
+                      className={`size-24 text-foreground ${step.anim}`}
+                    />
+                    <h2 className="font-display text-2xl md:text-3xl leading-tight">
                       {t(`${step.id}.title`)}
                     </h2>
-                    <p className="text-base text-foreground/70 leading-relaxed">
+                    <p className="text-sm text-foreground/70 leading-relaxed">
                       {t(`${step.id}.body`)}
                     </p>
-                    <p className="text-sm text-foreground/60 leading-relaxed">
+                    <p className="text-xs text-foreground/60 leading-relaxed">
                       {t(`${step.id}.detail`)}
                     </p>
-                  </div>
-                </article>
-              );
-            })}
+                  </article>
+                );
+              })}
+            </div>
           </div>
         </section>
 

@@ -185,3 +185,35 @@ html {
     0 0 4px currentColor,
     0 0 12px color-mix(in oklab, currentColor 40%, transparent);
 }
+
+/* ─────────────────────────────────────────────
+   Pixel-art animations — stepped to keep the
+   retro frame-by-frame feel; reduced motion
+   is already neutralised globally above.
+   ───────────────────────────────────────────── */
+
+@keyframes pixel-bounce {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-4px); }
+}
+.anim-bounce {
+  animation: pixel-bounce 1.4s steps(2, jump-none) infinite;
+  transform-origin: center;
+}
+
+@keyframes pixel-blink {
+  0%, 55%, 100% { opacity: 1; }
+  60%, 78%      { opacity: 0.35; }
+}
+.anim-blink {
+  animation: pixel-blink 2.2s infinite;
+}
+
+@keyframes pixel-shimmer {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.08); }
+}
+.anim-shimmer {
+  animation: pixel-shimmer 1.8s steps(2, jump-none) infinite;
+  transform-origin: center;
+}

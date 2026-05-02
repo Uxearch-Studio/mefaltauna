@@ -1,34 +1,52 @@
 import { useTranslations } from "next-intl";
+import { Logo } from "./Logo";
 
+/**
+ * Single-color footer — deep pitch green regardless of theme,
+ * giving it a distinct identity from the rest of the site.
+ */
 export function Footer() {
   const t = useTranslations("footer");
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t-2 border-border mt-24">
-      <div className="mx-auto max-w-6xl px-6 py-12 flex flex-col gap-6">
-        <p className="font-display text-2xl md:text-3xl leading-tight max-w-3xl">
-          {t("tagline")}
-        </p>
+    <footer
+      className="mt-24"
+      style={{ background: "#0a2e18", color: "#f5efe1" }}
+    >
+      <div className="mx-auto max-w-6xl px-6 py-10 flex flex-col gap-8">
+        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+          <div className="flex flex-col gap-3">
+            <Logo />
+            <p className="text-sm leading-relaxed max-w-sm opacity-75">
+              {t("tagline")}
+            </p>
+          </div>
+          <p className="font-pixel text-[10px] uppercase tracking-widest opacity-50">
+            {t("origin")}
+          </p>
+        </div>
 
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 pt-6 border-t border-border/30">
-          <p className="text-sm font-mono text-muted-foreground">
+        <div
+          className="pt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-2 text-xs font-mono"
+          style={{ borderTop: "1px solid rgba(245, 239, 225, 0.12)" }}
+        >
+          <p className="opacity-70">
             {t("credit")}{" "}
             <a
               href="https://uxearch.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-foreground underline decoration-accent decoration-2 underline-offset-4 hover:text-accent transition-colors"
+              className="hover:opacity-100 transition-opacity"
+              style={{ color: "#2ea84e" }}
             >
               uxearch.com
             </a>{" "}
-            {t("and")}{" "}
-            <span className="text-foreground font-semibold">Javier Mora</span>
+            · <span>Javier Mora</span>
             <span className="opacity-60"> — {t("role")}</span>
           </p>
-
-          <p className="text-xs font-mono text-muted-foreground/60">
-            © {year} mefaltauna. {t("rights")}
+          <p className="opacity-50">
+            © {year} mefaltauna · {t("rights")}
           </p>
         </div>
       </div>
