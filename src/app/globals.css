@@ -15,7 +15,7 @@
   --border: #0a0a0a;
 
   /* Accent — swap this variable to retheme */
-  --accent: #d62828;           /* Panini red */
+  --accent: #1b7a3a;           /* pitch green / cancha de fútbol */
   --accent-foreground: #f5efe1;
 
   /* Misc */
@@ -30,7 +30,7 @@
     --muted: #1a1a1a;
     --muted-foreground: #9a9382;
     --border: #f5efe1;
-    --accent: #d62828;
+    --accent: #2ea84e;         /* lighter pitch green for dark mode contrast */
     --accent-foreground: #0a0a0a;
     --halftone-opacity: 0.06;
   }
@@ -107,10 +107,10 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Display type — chunky, condensed, sport-poster vibe */
+/* Display type — chunky, rounded, foosball/poster vibe */
 .font-display {
   font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
   text-transform: uppercase;
 }
 

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono, Anton } from "next/font/google";
+import { Inter, JetBrains_Mono, Bowlby_One } from "next/font/google";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -16,7 +16,7 @@ const jetbrains = JetBrains_Mono({
   subsets: ["latin"],
 });
 
-const anton = Anton({
+const bowlby = Bowlby_One({
   variable: "--font-display",
   weight: "400",
   subsets: ["latin"],
@@ -54,7 +54,7 @@ export default async function LocaleLayout({
   return (
     <html
       lang={locale}
-      className={`${inter.variable} ${jetbrains.variable} ${anton.variable} h-full antialiased`}
+      className={`${inter.variable} ${jetbrains.variable} ${bowlby.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-background text-foreground font-sans">
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
