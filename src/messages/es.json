@@ -1,0 +1,32 @@
+{
+  "meta": {
+    "title": "mefaltauna — intercambia y compra láminas Panini Mundial 2026",
+    "description": "La forma más fácil de completar tu álbum Panini del Mundial 2026. Intercambia láminas con otros coleccionistas o cómpralas en pesos colombianos."
+  },
+  "nav": {
+    "explore": "Explorar",
+    "howItWorks": "Cómo funciona",
+    "pricing": "Planes",
+    "signIn": "Entrar"
+  },
+  "home": {
+    "hero": {
+      "kicker": "Mundial 2026",
+      "title": "¿Cuánto te falta?",
+      "subtitle": "Intercambia y compra las láminas que necesitas para completar tu álbum Panini. Hecho en Colombia, para coleccionistas reales.",
+      "ctaPrimary": "Empezar gratis",
+      "ctaSecondary": "Ver cómo funciona"
+    },
+    "stats": {
+      "stickers": "láminas oficiales",
+      "comingSoon": "próximamente"
+    }
+  },
+  "footer": {
+    "tagline": "Podemos ayudar a cualquier persona o negocio a crear software a la medida con UX y AI para programación, haciendo que todo se lance más rápido.",
+    "credit": "Creado por",
+    "and": "y",
+    "role": "UX Product Designer",
+    "rights": "Todos los derechos reservados."
+  }
+}

@@ -1,0 +1,121 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────
+   mefaltauna — design tokens
+   Vintage / WC98 / foosball
+   B&W base + swappable accent (default: Panini red)
+   ───────────────────────────────────────────── */
+
+:root {
+  /* Surface */
+  --background: #f5efe1;       /* off-white aged paper */
+  --foreground: #0a0a0a;
+  --muted: #e6dfcf;
+  --muted-foreground: #4a4538;
+  --border: #0a0a0a;
+
+  /* Accent — swap this variable to retheme */
+  --accent: #d62828;           /* Panini red */
+  --accent-foreground: #f5efe1;
+
+  /* Misc */
+  --radius: 2px;               /* sharp, sticker-like */
+  --halftone-opacity: 0.04;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #f5efe1;
+    --muted: #1a1a1a;
+    --muted-foreground: #9a9382;
+    --border: #f5efe1;
+    --accent: #d62828;
+    --accent-foreground: #0a0a0a;
+    --halftone-opacity: 0.06;
+  }
+}
+
+[data-theme="light"] {
+  --background: #f5efe1;
+  --foreground: #0a0a0a;
+  --muted: #e6dfcf;
+  --muted-foreground: #4a4538;
+  --border: #0a0a0a;
+  --accent-foreground: #f5efe1;
+  --halftone-opacity: 0.04;
+}
+
+[data-theme="dark"] {
+  --background: #0a0a0a;
+  --foreground: #f5efe1;
+  --muted: #1a1a1a;
+  --muted-foreground: #9a9382;
+  --border: #f5efe1;
+  --accent-foreground: #0a0a0a;
+  --halftone-opacity: 0.06;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-display: var(--font-display);
+
+  --radius-base: var(--radius);
+}
+
+/* Halftone background texture — subtle paper grain */
+body {
+  background-image: radial-gradient(
+    var(--foreground) 1px,
+    transparent 1px
+  );
+  background-size: 4px 4px;
+  background-position: 0 0;
+  background-attachment: fixed;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: var(--background);
+  opacity: calc(1 - var(--halftone-opacity));
+  pointer-events: none;
+  z-index: -1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Display type — chunky, condensed, sport-poster vibe */
+.font-display {
+  font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+/* Sticker / troquel border utility */
+.border-sticker {
+  border: 2px solid var(--border);
+  box-shadow: 4px 4px 0 var(--border);
+}

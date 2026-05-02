@@ -1,0 +1,32 @@
+{
+  "meta": {
+    "title": "mefaltauna — trade and buy Panini World Cup 2026 stickers",
+    "description": "The easiest way to complete your Panini World Cup 2026 album. Trade stickers with fellow collectors or buy them in Colombian pesos."
+  },
+  "nav": {
+    "explore": "Explore",
+    "howItWorks": "How it works",
+    "pricing": "Pricing",
+    "signIn": "Sign in"
+  },
+  "home": {
+    "hero": {
+      "kicker": "World Cup 2026",
+      "title": "How many are you missing?",
+      "subtitle": "Trade and buy the stickers you need to complete your Panini album. Built in Colombia, for real collectors.",
+      "ctaPrimary": "Start free",
+      "ctaSecondary": "See how it works"
+    },
+    "stats": {
+      "stickers": "official stickers",
+      "comingSoon": "coming soon"
+    }
+  },
+  "footer": {
+    "tagline": "We help any person or business build custom software with UX and AI-driven engineering, shipping faster than ever.",
+    "credit": "Built by",
+    "and": "and",
+    "role": "UX Product Designer",
+    "rights": "All rights reserved."
+  }
+}
