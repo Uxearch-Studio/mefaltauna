@@ -41,6 +41,7 @@ export type Listing = {
   price_cop: number | null;
   status: ListingStatus;
   created_at: string;
+  photo_url: string | null;
 };
 
 export type FeedItem = Listing & {
@@ -100,7 +101,7 @@ export async function fetchActiveListings(
     .from("listings")
     .select(
       `
-      id, user_id, sticker_id, type, price_cop, status, created_at,
+      id, user_id, sticker_id, type, price_cop, status, created_at, photo_url,
       sticker:sticker_catalog!listings_sticker_id_fkey ( code, name, team_code, type, number )
       `,
     )
@@ -117,6 +118,7 @@ export async function fetchActiveListings(
     price_cop: number | null;
     status: ListingStatus;
     created_at: string;
+    photo_url: string | null;
     sticker: FeedItem["sticker"];
   }>;
 
@@ -141,6 +143,7 @@ export async function fetchActiveListings(
     price_cop: row.price_cop,
     status: row.status,
     created_at: row.created_at,
+    photo_url: row.photo_url,
     sticker: row.sticker,
     username: usernames.get(row.user_id) ?? null,
   }));

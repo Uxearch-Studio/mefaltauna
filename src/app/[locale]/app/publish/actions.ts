@@ -37,6 +37,7 @@ export async function publishListingAction(
   const wantsMode = String(formData.get("wants_mode") ?? "any");
   const wantsStickerId = formData.get("wants_sticker_id");
   const wantsTeamCode = formData.get("wants_team_code");
+  const photoUrl = String(formData.get("photo_url") ?? "").trim() || null;
   const locale = String(formData.get("locale") ?? "es");
 
   if (!stickerId) return { error: "missing_sticker" };
@@ -81,6 +82,7 @@ export async function publishListingAction(
     price_cop: priceCop,
     wants_sticker_id: wsId,
     wants_team_code: wTeam,
+    photo_url: photoUrl,
   });
   if (error) return { error: "db_error" };
 

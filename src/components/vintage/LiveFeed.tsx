@@ -57,6 +57,7 @@ export function LiveFeed({ initial, catalog, locale }: Props) {
             price_cop: (row.price_cop as number | null) ?? null,
             status: "active",
             created_at: row.created_at as string,
+            photo_url: (row.photo_url as string | null) ?? null,
             sticker: {
               code: sticker.code,
               name: sticker.name,
@@ -110,10 +111,19 @@ export function LiveFeed({ initial, catalog, locale }: Props) {
               className="animate-feed-in surface-card p-4 flex items-center justify-between gap-3"
             >
               <div className="flex items-center gap-3 min-w-0">
-                <div className="size-12 shrink-0 flex items-center justify-center rounded-lg bg-accent/15 text-accent">
-                  <span className="text-xs font-semibold">
-                    {item.sticker.team_code ?? item.sticker.code.slice(0, 3)}
-                  </span>
+                <div className="size-14 shrink-0 flex items-center justify-center rounded-lg bg-accent/15 text-accent overflow-hidden">
+                  {item.photo_url ? (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img
+                      src={item.photo_url}
+                      alt=""
+                      className="size-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-xs font-semibold">
+                      {item.sticker.team_code ?? item.sticker.code.slice(0, 3)}
+                    </span>
+                  )}
                 </div>
                 <div className="flex flex-col min-w-0">
                   <p className="text-sm truncate">

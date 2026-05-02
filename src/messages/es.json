@@ -147,6 +147,10 @@
       "title": "1 · Elige una repetida",
       "subtitle": "Solo aparecen las que tienes en duplicado o más."
     },
+    "photoStep": {
+      "title": "2 · Foto de la lámina",
+      "subtitle": "Opcional pero recomendada — genera más confianza con quien la quiera."
+    },
     "step2": {
       "title": "2 · ¿Cómo la publicas?",
       "subtitle": "Cambio, venta, o las dos.",
@@ -178,6 +182,18 @@
       "missing_price": "Pon un precio válido en COP.",
       "invalid_wants": "Selecciona qué buscas a cambio.",
       "db_error": "No pudimos publicar. Intenta de nuevo."
+    }
+  },
+  "photo": {
+    "takePhoto": "Tomar foto",
+    "hint": "Cámara o galería · se comprime automáticamente",
+    "uploading": "Subiendo…",
+    "retake": "Tomar otra",
+    "remove": "Quitar foto",
+    "errors": {
+      "not_configured": "Servicio no configurado.",
+      "unauthenticated": "Inicia sesión para subir fotos.",
+      "upload_failed": "No pudimos subir la foto. Intenta de nuevo."
     }
   },
   "inbox": {

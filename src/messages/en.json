@@ -147,6 +147,10 @@
       "title": "1 · Pick a duplicate",
       "subtitle": "Only stickers you have in duplicate or more show up here."
     },
+    "photoStep": {
+      "title": "2 · Photo of the sticker",
+      "subtitle": "Optional but recommended — helps build trust with whoever wants it."
+    },
     "step2": {
       "title": "2 · How are you publishing it?",
       "subtitle": "Trade, sale, or both.",
@@ -178,6 +182,18 @@
       "missing_price": "Enter a valid price in COP.",
       "invalid_wants": "Pick what you want in exchange.",
       "db_error": "Couldn't publish. Try again."
+    }
+  },
+  "photo": {
+    "takePhoto": "Take a photo",
+    "hint": "Camera or gallery · auto-compressed",
+    "uploading": "Uploading…",
+    "retake": "Take another",
+    "remove": "Remove photo",
+    "errors": {
+      "not_configured": "Service not configured.",
+      "unauthenticated": "Sign in to upload photos.",
+      "upload_failed": "Couldn't upload the photo. Try again."
     }
   },
   "inbox": {

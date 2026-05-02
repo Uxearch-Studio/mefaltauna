@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/cn";
 import type { Sticker } from "@/lib/db";
+import { PhotoCapture } from "@/components/vintage/PhotoCapture";
 import { publishListingAction, type PublishState } from "./actions";
 
 type Props = {
@@ -32,6 +33,7 @@ export function PublishFlow({ duplicates, catalog, teamCodes, locale }: Props) {
   const [wantsMode, setWantsMode] = useState<WantsMode>("any");
   const [wantsTeam, setWantsTeam] = useState<string>(teamCodes[0] ?? "");
   const [wantsStickerId, setWantsStickerId] = useState<number | null>(null);
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
 
   const wantsTeamOptions = useMemo(
     () => catalog.filter((s) => s.team_code === wantsTeam),
@@ -76,6 +78,9 @@ export function PublishFlow({ duplicates, catalog, teamCodes, locale }: Props) {
           value={wantsStickerId}
         />
       )}
+      {photoUrl && (
+        <input type="hidden" name="photo_url" value={photoUrl} />
+      )}
 
       {/* Step 1 — pick a duplicate */}
       <Section title={t("step1.title")} subtitle={t("step1.subtitle")}>
@@ -105,6 +110,11 @@ export function PublishFlow({ duplicates, catalog, teamCodes, locale }: Props) {
             );
           })}
         </div>
+      </Section>
+
+      {/* Step 1.5 — photo */}
+      <Section title={t("photoStep.title")} subtitle={t("photoStep.subtitle")}>
+        <PhotoCapture value={photoUrl} onChange={setPhotoUrl} />
       </Section>
 
       {/* Step 2 — listing type */}
