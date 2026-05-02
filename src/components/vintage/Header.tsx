@@ -5,6 +5,7 @@ import { Logo } from "./Logo";
 import { LocaleSwitcher } from "./LocaleSwitcher";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { UserMenu } from "./UserMenu";
+import { NavLinks } from "./NavLinks";
 
 export async function Header() {
   const t = await getTranslations("nav");
@@ -17,23 +18,7 @@ export async function Header() {
           <Logo />
         </Link>
 
-        <nav className="hidden md:flex items-center gap-6 font-pixel text-[10px] uppercase">
-          <Link
-            href="/how-it-works"
-            className="hover:text-accent transition-colors"
-          >
-            {t("howItWorks")}
-          </Link>
-          <Link
-            href="/matches"
-            className="hover:text-accent transition-colors"
-          >
-            {t("matches")}
-          </Link>
-          <a href="/#pricing" className="hover:text-accent transition-colors">
-            {t("pricing")}
-          </a>
-        </nav>
+        <NavLinks />
 
         <div className="flex items-center gap-2">
           <LocaleSwitcher />
