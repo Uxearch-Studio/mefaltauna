@@ -1,58 +1,27 @@
 import { useTranslations } from "next-intl";
-
-const PRICE = 9900;
-const COP = new Intl.NumberFormat("es-CO");
+import { PriceReveal } from "./PriceReveal";
 
 export function Pricing() {
   const t = useTranslations("pricing");
 
   return (
-    <section id="pricing" className="border-b border-border bg-muted/30">
-      <div className="mx-auto max-w-3xl px-6 py-20 md:py-24">
-        <div className="text-center mb-10">
-          <p className="text-xs font-semibold uppercase tracking-widest text-accent mb-3">
+    <section id="pricing" className="border-b border-border">
+      <div className="mx-auto max-w-6xl px-6 py-20 md:py-24 grid md:grid-cols-2 gap-12 items-center">
+        <div className="flex flex-col gap-5 md:order-1 order-2">
+          <p className="text-xs font-semibold uppercase tracking-widest text-accent">
             {t("kicker")}
           </p>
           <h2
-            className="font-display whitespace-nowrap leading-none mb-4 mx-auto"
+            className="font-display whitespace-nowrap leading-none"
             style={{ fontSize: "clamp(2.25rem, 7vw, 4.5rem)" }}
           >
             {t("title")}
           </h2>
-          <p className="text-base text-muted-foreground leading-relaxed max-w-xl mx-auto">
+          <p className="text-base text-muted-foreground leading-relaxed max-w-md">
             {t("subtitle")}
           </p>
-        </div>
 
-        <article className="relative rounded-2xl bg-background border border-border p-8 md:p-10 flex flex-col gap-6 max-w-md mx-auto shadow-2xl shadow-accent/10">
-          {/* Highlight glow corner */}
-          <div
-            aria-hidden
-            className="absolute -top-px left-0 right-0 h-px"
-            style={{
-              background:
-                "linear-gradient(90deg, transparent, var(--highlight), transparent)",
-            }}
-          />
-
-          <header className="flex flex-col items-center text-center gap-2">
-            <span className="px-3 py-1 rounded-full bg-highlight text-highlight-foreground text-[10px] font-bold uppercase tracking-widest">
-              {t("singlePass")}
-            </span>
-            <h3 className="text-2xl font-bold tracking-tight">
-              {t("planName")}
-            </h3>
-            <p className="text-sm text-muted-foreground">{t("planTagline")}</p>
-          </header>
-
-          <div className="flex items-baseline gap-2 justify-center">
-            <span className="font-display text-6xl md:text-7xl tabular-nums">
-              ${COP.format(PRICE)}
-            </span>
-            <span className="text-sm text-muted-foreground">COP</span>
-          </div>
-
-          <ul className="flex flex-col gap-3 text-sm">
+          <ul className="flex flex-col gap-3 text-sm mt-2">
             <Feature>{t("benefits.full")}</Feature>
             <Feature>{t("benefits.chat")}</Feature>
             <Feature>{t("benefits.unlimited")}</Feature>
@@ -61,15 +30,17 @@ export function Pricing() {
 
           <button
             type="button"
-            className="h-12 px-5 rounded-full bg-accent text-accent-foreground font-bold hover:opacity-90 transition-opacity"
+            className="self-start mt-4 h-12 px-6 rounded-full bg-accent text-accent-foreground text-sm font-bold hover:opacity-90 transition-opacity shadow-lg shadow-accent/20"
           >
             {t("cta")}
           </button>
 
-          <p className="text-xs text-muted-foreground text-center">
-            {t("disclaimer")}
-          </p>
-        </article>
+          <p className="text-xs text-muted-foreground">{t("disclaimer")}</p>
+        </div>
+
+        <div className="flex justify-center md:justify-end md:order-2 order-1">
+          <PriceReveal className="w-60 h-80 md:w-72 md:h-96" />
+        </div>
       </div>
     </section>
   );
@@ -80,7 +51,10 @@ function Feature({ children }: { children: React.ReactNode }) {
     <li className="flex items-start gap-2.5">
       <span
         className="mt-0.5 size-5 rounded-full flex items-center justify-center shrink-0"
-        style={{ background: "var(--highlight)", color: "var(--highlight-foreground)" }}
+        style={{
+          background: "var(--highlight)",
+          color: "var(--highlight-foreground)",
+        }}
       >
         <svg
           viewBox="0 0 16 16"
