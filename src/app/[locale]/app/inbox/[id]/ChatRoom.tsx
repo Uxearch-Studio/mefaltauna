@@ -9,12 +9,14 @@ import type { Message } from "@/lib/db";
 type Props = {
   conversationId: string;
   currentUserId: string;
+  otherUsername: string | null;
   initialMessages: Message[];
 };
 
 export function ChatRoom({
   conversationId,
   currentUserId,
+  otherUsername,
   initialMessages,
 }: Props) {
   const t = useTranslations("inbox");
@@ -25,12 +27,10 @@ export function ChatRoom({
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Auto-scroll to bottom on new messages.
   useEffect(() => {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight });
   }, [messages.length]);
 
-  // Realtime subscription for incoming messages.
   useEffect(() => {
     const supabase = getSupabaseBrowserClient();
     if (!supabase) return;
@@ -72,7 +72,6 @@ export function ChatRoom({
     const value = body.trim();
     if (!value || pending) return;
 
-    // Optimistic insert with temp id.
     const tempId = `temp-${Date.now()}`;
     const optimistic: Message = {
       id: tempId,
@@ -89,7 +88,6 @@ export function ChatRoom({
     startTransition(async () => {
       const res = await sendMessageAction(conversationId, value);
       if (res.error) {
-        // Rollback the optimistic insert.
         setMessages((prev) => prev.filter((m) => m.id !== tempId));
         setError(t(`sendErrors.${res.error}`));
         setBody(value);
@@ -101,7 +99,7 @@ export function ChatRoom({
     <div className="flex flex-col h-[calc(100vh-3.5rem-7rem)]">
       <div
         ref={listRef}
-        className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-2"
+        className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-1"
       >
         {messages.length === 0 ? (
           <p className="text-center text-sm text-muted-foreground py-12">
@@ -114,15 +112,22 @@ export function ChatRoom({
             const sameAuthorBlock =
               prev && prev.sender_id === m.sender_id &&
               Date.parse(m.created_at) - Date.parse(prev.created_at) < 60_000;
+            const showSenderLabel = !mine && !sameAuthorBlock;
+
             return (
               <div
                 key={m.id}
-                className={`flex ${
-                  mine ? "justify-end" : "justify-start"
-                } ${sameAuthorBlock ? "mt-0.5" : "mt-2"}`}
+                className={`flex flex-col ${
+                  mine ? "items-end" : "items-start"
+                } ${sameAuthorBlock ? "mt-0.5" : "mt-3"}`}
               >
+                {showSenderLabel && (
+                  <span className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground ml-3 mb-1">
+                    {otherUsername ?? t("unknownUser")}
+                  </span>
+                )}
                 <div
-                  className={`max-w-[75%] px-3.5 py-2 rounded-2xl text-sm leading-relaxed break-words ${
+                  className={`max-w-[78%] px-3.5 py-2 rounded-2xl text-sm leading-relaxed break-words ${
                     mine
                       ? "bg-foreground text-background rounded-br-sm"
                       : "bg-muted text-foreground rounded-bl-sm"

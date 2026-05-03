@@ -82,6 +82,7 @@ export type ConversationListItem = {
   listing_sticker_code: string | null;
   last_message_at: string;
   last_message_body: string | null;
+  unread_count: number;
 };
 
 export async function fetchUserConversations(
@@ -90,7 +91,9 @@ export async function fetchUserConversations(
 ): Promise<ConversationListItem[]> {
   const { data: convs, error } = await supabase
     .from("conversations")
-    .select("id, user_a, user_b, listing_id, last_message_at")
+    .select(
+      "id, user_a, user_b, listing_id, last_message_at, last_read_at_a, last_read_at_b",
+    )
     .or(`user_a.eq.${userId},user_b.eq.${userId}`)
     .order("last_message_at", { ascending: false })
     .limit(60);
@@ -160,6 +163,42 @@ export async function fetchUserConversations(
     }
   }
 
+  // Unread count per conversation: messages from the OTHER party newer
+  // than the current user's last_read_at on this conversation.
+  const unreadByConv = new Map<string, number>();
+  if (conversationIds.length) {
+    const lastReadByConv = new Map<string, string | null>();
+    for (const c of convs) {
+      const isA = c.user_a === userId;
+      const lr = (isA ? c.last_read_at_a : c.last_read_at_b) as
+        | string
+        | null;
+      lastReadByConv.set(c.id as string, lr);
+    }
+
+    const { data: unreadRows } = await supabase
+      .from("messages")
+      .select("conversation_id, sender_id, created_at")
+      .in("conversation_id", conversationIds)
+      .neq("sender_id", userId)
+      .order("created_at", { ascending: false })
+      .limit(500);
+
+    for (const m of (unreadRows ?? []) as Array<{
+      conversation_id: string;
+      sender_id: string;
+      created_at: string;
+    }>) {
+      const lr = lastReadByConv.get(m.conversation_id);
+      if (!lr || Date.parse(m.created_at) > Date.parse(lr)) {
+        unreadByConv.set(
+          m.conversation_id,
+          (unreadByConv.get(m.conversation_id) ?? 0) + 1,
+        );
+      }
+    }
+  }
+
   return convs.map((c) => {
     const other = c.user_a === userId ? c.user_b : c.user_a;
     const p = profileMap.get(other);
@@ -174,8 +213,21 @@ export async function fetchUserConversations(
         : null,
       last_message_at: c.last_message_at as string,
       last_message_body: lastMsgByConv.get(c.id as string) ?? null,
+      unread_count: unreadByConv.get(c.id as string) ?? 0,
     };
   });
+}
+
+/**
+ * Total unread messages across all conversations of the user.
+ * Used to render the badge on the bottom-nav inbox tab.
+ */
+export async function fetchUnreadTotal(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<number> {
+  const convs = await fetchUserConversations(supabase, userId);
+  return convs.reduce((sum, c) => sum + c.unread_count, 0);
 }
 
 export async function fetchConversation(

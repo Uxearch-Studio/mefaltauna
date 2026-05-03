@@ -40,7 +40,7 @@ export function Countdown() {
       </p>
 
       <div className="grid grid-cols-4 gap-3 md:gap-4">
-        <Cell value={parts ? pad(parts.d, 3) : "···"} label={t("days")} />
+        <Cell value={parts ? String(parts.d) : "··"} label={t("days")} />
         <Cell value={parts ? pad(parts.h) : "··"} label={t("hours")} />
         <Cell value={parts ? pad(parts.m) : "··"} label={t("minutes")} />
         <Cell value={parts ? pad(parts.s) : "··"} label={t("seconds")} />

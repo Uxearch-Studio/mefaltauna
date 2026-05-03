@@ -69,6 +69,19 @@ export type SendMessageState = {
   error?: "empty" | "too_long" | "not_participant" | "not_configured" | "db_error";
 };
 
+/**
+ * Marks the conversation as read by the current user. Called from
+ * the conversation page when the user opens it.
+ */
+export async function markConversationReadAction(
+  conversationId: string,
+): Promise<void> {
+  const supabase = await createSupabaseServerClient();
+  if (!supabase) return;
+  await supabase.rpc("mark_conversation_read", { conv_id: conversationId });
+  revalidatePath("/[locale]/app/inbox", "page");
+}
+
 export async function sendMessageAction(
   conversationId: string,
   body: string,

@@ -30,7 +30,11 @@ const TABS: Tab[] = [
   { href: "/app/profile", key: "profile", Icon: ProfileIcon },
 ];
 
-export function BottomNav() {
+type Props = {
+  unreadCount?: number;
+};
+
+export function BottomNav({ unreadCount = 0 }: Props) {
   const t = useTranslations("appNav");
   const pathname = usePathname();
 
@@ -46,6 +50,7 @@ export function BottomNav() {
             const active =
               pathname === tab.href || pathname.startsWith(`${tab.href}/`);
             const isPublish = tab.key === "publish";
+            const isInbox = tab.key === "inbox";
             const Icon = tab.Icon;
 
             return (
@@ -67,6 +72,14 @@ export function BottomNav() {
                   )}
                 >
                   <Icon className="size-5" />
+                  {isInbox && unreadCount > 0 && (
+                    <span
+                      className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-accent text-accent-foreground text-[10px] font-bold flex items-center justify-center tabular-nums shadow-sm"
+                      aria-label={`${unreadCount} unread`}
+                    >
+                      {unreadCount > 9 ? "9+" : unreadCount}
+                    </span>
+                  )}
                 </Link>
               </li>
             );

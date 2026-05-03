@@ -86,40 +86,26 @@
     "cta": "Crear cuenta gratis"
   },
   "pricing": {
-    "kicker": "Planes",
-    "title": "Activa tu pase. Paga, intercambia, completa.",
-    "subtitle": "Tres pases por tiempo. Mientras esté activo, publicas láminas ilimitadas y puedes escribir por chat para comprar o cambiar.",
-    "popular": "Más elegido",
-    "cta": "Elegir plan",
-    "daysAccess": "{count} días de acceso completo",
-    "unlimitedListings": "Láminas ilimitadas para publicar",
-    "chatToBuy": "Chatea para comprar o cambiar",
-    "noCommission": "0% comisión por intercambio",
+    "kicker": "Acceso",
+    "title": "Un solo pase. Todo desbloqueado.",
+    "subtitle": "Sin niveles, sin enredos. Pagas una vez y puedes publicar, escribir por chat, comprar e intercambiar sin tope.",
+    "singlePass": "Pase único",
+    "planName": "Acceso completo",
+    "planTagline": "Todo lo que ofrece mefaltauna, sin restricciones",
+    "cta": "Activar pase",
     "disclaimer": "Pagos en pesos colombianos vía Wompi · Próximamente",
-    "free": {
-      "label": "Gratis",
-      "title": "Sin pase activo también ves todo",
-      "body": "Explora el feed, marca tu álbum y ve qué láminas hay disponibles. Para escribirle a alguien y comprar o cambiar, necesitas un pase."
-    },
-    "plans": {
-      "banca": {
-        "name": "Banca",
-        "tagline": "Para arrancar y cerrar un trato rápido"
-      },
-      "titular": {
-        "name": "Titular",
-        "tagline": "Lo que usan la mayoría"
-      },
-      "mvp": {
-        "name": "MVP",
-        "tagline": "Cobertura total hasta que termine la jornada"
-      }
+    "benefits": {
+      "full": "Acceso a todo el catálogo y al feed en vivo",
+      "chat": "Chat directo con cualquier coleccionista",
+      "unlimited": "Publica todas las láminas que tengas repetidas",
+      "noCommission": "Cero comisión por venta o intercambio"
     }
   },
   "preview": {
     "kicker": "Cómo se ve una lámina",
     "title": "Cada lámina, una historia.",
-    "body": "Tipografía estilo álbum vintage, datos verificados de cada jugador, y un click para cambiarla o comprarla.",
+    "body": "Datos verificados de cada jugador, foto real del coleccionista, y un click para cambiarla o comprarla.",
+    "hint": "Tócala para sentir el destello. Igual que cuando abres el sobre.",
     "ctaTrade": "Cambiar",
     "ctaBuy": "Comprar"
   },
@@ -148,12 +134,12 @@
       "cta": "Ir a mi álbum"
     },
     "step1": {
-      "title": "1 · Elige una repetida",
-      "subtitle": "Solo aparecen las que tienes en duplicado o más."
+      "title": "Lámina",
+      "subtitle": "Solo las que tienes repetidas."
     },
     "photoStep": {
-      "title": "2 · Foto de la lámina",
-      "subtitle": "Opcional pero recomendada — genera más confianza con quien la quiera."
+      "title": "1 · Foto de la lámina",
+      "subtitle": "Tómala con buena luz. Es lo que más vende."
     },
     "step2": {
       "title": "2 · ¿Cómo la publicas?",
@@ -242,9 +228,13 @@
   },
   "profile": {
     "title": "Mi perfil",
-    "noUsername": "Sin nombre de usuario",
+    "noUsername": "Sin nombre",
+    "identity": "Identidad",
+    "identityHint": "Lo que ven los demás",
+    "contact": "Contacto privado",
+    "contactHint": "Solo se comparte al cerrar un trato",
     "usernameLabel": "Nombre público",
-    "usernameHint": "Como te ven los demás (opcional)",
+    "usernameHint": "Cómo te ven en el feed",
     "firstName": "Nombre",
     "lastName": "Apellido",
     "nationalId": "Cédula",
@@ -253,9 +243,10 @@
     "emailLabel": "Correo",
     "language": "Idioma",
     "appearance": "Apariencia",
-    "save": "Guardar cambios",
+    "save": "Guardar",
     "saving": "Guardando…",
     "saved": "✓ Cambios guardados",
+    "dirtyHint": "Tienes cambios sin guardar",
     "reputation": "Reputación",
     "trustedSeller": "Vendedor verificado",
     "signOut": "Cerrar sesión",
@@ -340,16 +331,14 @@
     "signOut": "Cerrar sesión"
   },
   "finalCta": {
-    "kicker": "Última jugada",
-    "title": "¿Listo para completar el álbum?",
+    "kicker": "Pitazo final",
+    "title": "Tu álbum no se completa solo.",
+    "subtitle": "Otros coleccionistas ya tienen las que te faltan. Encuéntralos hoy.",
     "cta": "Crear cuenta gratis"
   },
   "footer": {
-    "tagline": "Diseñamos y lanzamos producto digital con UX y AI.",
+    "tagline": "¿Tienes una idea de app, software o sitio web? Te ayudamos a llevarla a producción.",
     "origin": "Mundial 2026 · Hecho en Colombia",
-    "credit": "Creado por",
-    "and": "y",
-    "role": "UX Product Designer",
-    "rights": "Todos los derechos reservados."
+    "credit": "Creado por"
   }
 }

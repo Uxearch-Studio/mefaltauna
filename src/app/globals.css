@@ -156,3 +156,86 @@ body {
 .animate-fade-in {
   animation: fade-in 240ms ease-out;
 }
+
+/* ─────────────────────────────────────────────
+   Landing hero — animated football field
+   ───────────────────────────────────────────── */
+
+@keyframes pitch-pan {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50%      { transform: translate3d(-1.5%, -1%, 0); }
+}
+.anim-pitch-pan {
+  animation: pitch-pan 22s ease-in-out infinite;
+}
+
+@keyframes drift-1 {
+  0%   { transform: translate(0, 0) rotate(0deg); }
+  50%  { transform: translate(40vw, -8vh) rotate(360deg); }
+  100% { transform: translate(0, 0) rotate(720deg); }
+}
+.anim-drift-1 {
+  animation: drift-1 28s ease-in-out infinite;
+}
+
+@keyframes drift-2 {
+  0%   { transform: translate(0, 0) rotate(0deg); }
+  50%  { transform: translate(-32vw, 12vh) rotate(-360deg); }
+  100% { transform: translate(0, 0) rotate(-720deg); }
+}
+.anim-drift-2 {
+  animation: drift-2 34s ease-in-out infinite;
+}
+
+@keyframes drift-3 {
+  0%   { transform: translate(0, 0) rotate(0deg); }
+  50%  { transform: translate(28vw, -16vh) rotate(540deg); }
+  100% { transform: translate(0, 0) rotate(1080deg); }
+}
+.anim-drift-3 {
+  animation: drift-3 40s ease-in-out infinite;
+}
+
+@keyframes sway {
+  0%, 100% { transform: translateY(0)    rotate(0deg); }
+  50%      { transform: translateY(-10px) rotate(2deg); }
+}
+.anim-sway {
+  animation: sway 6s ease-in-out infinite;
+}
+.anim-sway-reverse {
+  animation: sway 7.5s ease-in-out infinite reverse;
+}
+
+@keyframes bob-1 { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+@keyframes bob-2 { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes bob-3 { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+.anim-bob-1 { animation: bob-1 4s ease-in-out infinite; }
+.anim-bob-2 { animation: bob-2 5.5s ease-in-out infinite; }
+.anim-bob-3 { animation: bob-3 6s ease-in-out infinite; }
+
+/* Sticker shine sweep — triggered by .is-tapped class on the card */
+@keyframes shine-sweep {
+  0%   { transform: translateX(-120%) skewX(-20deg); opacity: 0; }
+  20%  { opacity: 0.8; }
+  100% { transform: translateX(220%) skewX(-20deg);  opacity: 0; }
+}
+.shine-sweep::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 100%
+  );
+  transform: translateX(-120%) skewX(-20deg);
+  pointer-events: none;
+}
+.shine-sweep.is-tapped::after {
+  animation: shine-sweep 700ms ease-out;
+}

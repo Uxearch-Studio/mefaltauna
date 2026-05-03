@@ -40,6 +40,11 @@ export function PublishFlow({ duplicates, catalog, teamCodes, locale }: Props) {
     [catalog, wantsTeam],
   );
 
+  const selectedSticker = useMemo(
+    () => duplicates.find((s) => s.id === stickerId) ?? null,
+    [duplicates, stickerId],
+  );
+
   if (duplicates.length === 0) {
     return (
       <div className="surface-card p-8 text-center flex flex-col items-center gap-4">
@@ -82,37 +87,27 @@ export function PublishFlow({ duplicates, catalog, teamCodes, locale }: Props) {
         <input type="hidden" name="photo_url" value={photoUrl} />
       )}
 
-      {/* Step 1 — pick a duplicate */}
-      <Section title={t("step1.title")} subtitle={t("step1.subtitle")}>
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
-          {duplicates.map((s) => {
-            const active = stickerId === s.id;
-            return (
-              <button
-                key={s.id}
-                type="button"
-                onClick={() => setStickerId(s.id)}
-                className={cn(
-                  "aspect-[3/4] rounded-xl flex flex-col items-center justify-center gap-1 p-1 transition-all",
-                  active
-                    ? "bg-accent text-accent-foreground ring-2 ring-accent"
-                    : "bg-muted/60 hover:bg-muted",
-                )}
-                aria-pressed={active}
-              >
-                <span className="text-[10px] font-semibold uppercase tracking-wide opacity-80">
-                  {s.team_code ?? s.code.split("-")[0]}
-                </span>
-                <span className="text-2xl font-bold tabular-nums leading-none">
-                  {s.number ?? "★"}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </Section>
+      {/* Step 1 — pick a duplicate (compact dropdown) */}
+      <div className="flex items-center gap-3 surface-card p-3">
+        <span className="size-10 shrink-0 rounded-lg bg-accent/15 text-accent flex items-center justify-center text-sm font-bold tabular-nums">
+          {selectedSticker?.number ?? "★"}
+        </span>
+        <select
+          value={stickerId ?? ""}
+          onChange={(e) => setStickerId(Number(e.target.value))}
+          className="flex-1 h-10 px-3 rounded-lg border border-border bg-background text-sm focus:outline-none focus:border-accent"
+          aria-label={t("step1.title")}
+        >
+          {duplicates.map((s) => (
+            <option key={s.id} value={s.id}>
+              {(s.team_code ?? s.code.split("-")[0])} ·{" "}
+              {s.number !== null ? `#${s.number}` : s.code} · {s.name}
+            </option>
+          ))}
+        </select>
+      </div>
 
-      {/* Step 1.5 — photo */}
+      {/* Step 2 — photo (the protagonist) */}
       <Section title={t("photoStep.title")} subtitle={t("photoStep.subtitle")}>
         <PhotoCapture value={photoUrl} onChange={setPhotoUrl} />
       </Section>

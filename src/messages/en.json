@@ -86,40 +86,26 @@
     "cta": "Create free account"
   },
   "pricing": {
-    "kicker": "Plans",
-    "title": "Activate your pass. Pay, trade, complete.",
-    "subtitle": "Three time-based passes. While active, you list unlimited stickers and chat to buy or trade.",
-    "popular": "Most picked",
-    "cta": "Choose plan",
-    "daysAccess": "{count} days of full access",
-    "unlimitedListings": "Unlimited stickers to publish",
-    "chatToBuy": "Chat to buy or trade",
-    "noCommission": "0% trade commission",
+    "kicker": "Access",
+    "title": "One pass. Everything unlocked.",
+    "subtitle": "No tiers, no fuss. Pay once and publish, chat, buy and trade without limits.",
+    "singlePass": "Single pass",
+    "planName": "Full access",
+    "planTagline": "Every mefaltauna feature, no caps",
+    "cta": "Activate pass",
     "disclaimer": "Payments in Colombian pesos via Wompi · Coming soon",
-    "free": {
-      "label": "Free",
-      "title": "No pass? You still see everything",
-      "body": "Browse the feed, mark your album, see what's available. To message someone and buy or trade, you need an active pass."
-    },
-    "plans": {
-      "banca": {
-        "name": "Banca",
-        "tagline": "Quick start, close a trade fast"
-      },
-      "titular": {
-        "name": "Titular",
-        "tagline": "What most collectors pick"
-      },
-      "mvp": {
-        "name": "MVP",
-        "tagline": "Full coverage until the matchday ends"
-      }
+    "benefits": {
+      "full": "Full catalog and live feed access",
+      "chat": "Direct chat with any collector",
+      "unlimited": "Publish every duplicate you own",
+      "noCommission": "Zero commission per sale or trade"
     }
   },
   "preview": {
     "kicker": "How a sticker looks",
     "title": "Every sticker, a story.",
-    "body": "Vintage album typography, verified player data, and one click to trade or buy it.",
+    "body": "Verified player data, real photo from the collector, and one click to trade or buy.",
+    "hint": "Tap to feel the shine — just like opening the pack.",
     "ctaTrade": "Trade",
     "ctaBuy": "Buy"
   },
@@ -148,12 +134,12 @@
       "cta": "Go to my album"
     },
     "step1": {
-      "title": "1 · Pick a duplicate",
-      "subtitle": "Only stickers you have in duplicate or more show up here."
+      "title": "Sticker",
+      "subtitle": "Only your duplicates."
     },
     "photoStep": {
-      "title": "2 · Photo of the sticker",
-      "subtitle": "Optional but recommended — helps build trust with whoever wants it."
+      "title": "1 · Photo of the sticker",
+      "subtitle": "Snap it with good light — this is what closes the deal."
     },
     "step2": {
       "title": "2 · How are you publishing it?",
@@ -242,9 +228,13 @@
   },
   "profile": {
     "title": "My profile",
-    "noUsername": "No username yet",
+    "noUsername": "No name yet",
+    "identity": "Identity",
+    "identityHint": "What everyone sees",
+    "contact": "Private contact",
+    "contactHint": "Only shared when a deal closes",
     "usernameLabel": "Public name",
-    "usernameHint": "How others see you (optional)",
+    "usernameHint": "How others see you in the feed",
     "firstName": "First name",
     "lastName": "Last name",
     "nationalId": "ID number",
@@ -253,9 +243,10 @@
     "emailLabel": "Email",
     "language": "Language",
     "appearance": "Appearance",
-    "save": "Save changes",
+    "save": "Save",
     "saving": "Saving…",
     "saved": "✓ Saved",
+    "dirtyHint": "You have unsaved changes",
     "reputation": "Reputation",
     "trustedSeller": "Verified seller",
     "signOut": "Sign out",
@@ -340,16 +331,14 @@
     "signOut": "Sign out"
   },
   "finalCta": {
-    "kicker": "Final play",
-    "title": "Ready to complete the album?",
+    "kicker": "Final whistle",
+    "title": "Your album won't complete itself.",
+    "subtitle": "Other collectors already have the ones you're missing. Find them today.",
     "cta": "Create free account"
   },
   "footer": {
-    "tagline": "We design and ship digital products with UX and AI.",
+    "tagline": "Got an idea for an app, software or website? We help you ship it.",
     "origin": "World Cup 2026 · Made in Colombia",
-    "credit": "Built by",
-    "and": "and",
-    "role": "UX Product Designer",
-    "rights": "All rights reserved."
+    "credit": "Built by"
   }
 }

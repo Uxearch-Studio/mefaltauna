@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 
 export function StickerPreview() {
@@ -16,6 +19,9 @@ export function StickerPreview() {
           <p className="text-base text-muted-foreground leading-relaxed max-w-md">
             {t("body")}
           </p>
+          <p className="text-xs text-muted-foreground/70 italic">
+            {t("hint")}
+          </p>
         </div>
 
         <div className="flex justify-center md:justify-end">
@@ -27,9 +33,25 @@ export function StickerPreview() {
 }
 
 function StickerCard() {
+  const [tapped, setTapped] = useState(false);
+
+  function trigger() {
+    setTapped(true);
+    setTimeout(() => setTapped(false), 800);
+  }
+
   return (
-    <div className="relative">
-      <article className="w-64 md:w-80 surface-card overflow-hidden">
+    <button
+      type="button"
+      onClick={trigger}
+      className="relative active:scale-[0.98] transition-transform"
+      aria-label="Vista de lámina"
+    >
+      <article
+        className={`relative w-64 md:w-80 surface-card overflow-hidden shine-sweep ${
+          tapped ? "is-tapped" : ""
+        }`}
+      >
         <div className="aspect-[3/4] bg-gradient-to-br from-accent/30 to-accent/5 relative">
           <span className="absolute top-3 left-3 size-12 rounded-lg bg-background/90 backdrop-blur flex items-center justify-center text-xs font-bold">
             COL
@@ -39,7 +61,7 @@ function StickerCard() {
           </span>
           <PlayerSilhouette />
         </div>
-        <div className="border-t border-border p-4 flex flex-col gap-1">
+        <div className="border-t border-border p-4 flex flex-col gap-1 text-left">
           <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
             Colombia · Mundial 2026
           </p>
@@ -51,7 +73,7 @@ function StickerCard() {
         aria-hidden
         className="absolute -z-10 inset-0 translate-x-2 translate-y-2 rounded-2xl bg-muted"
       />
-    </div>
+    </button>
   );
 }
 

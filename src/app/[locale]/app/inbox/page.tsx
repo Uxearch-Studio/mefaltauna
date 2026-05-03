@@ -50,14 +50,16 @@ export default async function InboxPage({
         ) : (
           <ul className="flex flex-col gap-2">
             {conversations.map((c) => {
-              const label =
-                c.other_username ?? t("unknownUser");
+              const label = c.other_username ?? t("unknownUser");
               const initial = label.charAt(0).toUpperCase();
+              const unread = c.unread_count > 0;
               return (
                 <li key={c.id}>
                   <Link
                     href={`/app/inbox/${c.id}`}
-                    className="flex items-center gap-3 surface-card p-4 hover:bg-muted/40 transition-colors"
+                    className={`flex items-center gap-3 surface-card p-4 hover:bg-muted/40 transition-colors ${
+                      unread ? "ring-2 ring-accent/40" : ""
+                    }`}
                   >
                     {c.other_avatar_url ? (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -73,12 +75,24 @@ export default async function InboxPage({
                     )}
                     <div className="flex-1 min-w-0 flex flex-col">
                       <div className="flex items-baseline justify-between gap-2">
-                        <p className="font-medium truncate">{label}</p>
+                        <p
+                          className={`truncate ${
+                            unread ? "font-semibold" : "font-medium"
+                          }`}
+                        >
+                          {label}
+                        </p>
                         <span className="text-xs text-muted-foreground tabular-nums shrink-0">
                           {relTime(c.last_message_at)}
                         </span>
                       </div>
-                      <p className="text-sm text-muted-foreground truncate">
+                      <p
+                        className={`text-sm truncate ${
+                          unread
+                            ? "text-foreground font-medium"
+                            : "text-muted-foreground"
+                        }`}
+                      >
                         {c.last_message_body ?? t("noMessagesYet")}
                       </p>
                       {c.listing_sticker_code && (
@@ -87,6 +101,11 @@ export default async function InboxPage({
                         </p>
                       )}
                     </div>
+                    {unread && (
+                      <span className="size-6 shrink-0 rounded-full bg-accent text-accent-foreground text-xs font-bold flex items-center justify-center tabular-nums">
+                        {c.unread_count}
+                      </span>
+                    )}
                   </Link>
                 </li>
               );
