@@ -134,15 +134,15 @@
       "cta": "Ir a mi álbum"
     },
     "step1": {
-      "title": "Lámina",
-      "subtitle": "Solo las que tienes repetidas."
+      "title": "1 · Escoge tu repetida",
+      "subtitle": "Solo aparecen las que tienes en duplicado."
     },
     "photoStep": {
-      "title": "1 · Foto de la lámina",
-      "subtitle": "Tómala con buena luz. Es lo que más vende."
+      "title": "2 · Toma una foto",
+      "subtitle": "Con buena luz. La foto es lo que más vende."
     },
     "step2": {
-      "title": "2 · ¿Cómo la publicas?",
+      "title": "3 · ¿Cómo la publicas?",
       "subtitle": "Cambio, venta, o las dos.",
       "types": {
         "trade": "Cambio",
@@ -151,14 +151,22 @@
       }
     },
     "step3": {
-      "priceTitle": "Precio",
+      "priceTitle": "4 · Precio",
       "priceSubtitle": "En pesos colombianos. Sin comisión de mefaltauna.",
-      "wantsTitle": "¿Qué buscas a cambio?",
+      "wantsTitle": "4 · ¿Qué buscas a cambio?",
       "wantsSubtitle": "Puedes dejarlo abierto, pedir cualquiera de un equipo, o pedir una específica.",
       "wantsModes": {
         "any": "Cualquier lámina",
         "team": "De un equipo",
         "specific": "Una específica"
+      }
+    },
+    "paymentStep": {
+      "title": "5 · Métodos de pago",
+      "subtitle": "Cómo aceptas que te paguen.",
+      "methods": {
+        "cash": "Efectivo",
+        "transfer": "Transferencia"
       }
     },
     "submit": "Publicar",
@@ -243,6 +251,8 @@
     "emailLabel": "Correo",
     "language": "Idioma",
     "appearance": "Apariencia",
+    "edit": "Editar perfil",
+    "cancel": "Cancelar",
     "save": "Guardar",
     "saving": "Guardando…",
     "saved": "✓ Cambios guardados",
@@ -264,14 +274,19 @@
     "subtitle": "Cada lámina nueva que alguien publica aparece aquí al instante.",
     "live": "Conectado en vivo",
     "connecting": "Conectando…",
-    "empty": "Aún no hay publicaciones. Sé el primero.",
+    "empty": "Aún no hay publicaciones de otros coleccionistas.",
+    "emptyMine": "Aún no has publicado ninguna lámina.",
     "noResults": "Ninguna publicación coincide con esos filtros.",
-    "publishFirst": "Publicar lámina",
+    "publishFirst": "Publicar mi primera",
     "contact": "Escribir",
     "opening": "Abriendo…",
-    "yourListing": "Tu publicación",
+    "yourListing": "Tuya",
     "expandPhoto": "Ampliar foto",
     "countShown": "{count} de {total}",
+    "scope": {
+      "market": "Market",
+      "mine": "Mis publicadas"
+    },
     "filterType": {
       "all": "Todo",
       "trade": "Cambio",

@@ -4,7 +4,6 @@ import { Link } from "@/i18n/navigation";
 import { requireUser } from "@/lib/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { fetchConversation } from "@/lib/db";
-import { markConversationReadAction } from "../actions";
 import { ChatRoom } from "./ChatRoom";
 
 export default async function ConversationPage({
@@ -22,9 +21,6 @@ export default async function ConversationPage({
 
   const conv = await fetchConversation(supabase, id, user.id);
   if (!conv) notFound();
-
-  // Mark read on every entry — fire-and-forget.
-  await markConversationReadAction(id);
 
   const otherLabel = conv.otherUser?.username ?? t("unknownUser");
   const initial = otherLabel.charAt(0).toUpperCase();

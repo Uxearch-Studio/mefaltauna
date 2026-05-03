@@ -31,12 +31,14 @@ function relTime(iso: string, locale: string) {
 const COP = new Intl.NumberFormat("es-CO");
 
 type FilterType = "all" | "trade" | "sale";
+type ScopeTab = "market" | "mine";
 
 export function LiveFeed({ initial, catalog, locale, currentUserId }: Props) {
   const t = useTranslations("feed");
   const [items, setItems] = useState<FeedItem[]>(initial);
   const [connected, setConnected] = useState(false);
 
+  const [scope, setScope] = useState<ScopeTab>("market");
   const [filterType, setFilterType] = useState<FilterType>("all");
   const [filterTeam, setFilterTeam] = useState<string>("all");
   const [filterNumber, setFilterNumber] = useState<string>("");
@@ -98,6 +100,8 @@ export function LiveFeed({ initial, catalog, locale, currentUserId }: Props) {
 
   const filtered = useMemo(() => {
     return items.filter((item) => {
+      if (scope === "mine" && item.user_id !== currentUserId) return false;
+      if (scope === "market" && item.user_id === currentUserId) return false;
       if (filterType !== "all") {
         if (filterType === "trade" && item.type === "sale") return false;
         if (filterType === "sale" && item.type === "trade") return false;
@@ -120,7 +124,10 @@ export function LiveFeed({ initial, catalog, locale, currentUserId }: Props) {
       }
       return true;
     });
-  }, [items, filterType, filterTeam, filterNumber, filterMaxPrice]);
+  }, [items, scope, currentUserId, filterType, filterTeam, filterNumber, filterMaxPrice]);
+
+  const mineCount = items.filter((i) => i.user_id === currentUserId).length;
+  const marketCount = items.length - mineCount;
 
   function clearFilters() {
     setFilterType("all");
@@ -137,6 +144,7 @@ export function LiveFeed({ initial, catalog, locale, currentUserId }: Props) {
 
   return (
     <div className="flex flex-col gap-4">
+      {/* Live indicator */}
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <div className="flex items-center gap-2">
           <span
@@ -155,6 +163,22 @@ export function LiveFeed({ initial, catalog, locale, currentUserId }: Props) {
         <span className="text-xs text-muted-foreground tabular-nums">
           {t("countShown", { count: filtered.length, total: items.length })}
         </span>
+      </div>
+
+      {/* Scope tabs — Market / Mis publicadas */}
+      <div className="flex border-b border-border">
+        <ScopeTab
+          active={scope === "market"}
+          onClick={() => setScope("market")}
+          count={marketCount}
+          label={t("scope.market")}
+        />
+        <ScopeTab
+          active={scope === "mine"}
+          onClick={() => setScope("mine")}
+          count={mineCount}
+          label={t("scope.mine")}
+        />
       </div>
 
       {/* Filters — single horizontal row, scrolls on narrow viewports */}
@@ -221,9 +245,13 @@ export function LiveFeed({ initial, catalog, locale, currentUserId }: Props) {
       {filtered.length === 0 ? (
         <div className="surface-card p-12 text-center">
           <p className="text-sm text-muted-foreground">
-            {hasFilters ? t("noResults") : t("empty")}
+            {hasFilters
+              ? t("noResults")
+              : scope === "mine"
+                ? t("emptyMine")
+                : t("empty")}
           </p>
-          {!hasFilters && (
+          {scope === "mine" && (
             <Link
               href="/app/publish"
               className="inline-flex mt-4 h-10 px-4 items-center rounded-full bg-foreground text-background text-sm font-medium hover:opacity-90 transition-opacity"
@@ -233,7 +261,7 @@ export function LiveFeed({ initial, catalog, locale, currentUserId }: Props) {
           )}
         </div>
       ) : (
-        <ul className="flex flex-col gap-3">
+        <ul className="flex flex-col gap-2">
           {filtered.map((item) => (
             <FeedCard
               key={item.id}
@@ -252,6 +280,45 @@ export function LiveFeed({ initial, catalog, locale, currentUserId }: Props) {
         <Lightbox src={lightbox} onClose={() => setLightbox(null)} />
       )}
     </div>
+  );
+}
+
+function ScopeTab({
+  active,
+  onClick,
+  count,
+  label,
+}: {
+  active: boolean;
+  onClick: () => void;
+  count: number;
+  label: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "relative px-4 py-3 text-sm font-medium transition-colors",
+        active ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+      )}
+      aria-pressed={active}
+    >
+      <span className="flex items-center gap-2">
+        {label}
+        <span
+          className={cn(
+            "px-1.5 py-0.5 rounded-full text-[10px] font-semibold tabular-nums",
+            active ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground",
+          )}
+        >
+          {count}
+        </span>
+      </span>
+      {active && (
+        <span className="absolute inset-x-0 -bottom-px h-0.5 bg-accent" />
+      )}
+    </button>
   );
 }
 
@@ -277,14 +344,20 @@ function FeedCard({
     });
   }
 
+  // Show only the first name token from the username/display_name.
+  const senderLabel = item.username
+    ? item.username.split(/[\s_·]/)[0]
+    : t("someone");
+
   return (
     <li className="animate-feed-in surface-card overflow-hidden">
-      <div className="grid grid-cols-[auto_1fr] gap-4 p-4">
+      <div className="grid grid-cols-[auto_1fr_auto] gap-3 p-3 items-center">
+        {/* Thumb / sticker badge */}
         {item.photo_url ? (
           <button
             type="button"
             onClick={onPhotoClick}
-            className="size-20 sm:size-24 shrink-0 rounded-lg overflow-hidden bg-muted hover:opacity-90 transition-opacity"
+            className="size-14 shrink-0 rounded-lg overflow-hidden bg-muted hover:opacity-90 transition-opacity"
             aria-label={t("expandPhoto")}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -295,34 +368,31 @@ function FeedCard({
             />
           </button>
         ) : (
-          <div className="size-20 sm:size-24 shrink-0 rounded-lg bg-accent/15 text-accent flex flex-col items-center justify-center">
-            <span className="text-[10px] font-semibold uppercase tracking-wider">
+          <div className="size-14 shrink-0 rounded-lg bg-accent/15 text-accent flex flex-col items-center justify-center">
+            <span className="text-[9px] font-semibold uppercase tracking-wider">
               {item.sticker.team_code ?? item.sticker.code.slice(0, 3)}
             </span>
-            <span className="text-2xl font-bold tabular-nums leading-none mt-1">
+            <span className="text-base font-bold tabular-nums leading-none mt-0.5">
               {item.sticker.number ?? "★"}
             </span>
           </div>
         )}
 
-        <div className="flex flex-col gap-1.5 min-w-0">
+        {/* Middle column — sender + sticker + price */}
+        <div className="flex flex-col gap-0.5 min-w-0">
           <div className="flex items-baseline justify-between gap-2">
-            <p className="text-sm font-medium truncate">
-              {item.username ?? t("someone")}
-            </p>
-            <span className="text-xs text-muted-foreground tabular-nums shrink-0">
+            <p className="text-sm font-semibold truncate">{senderLabel}</p>
+            <span className="text-[10px] text-muted-foreground tabular-nums shrink-0">
               {relTime(item.created_at, locale)}
             </span>
           </div>
-
           <p className="text-xs text-muted-foreground truncate">
-            <span className="text-foreground">{item.sticker.code}</span> · {item.sticker.name}
+            {item.sticker.team_code ?? "·"} #{item.sticker.number ?? "—"} · {item.sticker.name}
           </p>
-
-          <div className="flex flex-wrap items-center gap-1.5 mt-1">
+          <div className="flex items-center gap-2 mt-1">
             <span
               className={cn(
-                "px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide",
+                "px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wide",
                 item.type === "sale"
                   ? "bg-highlight/20 text-highlight"
                   : item.type === "trade"
@@ -338,35 +408,36 @@ function FeedCard({
               </span>
             )}
           </div>
-
-          {!isOwn && (
-            <button
-              type="button"
-              onClick={contact}
-              disabled={pending}
-              className="self-start mt-2 inline-flex items-center gap-1.5 h-9 px-3 rounded-full bg-foreground text-background text-xs font-medium hover:opacity-90 transition-opacity disabled:opacity-40"
-            >
-              <svg
-                viewBox="0 0 24 24"
-                className="size-3.5"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden
-              >
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-              </svg>
-              {pending ? t("opening") : t("contact")}
-            </button>
-          )}
-          {isOwn && (
-            <p className="self-start mt-1 text-[10px] uppercase tracking-wide text-muted-foreground">
-              {t("yourListing")}
-            </p>
-          )}
         </div>
+
+        {/* Right column — icon-only contact */}
+        {!isOwn ? (
+          <button
+            type="button"
+            onClick={contact}
+            disabled={pending}
+            aria-label={t("contact")}
+            title={t("contact")}
+            className="size-10 shrink-0 rounded-full bg-foreground text-background flex items-center justify-center hover:opacity-90 transition-opacity disabled:opacity-40"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              className="size-4"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden
+            >
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+          </button>
+        ) : (
+          <span className="text-[9px] uppercase tracking-wide text-muted-foreground shrink-0 text-right">
+            {t("yourListing")}
+          </span>
+        )}
       </div>
     </li>
   );

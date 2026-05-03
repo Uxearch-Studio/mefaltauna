@@ -3,16 +3,22 @@
 import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-export type ToggleResult = {
+export type AdjustResult = {
   ok: boolean;
   count: number;
   error?: string;
 };
 
-export async function cycleStickerAction(
+/**
+ * Increment or decrement the user's count for a sticker by `delta`.
+ * No upper cap — duplicates can grow without limit.
+ * Hitting 0 deletes the inventory row.
+ */
+export async function adjustStickerAction(
   stickerId: number,
+  delta: number,
   locale: string,
-): Promise<ToggleResult> {
+): Promise<AdjustResult> {
   const supabase = await createSupabaseServerClient();
   if (!supabase) return { ok: false, count: 0, error: "not_configured" };
 
@@ -29,15 +35,17 @@ export async function cycleStickerAction(
     .maybeSingle();
 
   const current = existing?.count ?? 0;
-  const next = current >= 3 ? 0 : current + 1;
+  const next = Math.max(0, current + delta);
 
   if (next === 0) {
-    const { error } = await supabase
-      .from("inventory")
-      .delete()
-      .eq("user_id", user.id)
-      .eq("sticker_id", stickerId);
-    if (error) return { ok: false, count: current, error: error.message };
+    if (current > 0) {
+      const { error } = await supabase
+        .from("inventory")
+        .delete()
+        .eq("user_id", user.id)
+        .eq("sticker_id", stickerId);
+      if (error) return { ok: false, count: current, error: error.message };
+    }
   } else {
     const { error } = await supabase.from("inventory").upsert(
       {

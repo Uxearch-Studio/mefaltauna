@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
-import { sendMessageAction } from "../actions";
+import { sendMessageAction, markConversationReadAction } from "../actions";
 import type { Message } from "@/lib/db";
 
 type Props = {
@@ -30,6 +30,12 @@ export function ChatRoom({
   useEffect(() => {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight });
   }, [messages.length]);
+
+  // Mark read on mount — client-side fire-and-forget so the server
+  // render doesn't have to invoke the action (which crashed in 16).
+  useEffect(() => {
+    markConversationReadAction(conversationId).catch(() => {});
+  }, [conversationId]);
 
   useEffect(() => {
     const supabase = getSupabaseBrowserClient();

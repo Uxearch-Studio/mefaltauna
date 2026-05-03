@@ -4,7 +4,7 @@ import { useState, useTransition, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/cn";
 import type { Sticker } from "@/lib/db";
-import { cycleStickerAction } from "./actions";
+import { adjustStickerAction } from "./actions";
 
 type FilterId = "all" | "owned" | "missing" | "duplicates";
 const FILTERS: FilterId[] = ["all", "owned", "missing", "duplicates"];
@@ -22,6 +22,7 @@ export function AlbumGrid({ catalog, initialInventory, locale }: Props) {
   const [inventory, setInventory] = useState(initialInventory);
   const [filter, setFilter] = useState<FilterId>("all");
   const [pops, setPops] = useState<Pop[]>([]);
+  const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   const [, startTransition] = useTransition();
 
   const grouped = useMemo(() => groupByPage(catalog), [catalog]);
@@ -42,8 +43,9 @@ export function AlbumGrid({ catalog, initialInventory, locale }: Props) {
       .filter((g) => g.stickers.length > 0);
   }, [grouped, inventory, filter]);
 
-  function bumpPop(stickerId: number, count: number) {
-    const text = count === 0 ? "−" : count === 1 ? "+1" : `${count}×`;
+  function bumpPop(stickerId: number, delta: number, count: number) {
+    const text =
+      delta < 0 ? "−1" : count === 1 ? "+1" : `+1`;
     const pop: Pop = { id: stickerId, key: Date.now(), text };
     setPops((prev) => [...prev, pop]);
     setTimeout(() => {
@@ -51,19 +53,30 @@ export function AlbumGrid({ catalog, initialInventory, locale }: Props) {
     }, 700);
   }
 
-  function onTap(s: Sticker) {
+  function adjust(s: Sticker, delta: number) {
     const current = inventory[s.id] ?? 0;
-    const optimistic = current >= 3 ? 0 : current + 1;
-    setInventory((prev) => ({ ...prev, [s.id]: optimistic }));
-    bumpPop(s.id, optimistic);
+    const next = Math.max(0, current + delta);
+    if (next === current) return;
+
+    setInventory((prev) => ({ ...prev, [s.id]: next }));
+    bumpPop(s.id, delta, next);
 
     startTransition(async () => {
-      const res = await cycleStickerAction(s.id, locale);
+      const res = await adjustStickerAction(s.id, delta, locale);
       if (!res.ok) {
         setInventory((prev) => ({ ...prev, [s.id]: current }));
       } else {
         setInventory((prev) => ({ ...prev, [s.id]: res.count }));
       }
+    });
+  }
+
+  function togglePage(key: string) {
+    setCollapsed((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
     });
   }
 
@@ -96,14 +109,17 @@ export function AlbumGrid({ catalog, initialInventory, locale }: Props) {
         ))}
       </div>
 
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-3">
         {filtered.map((page) => (
           <PageBlock
             key={page.key}
             page={page}
             inventory={inventory}
             pops={pops}
-            onTap={onTap}
+            collapsed={collapsed.has(page.key)}
+            onToggle={() => togglePage(page.key)}
+            onIncrement={(s) => adjust(s, +1)}
+            onDecrement={(s) => adjust(s, -1)}
           />
         ))}
       </div>
@@ -162,47 +178,80 @@ function PageBlock({
   page,
   inventory,
   pops,
-  onTap,
+  collapsed,
+  onToggle,
+  onIncrement,
+  onDecrement,
 }: {
   page: PageGroup;
   inventory: Record<number, number>;
   pops: Pop[];
-  onTap: (s: Sticker) => void;
+  collapsed: boolean;
+  onToggle: () => void;
+  onIncrement: (s: Sticker) => void;
+  onDecrement: (s: Sticker) => void;
 }) {
   const owned = page.stickers.filter((s) => (inventory[s.id] ?? 0) >= 1).length;
   const total = page.stickers.length;
   const complete = owned === total;
 
   return (
-    <section className="flex flex-col gap-3">
-      <header className="flex items-baseline justify-between gap-4 px-1">
-        <div className="flex items-baseline gap-3">
-          <h2 className="text-lg font-semibold tracking-tight">{page.title}</h2>
+    <section className="flex flex-col gap-3 surface-card p-3">
+      <button
+        type="button"
+        onClick={onToggle}
+        className="flex items-center justify-between gap-4 w-full text-left hover:opacity-80 transition-opacity"
+        aria-expanded={!collapsed}
+      >
+        <div className="flex items-center gap-2 min-w-0">
+          <svg
+            viewBox="0 0 24 24"
+            className={cn(
+              "size-4 shrink-0 text-muted-foreground transition-transform",
+              collapsed ? "" : "rotate-90",
+            )}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden
+          >
+            <path d="M9 6l6 6-6 6" />
+          </svg>
+          <h2 className="text-base font-semibold tracking-tight truncate">
+            {page.title}
+          </h2>
           {page.subtitle && (
-            <p className="text-xs text-muted-foreground">{page.subtitle}</p>
+            <p className="text-xs text-muted-foreground hidden sm:block">
+              {page.subtitle}
+            </p>
           )}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           {complete && (
-            <span className="text-xs font-medium text-highlight">★ Completa</span>
+            <span className="text-xs font-medium text-highlight">★</span>
           )}
           <span className="text-xs tabular-nums text-muted-foreground">
             {owned}/{total}
           </span>
         </div>
-      </header>
+      </button>
 
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7 gap-2">
-        {page.stickers.map((s) => (
-          <StickerTile
-            key={s.id}
-            sticker={s}
-            count={inventory[s.id] ?? 0}
-            pops={pops.filter((p) => p.id === s.id)}
-            onTap={() => onTap(s)}
-          />
-        ))}
-      </div>
+      {!collapsed && (
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7 gap-2 pt-1">
+          {page.stickers.map((s) => (
+            <StickerTile
+              key={s.id}
+              sticker={s}
+              count={inventory[s.id] ?? 0}
+              pops={pops.filter((p) => p.id === s.id)}
+              onIncrement={() => onIncrement(s)}
+              onDecrement={() => onDecrement(s)}
+            />
+          ))}
+        </div>
+      )}
     </section>
   );
 }
@@ -211,21 +260,23 @@ function StickerTile({
   sticker,
   count,
   pops,
-  onTap,
+  onIncrement,
+  onDecrement,
 }: {
   sticker: Sticker;
   count: number;
   pops: Pop[];
-  onTap: () => void;
+  onIncrement: () => void;
+  onDecrement: () => void;
 }) {
   const owned = count >= 1;
   const dup = count >= 2;
 
   return (
-    <div className="relative">
+    <div className="relative group">
       <button
         type="button"
-        onClick={onTap}
+        onClick={onIncrement}
         aria-label={sticker.code}
         className={cn(
           "w-full aspect-[3/4] rounded-xl flex flex-col items-center justify-center gap-1 p-1 transition-all active:scale-95",
@@ -240,7 +291,7 @@ function StickerTile({
             owned ? "text-accent" : "opacity-60",
           )}
         >
-          {sticker.team_code ?? sticker.code.split("-")[0]}
+          {sticker.team_code ?? glyphTeam(sticker)}
         </span>
         <span
           className={cn(
@@ -248,14 +299,31 @@ function StickerTile({
             owned ? "text-foreground" : "opacity-50",
           )}
         >
-          {sticker.number ?? glyphFor(sticker.type)}
+          {sticker.number ?? glyphNumber(sticker)}
         </span>
-        {dup && (
-          <span className="absolute top-1 right-1 size-5 flex items-center justify-center bg-highlight text-highlight-foreground rounded-full text-[10px] font-bold">
-            {count}
-          </span>
-        )}
       </button>
+
+      {/* Duplicate count badge — top right */}
+      {dup && (
+        <span className="absolute top-1 right-1 min-w-5 h-5 px-1 flex items-center justify-center bg-highlight text-highlight-foreground rounded-full text-[10px] font-bold tabular-nums pointer-events-none">
+          ×{count}
+        </span>
+      )}
+
+      {/* Decrement button — visible when count > 0 */}
+      {owned && (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onDecrement();
+          }}
+          aria-label={`Quitar una ${sticker.code}`}
+          className="absolute -bottom-1 -right-1 size-6 rounded-full bg-foreground text-background flex items-center justify-center text-sm font-bold opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity shadow-md"
+        >
+          −
+        </button>
+      )}
 
       {pops.map((p) => (
         <span
@@ -270,11 +338,17 @@ function StickerTile({
   );
 }
 
-function glyphFor(type: Sticker["type"]) {
-  if (type === "badge") return "★";
-  if (type === "group") return "G";
-  if (type === "stadium") return "▲";
-  if (type === "legend") return "♛";
-  if (type === "special") return "✦";
+function glyphTeam(s: Sticker): string {
+  if (s.type === "group") return "GR";
+  if (s.type === "stadium") return "ST";
+  return s.code.split("-")[0];
+}
+
+function glyphNumber(s: Sticker): string {
+  if (s.type === "group") return s.code.split("-").pop() ?? "G";
+  if (s.type === "badge") return "★";
+  if (s.type === "stadium") return "▲";
+  if (s.type === "legend") return "♛";
+  if (s.type === "special") return "✦";
   return "·";
 }

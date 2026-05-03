@@ -74,11 +74,21 @@ export function ThemeSwitcher() {
 
 export const themeBootScript = `
 (function(){
-  try {
-    var t = localStorage.getItem('theme');
-    if (t === 'light' || t === 'dark') {
-      document.documentElement.setAttribute('data-theme', t);
-    }
-  } catch (e) {}
+  function apply() {
+    try {
+      var t = localStorage.getItem('theme');
+      if (t === 'light' || t === 'dark') {
+        document.documentElement.setAttribute('data-theme', t);
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+      }
+    } catch (e) {}
+  }
+  apply();
+  // Re-apply on bfcache restore (e.g. browser back button) so the
+  // theme doesn't snap to the default light.
+  window.addEventListener('pageshow', function(e) {
+    if (e.persisted) apply();
+  });
 })();
 `;

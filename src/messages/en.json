@@ -134,15 +134,15 @@
       "cta": "Go to my album"
     },
     "step1": {
-      "title": "Sticker",
-      "subtitle": "Only your duplicates."
+      "title": "1 · Pick your duplicate",
+      "subtitle": "Only stickers you have in duplicate or more."
     },
     "photoStep": {
-      "title": "1 · Photo of the sticker",
-      "subtitle": "Snap it with good light — this is what closes the deal."
+      "title": "2 · Take a photo",
+      "subtitle": "With good light — the photo is what closes the deal."
     },
     "step2": {
-      "title": "2 · How are you publishing it?",
+      "title": "3 · How are you publishing it?",
       "subtitle": "Trade, sale, or both.",
       "types": {
         "trade": "Trade",
@@ -151,14 +151,22 @@
       }
     },
     "step3": {
-      "priceTitle": "Price",
+      "priceTitle": "4 · Price",
       "priceSubtitle": "Colombian pesos. Zero commission from mefaltauna.",
-      "wantsTitle": "What do you want in exchange?",
+      "wantsTitle": "4 · What do you want in exchange?",
       "wantsSubtitle": "Open, any sticker from a team, or one specific sticker.",
       "wantsModes": {
         "any": "Any sticker",
         "team": "From a team",
         "specific": "A specific one"
+      }
+    },
+    "paymentStep": {
+      "title": "5 · Payment methods",
+      "subtitle": "How you accept payment.",
+      "methods": {
+        "cash": "Cash",
+        "transfer": "Transfer"
       }
     },
     "submit": "Publish",
@@ -243,6 +251,8 @@
     "emailLabel": "Email",
     "language": "Language",
     "appearance": "Appearance",
+    "edit": "Edit profile",
+    "cancel": "Cancel",
     "save": "Save",
     "saving": "Saving…",
     "saved": "✓ Saved",
@@ -264,14 +274,19 @@
     "subtitle": "Every new sticker listed appears here instantly.",
     "live": "Connected live",
     "connecting": "Connecting…",
-    "empty": "No listings yet. Be the first.",
+    "empty": "No listings from other collectors yet.",
+    "emptyMine": "You haven't published any sticker yet.",
     "noResults": "No listings match those filters.",
-    "publishFirst": "Publish a sticker",
+    "publishFirst": "Publish my first",
     "contact": "Message",
     "opening": "Opening…",
-    "yourListing": "Your listing",
+    "yourListing": "Yours",
     "expandPhoto": "Expand photo",
     "countShown": "{count} of {total}",
+    "scope": {
+      "market": "Market",
+      "mine": "My listings"
+    },
     "filterType": {
       "all": "All",
       "trade": "Trade",

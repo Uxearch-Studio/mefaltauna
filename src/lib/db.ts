@@ -353,6 +353,7 @@ export async function fetchInventory(
 export async function fetchActiveListings(
   supabase: SupabaseClient,
   limit = 30,
+  options: { ownerOnly?: string } = {},
 ): Promise<FeedItem[]> {
   // Listings + their sticker, joined via the FK on sticker_id.
   // profiles.id has no direct FK to listings.user_id (both reference

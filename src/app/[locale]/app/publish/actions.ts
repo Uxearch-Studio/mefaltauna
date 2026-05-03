@@ -107,6 +107,13 @@ export async function publishListingAction(
   const wantsTeamCode = formData.get("wants_team_code");
   const photoUrl = String(formData.get("photo_url") ?? "").trim() || null;
   const locale = String(formData.get("locale") ?? "es");
+  const paymentMethodsRaw = formData.getAll("payment_methods");
+  const allowedMethods = ["cash", "transfer"] as const;
+  const paymentMethods = paymentMethodsRaw
+    .map((v) => String(v))
+    .filter((v): v is (typeof allowedMethods)[number] =>
+      (allowedMethods as readonly string[]).includes(v),
+    );
 
   if (!stickerId) return { error: "missing_sticker" };
   if (!VALID_TYPES.includes(type as ListingType)) return { error: "missing_type" };
@@ -143,7 +150,7 @@ export async function publishListingAction(
     }
   }
 
-  const { error } = await supabase.from("listings").insert({
+  const insertPayload: Record<string, unknown> = {
     user_id: user.id,
     sticker_id: stickerId,
     type,
@@ -151,7 +158,12 @@ export async function publishListingAction(
     wants_sticker_id: wsId,
     wants_team_code: wTeam,
     photo_url: photoUrl,
-  });
+  };
+  if (paymentMethods.length > 0) {
+    insertPayload.payment_methods = paymentMethods;
+  }
+
+  const { error } = await supabase.from("listings").insert(insertPayload);
   if (error) return { error: "db_error" };
 
   revalidatePath(`/${locale}/app/feed`);
