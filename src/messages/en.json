@@ -26,11 +26,11 @@
   },
   "home": {
     "hero": {
-      "kicker": "World Cup 2026",
-      "title": "How many are you missing?",
-      "subtitle": "Trade and buy the stickers you need to complete your Panini album. Built in Colombia, for real collectors.",
-      "ctaPrimary": "Start free",
-      "ctaSecondary": "See matches"
+      "kicker": "World Cup 2026 Edition",
+      "title": "Open the pack.",
+      "subtitle": "Other collectors are already opening theirs. Find what you're missing, trade what you've got. In real time.",
+      "ctaPrimary": "Open my album",
+      "ctaSecondary": "See the schedule"
     }
   },
   "countdown": {

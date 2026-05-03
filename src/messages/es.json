@@ -26,11 +26,11 @@
   },
   "home": {
     "hero": {
-      "kicker": "Mundial 2026",
-      "title": "¿Cuánto te falta?",
-      "subtitle": "Intercambia y compra las láminas que necesitas para completar tu álbum Panini. Hecho en Colombia, para coleccionistas reales.",
-      "ctaPrimary": "Empezar gratis",
-      "ctaSecondary": "Ver partidos"
+      "kicker": "Edición Mundial 2026",
+      "title": "Abre el sobre.",
+      "subtitle": "Otros coleccionistas ya están abriendo los suyos. Encuentra las que te faltan, cambia las que te sobran. En tiempo real.",
+      "ctaPrimary": "Abrir mi álbum",
+      "ctaSecondary": "Ver el calendario"
     }
   },
   "countdown": {

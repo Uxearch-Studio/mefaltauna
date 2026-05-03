@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono, Bowlby_One } from "next/font/google";
+import {
+  Inter,
+  JetBrains_Mono,
+  Bowlby_One,
+  Permanent_Marker,
+} from "next/font/google";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -19,6 +24,12 @@ const jetbrains = JetBrains_Mono({
 
 const bowlby = Bowlby_One({
   variable: "--font-display",
+  weight: "400",
+  subsets: ["latin"],
+});
+
+const marker = Permanent_Marker({
+  variable: "--font-marker",
   weight: "400",
   subsets: ["latin"],
 });
@@ -55,7 +66,7 @@ export default async function LocaleLayout({
   return (
     <html
       lang={locale}
-      className={`${inter.variable} ${jetbrains.variable} ${bowlby.variable} h-full antialiased`}
+      className={`${inter.variable} ${jetbrains.variable} ${bowlby.variable} ${marker.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>
