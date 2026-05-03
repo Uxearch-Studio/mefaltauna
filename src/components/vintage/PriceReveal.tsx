@@ -77,6 +77,8 @@ export function PriceReveal({ className = "" }: Props) {
             albumProgress: t("albumProgress"),
             findMissing: t("findMissing"),
           }}
+          editionLabel={tp("passEdition")}
+          taglineLabel={tp("passTagline")}
           ctaLabel={tp("passCta")}
         />
       )}
@@ -290,19 +292,21 @@ function PackWrapper({ torn }: { torn: number }) {
 }
 
 /**
- * FIFA Ultimate Team-inspired premium pass card.
- * - Single panel (dark violet base) with a gold holographic frame
- *   accent and corner caret marks (FUT Icon vibe).
- * - Top-left rating block: price as the "rating", "PASE" as position,
- *   Colombian flag as the nationality mark.
- * - Top-right logo medallion as the player photo equivalent.
- * - Wordmark + thin gold divider centered like a player name.
- * - 2-column benefit grid styled as FIFA stat lines (✓ then short
- *   abbreviation + full label).
- * - Yellow "Entrar al club" CTA pinned to the bottom.
+ * Premium pass card — single dark-violet panel with a gold-foil frame
+ * and corner carets. Architecture (top → bottom):
+ *   1. Brand row: logo medallion + lowercase "mefaltauna" wordmark
+ *   2. Edition kicker + tagline + thin gold divider
+ *   3. Six benefit lines, each with a green checkmark and the FULL
+ *      sentence (no truncation, no FIFA-style abbreviations)
+ *   4. Bottom block: $9.900 stacked above the CTA
+ *
+ * The container has no fixed aspect ratio so the card grows with
+ * content and never clips on narrow viewports.
  */
 function GoldCollectorCard({
   labels,
+  editionLabel,
+  taglineLabel,
   ctaLabel,
 }: {
   labels: {
@@ -313,33 +317,35 @@ function GoldCollectorCard({
     albumProgress: string;
     findMissing: string;
   };
+  editionLabel: string;
+  taglineLabel: string;
   ctaLabel: string;
 }) {
-  const benefits: Array<{ tag: string; label: string }> = [
-    { tag: "FED", label: labels.full },
-    { tag: "CHA", label: labels.chat },
-    { tag: "PUB", label: labels.unlimited },
-    { tag: "0%",  label: labels.noCommission },
-    { tag: "ALB", label: labels.albumProgress },
-    { tag: "BSC", label: labels.findMissing },
+  const benefits = [
+    labels.full,
+    labels.chat,
+    labels.unlimited,
+    labels.noCommission,
+    labels.albumProgress,
+    labels.findMissing,
   ];
 
   return (
-    <div className="absolute inset-0 flex flex-col bg-[#0e0524] text-white overflow-hidden">
+    <div className="absolute inset-0 flex flex-col bg-[#0e0524] text-white overflow-hidden px-6 py-7">
       {/* Holographic gold sheen behind everything */}
       <div
         aria-hidden
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(140% 90% at 50% -10%, rgba(255,215,122,0.35) 0%, rgba(255,199,44,0.18) 25%, transparent 55%), linear-gradient(160deg, rgba(255,199,44,0.05) 0%, transparent 40%, rgba(255,199,44,0.10) 90%)",
+            "radial-gradient(140% 90% at 50% -10%, rgba(255,215,122,0.30) 0%, rgba(255,199,44,0.15) 25%, transparent 55%), linear-gradient(160deg, rgba(255,199,44,0.05) 0%, transparent 40%, rgba(255,199,44,0.10) 90%)",
         }}
       />
-      {/* Animated foil sweep across the whole card */}
+      {/* Animated foil sweep */}
       <div
         aria-hidden
         className="absolute inset-0 pointer-events-none shine-sweep"
-        style={{ mixBlendMode: "screen", opacity: 0.5 }}
+        style={{ mixBlendMode: "screen", opacity: 0.4 }}
       />
 
       {/* Gold foil frame */}
@@ -353,7 +359,7 @@ function GoldCollectorCard({
         }}
       />
 
-      {/* Corner carets — FUT Icon style */}
+      {/* Corner carets */}
       {(["tl", "tr", "bl", "br"] as const).map((c) => (
         <span
           key={c}
@@ -370,32 +376,16 @@ function GoldCollectorCard({
         />
       ))}
 
-      {/* Top section: rating block + logo medallion */}
-      <div className="relative pt-7 px-6 flex items-start justify-between gap-3">
-        <div className="flex flex-col items-start">
-          <span
-            className="font-display tabular-nums leading-none text-[var(--stage-yellow)]"
-            style={{
-              fontSize: "clamp(1.6rem, 7vw, 2.4rem)",
-              textShadow: "2px 2px 0 rgba(0,0,0,0.5)",
-            }}
-          >
-            $9.900
-          </span>
-          <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/85 mt-1.5">
-            Pase
-          </span>
-          <span className="text-lg leading-none mt-1.5">🇨🇴</span>
-        </div>
-
+      {/* Brand row — logo medallion + wordmark inline */}
+      <div className="relative flex items-center gap-3 pl-10">
         <div
-          className="size-16 md:size-20 rounded-2xl flex items-center justify-center shrink-0 shadow-[0_8px_24px_rgba(0,0,0,0.4)]"
+          className="size-12 md:size-14 rounded-xl flex items-center justify-center shrink-0 shadow-[0_8px_20px_rgba(0,0,0,0.4)]"
           style={{
             background:
               "linear-gradient(135deg, #ffd97a 0%, #ffc72c 50%, #b67e0f 100%)",
           }}
         >
-          <svg viewBox="0 0 32 32" className="size-10 md:size-12 text-[#1a0b3d]" aria-hidden>
+          <svg viewBox="0 0 32 32" className="size-7 md:size-8 text-[#1a0b3d]" aria-hidden>
             <g fill="currentColor">
               <rect x="3" y="6" width="7" height="9" rx="1.4" />
               <rect x="12.5" y="6" width="7" height="9" rx="1.4" />
@@ -410,64 +400,80 @@ function GoldCollectorCard({
             />
           </svg>
         </div>
-      </div>
-
-      {/* Wordmark + divider — the "player name" zone */}
-      <div className="relative px-6 mt-4 text-center">
         <h3
           className="font-display lowercase leading-none text-[var(--stage-yellow)]"
           style={{
-            fontSize: "clamp(1.6rem, 6.5vw, 2.25rem)",
+            fontSize: "clamp(1.5rem, 6vw, 2rem)",
             textShadow: "2px 2px 0 rgba(0,0,0,0.45)",
           }}
         >
           mefaltauna
         </h3>
-        <span className="block text-[10px] font-bold uppercase tracking-[0.3em] text-white/70 mt-2">
-          Edición · Mundial 2026
-        </span>
+      </div>
+
+      {/* Edition + tagline */}
+      <div className="relative mt-4">
+        <p className="text-[10px] md:text-xs font-bold uppercase tracking-[0.3em] text-white/85">
+          {editionLabel}
+        </p>
+        <p className="text-sm md:text-base text-white/70 mt-1.5 leading-snug">
+          {taglineLabel}
+        </p>
         <div
           aria-hidden
-          className="mx-auto mt-3 h-[1.5px] w-20"
+          className="mt-4 h-[1.5px] w-16"
           style={{
             background:
-              "linear-gradient(90deg, transparent 0%, var(--stage-yellow) 50%, transparent 100%)",
+              "linear-gradient(90deg, var(--stage-yellow) 0%, transparent 100%)",
           }}
         />
       </div>
 
-      {/* FIFA-style stats grid — 2 columns × 3 rows */}
-      <ul className="relative px-5 mt-4 grid grid-cols-2 gap-x-3 gap-y-2 text-[10px] md:text-[11px] w-full">
-        {benefits.map((b, i) => (
-          <li key={i} className="flex items-center gap-1.5 min-w-0">
+      {/* Benefits — full sentences, no truncation */}
+      <ul className="relative mt-5 flex flex-col gap-2.5">
+        {benefits.map((label, i) => (
+          <li key={i} className="flex items-start gap-3">
             <span
               aria-hidden
-              className="size-3.5 rounded-full bg-emerald-400 text-[#0a2a18] flex items-center justify-center shrink-0 shadow-[0_0_8px_rgba(52,211,153,0.5)]"
+              className="mt-0.5 size-5 rounded-full bg-emerald-400 text-[#0a2a18] flex items-center justify-center shrink-0 shadow-[0_0_10px_rgba(52,211,153,0.45)]"
             >
-              <svg viewBox="0 0 16 16" className="size-2.5" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <svg viewBox="0 0 16 16" className="size-3" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M3 8 L7 12 L13 4" />
               </svg>
             </span>
-            <span className="font-bold uppercase tracking-wider text-[var(--stage-yellow)] tabular-nums shrink-0">
-              {b.tag}
-            </span>
-            <span className="leading-tight text-white/80 truncate">
-              {b.label}
+            <span className="text-sm md:text-[15px] leading-snug text-white/90">
+              {label}
             </span>
           </li>
         ))}
       </ul>
 
-      {/* CTA pinned to the bottom edge */}
-      <a
-        href="/sign-in"
-        className="relative mt-auto mb-5 mx-5 h-10 rounded-full bg-[var(--stage-yellow)] text-[#1a0b3d] text-xs font-bold uppercase tracking-[0.2em] flex items-center justify-center gap-2 hover:opacity-90 transition-opacity shadow-[0_8px_20px_rgba(255,199,44,0.35)]"
-      >
-        {ctaLabel}
-        <svg viewBox="0 0 16 16" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-          <path d="M3 8h10M9 4l4 4-4 4" />
-        </svg>
-      </a>
+      {/* Bottom block: price stacked above CTA */}
+      <div className="relative mt-auto pt-6 flex flex-col gap-3">
+        <div className="flex items-baseline gap-2">
+          <span
+            className="font-display tabular-nums leading-none text-[var(--stage-yellow)]"
+            style={{
+              fontSize: "clamp(2rem, 9vw, 3rem)",
+              textShadow: "2px 2px 0 rgba(0,0,0,0.5)",
+            }}
+          >
+            $9.900
+          </span>
+          <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-white/55">
+            COP · Pago único
+          </span>
+        </div>
+        <a
+          href="/sign-in"
+          className="h-12 rounded-full bg-[var(--stage-yellow)] text-[#1a0b3d] text-sm font-bold uppercase tracking-[0.2em] flex items-center justify-center gap-2 hover:opacity-90 transition-opacity shadow-[0_8px_20px_rgba(255,199,44,0.35)]"
+        >
+          {ctaLabel}
+          <svg viewBox="0 0 16 16" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M3 8h10M9 4l4 4-4 4" />
+          </svg>
+        </a>
+      </div>
     </div>
   );
 }

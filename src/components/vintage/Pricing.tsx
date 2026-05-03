@@ -29,9 +29,10 @@ export function Pricing() {
           <p className="text-xs text-muted-foreground">{t("disclaimer")}</p>
         </div>
 
-        {/* Pack — same dimensions as the Luis Díaz card */}
+        {/* Pack — width adapts to viewport; height grows with content
+            so benefits never truncate on small screens. */}
         <div className="flex justify-center md:justify-end">
-          <PriceReveal className="w-72 md:w-96 aspect-[3/4]" />
+          <PriceReveal className="w-full max-w-sm md:max-w-md min-h-[34rem] md:min-h-[38rem]" />
         </div>
       </div>
     </section>
