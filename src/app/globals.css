@@ -341,6 +341,13 @@ body {
   animation: pack-tear-loop 5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   transform-origin: bottom right;
 }
+
+/* Slide hint — gentle nudge so the user knows to drag */
+@keyframes nudge {
+  0%, 100% { transform: translateX(0); opacity: 0.6; }
+  50%      { transform: translateX(6px); opacity: 1; }
+}
+.anim-marquee-hint { animation: nudge 1.6s ease-in-out infinite; }
 .paper-grain::before {
   content: "";
   position: absolute;
