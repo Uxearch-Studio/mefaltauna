@@ -1,0 +1,20 @@
+{
+  "name": "mefaltauna",
+  "short_name": "mefaltauna",
+  "description": "Cambia y compra láminas del Mundial 2026.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1a0b3d",
+  "theme_color": "#1a0b3d",
+  "lang": "es-CO",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

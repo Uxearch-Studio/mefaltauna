@@ -22,7 +22,13 @@ export default async function ConversationPage({
   const conv = await fetchConversation(supabase, id, user.id);
   if (!conv) notFound();
 
-  const otherLabel = conv.otherUser?.username ?? t("unknownUser");
+  // Prefer display_name (set from contact first_name on first publish)
+  // over the optional username. Falls back to a generic label only if
+  // the other party hasn't filled the publish gate yet.
+  const otherLabel =
+    conv.otherUser?.display_name ??
+    conv.otherUser?.username ??
+    t("unknownUser");
   const initial = otherLabel.charAt(0).toUpperCase();
 
   return (
@@ -74,7 +80,7 @@ export default async function ConversationPage({
       <ChatRoom
         conversationId={conv.conversation.id}
         currentUserId={user.id}
-        otherUsername={conv.otherUser?.username ?? null}
+        otherUsername={otherLabel}
         initialMessages={conv.messages}
       />
     </>

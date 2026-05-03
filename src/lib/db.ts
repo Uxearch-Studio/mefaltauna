@@ -77,6 +77,7 @@ export type ConversationListItem = {
   id: string;
   other_user_id: string;
   other_username: string | null;
+  other_display_name: string | null;
   other_avatar_url: string | null;
   listing_id: string | null;
   listing_sticker_code: string | null;
@@ -113,9 +114,16 @@ export async function fetchUserConversations(
     otherIds.length
       ? supabase
           .from("profiles")
-          .select("id, username, avatar_url")
+          .select("id, username, display_name, avatar_url")
           .in("id", otherIds)
-      : Promise.resolve({ data: [] as Array<{ id: string; username: string | null; avatar_url: string | null }> }),
+      : Promise.resolve({
+          data: [] as Array<{
+            id: string;
+            username: string | null;
+            display_name: string | null;
+            avatar_url: string | null;
+          }>,
+        }),
     listingIds.length
       ? supabase
           .from("listings")
@@ -135,14 +143,23 @@ export async function fetchUserConversations(
 
   const profileMap = new Map<
     string,
-    { username: string | null; avatar_url: string | null }
+    {
+      username: string | null;
+      display_name: string | null;
+      avatar_url: string | null;
+    }
   >();
   for (const p of (profilesRes.data ?? []) as Array<{
     id: string;
     username: string | null;
+    display_name: string | null;
     avatar_url: string | null;
   }>) {
-    profileMap.set(p.id, { username: p.username, avatar_url: p.avatar_url });
+    profileMap.set(p.id, {
+      username: p.username,
+      display_name: p.display_name,
+      avatar_url: p.avatar_url,
+    });
   }
 
   const listingMap = new Map<string, string | null>();
@@ -206,6 +223,7 @@ export async function fetchUserConversations(
       id: c.id as string,
       other_user_id: other as string,
       other_username: p?.username ?? null,
+      other_display_name: p?.display_name ?? null,
       other_avatar_url: p?.avatar_url ?? null,
       listing_id: c.listing_id as string | null,
       listing_sticker_code: c.listing_id
@@ -240,6 +258,7 @@ export async function fetchConversation(
   otherUser: {
     id: string;
     username: string | null;
+    display_name: string | null;
     avatar_url: string | null;
   } | null;
   listingStickerCode: string | null;
@@ -263,7 +282,7 @@ export async function fetchConversation(
       .limit(200),
     supabase
       .from("profiles")
-      .select("id, username, avatar_url")
+      .select("id, username, display_name, avatar_url")
       .eq("id", otherId)
       .maybeSingle(),
     conv.listing_id
@@ -284,6 +303,8 @@ export async function fetchConversation(
       ? {
           id: (profile as { id: string }).id,
           username: (profile as { username: string | null }).username,
+          display_name: (profile as { display_name: string | null })
+            .display_name,
           avatar_url: (profile as { avatar_url: string | null }).avatar_url,
         }
       : null,

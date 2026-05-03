@@ -50,7 +50,10 @@ export default async function InboxPage({
         ) : (
           <ul className="flex flex-col gap-2">
             {conversations.map((c) => {
-              const label = c.other_username ?? t("unknownUser");
+              const label =
+                c.other_display_name ??
+                c.other_username ??
+                t("unknownUser");
               const initial = label.charAt(0).toUpperCase();
               const unread = c.unread_count > 0;
               return (

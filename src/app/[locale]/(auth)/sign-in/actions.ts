@@ -20,6 +20,7 @@ export type AuthState = {
     | "wrong_pin"
     | "signup_failed"
     | "auth_error"
+    | "blocked"
     | "not_configured";
 };
 
@@ -61,11 +62,26 @@ export async function phonePinAction(
   const email = phoneToEmail(phoneInput);
 
   // First try: maybe the user already exists.
-  const { error: signInError } = await supabase.auth.signInWithPassword({
-    email,
-    password: pin,
-  });
+  const { error: signInError, data: signInData } =
+    await supabase.auth.signInWithPassword({
+      email,
+      password: pin,
+    });
   if (!signInError) {
+    // Refuse to keep the session if the account has been blocked
+    // through the anti-PII strike system.
+    const uid = signInData.user?.id;
+    if (uid) {
+      const { data: prof } = await supabase
+        .from("profiles")
+        .select("is_blocked")
+        .eq("id", uid)
+        .maybeSingle();
+      if (prof?.is_blocked) {
+        await supabase.auth.signOut();
+        return { phone: phoneInput, error: "blocked" };
+      }
+    }
     redirect(next);
   }
 

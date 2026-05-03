@@ -24,6 +24,15 @@
     "dark": "Dark",
     "auto": "Auto"
   },
+  "install": {
+    "install": "Install",
+    "iosTitle": "Add to Home Screen",
+    "iosStep1": "Tap the Share button in Safari's bar.",
+    "iosStep2": "Pick \"Add to Home Screen\".",
+    "iosStep3": "Confirm \"Add\". mefaltauna will live like an app.",
+    "gotIt": "Got it",
+    "close": "Close"
+  },
   "home": {
     "hero": {
       "kicker": "World Cup 2026",
@@ -240,7 +249,14 @@
       "not_participant": "You can't send to this conversation",
       "not_configured": "Service unavailable",
       "db_error": "Couldn't send. Try again."
-    }
+    },
+    "disclaimerTitle": "Keep contact on mefaltauna",
+    "disclaimerBody": "All chat must stay on the platform or your account can be blocked. Do not share emails or WhatsApp numbers.",
+    "piiKindPhone": "phone number",
+    "piiKindEmail": "email address",
+    "piiRejected": "Message blocked — it contains a {kind}. Warning {n} of 3.",
+    "blockedNotice": "Your account is blocked for sharing contact info. Reach us at hello@mefaltauna.com to review it.",
+    "blockedPlaceholder": "Your account is blocked"
   },
   "profile": {
     "title": "My profile",
@@ -385,6 +401,7 @@
     "continue": "Continue",
     "createAccount": "Create account",
     "pending": "Verifying…",
+    "forgotPin": "Forgot your PIN?",
     "disclaimer": "By continuing you accept the terms. Your data stays private.",
     "errors": {
       "invalid_phone": "Invalid WhatsApp number. Should be 10 digits.",
@@ -393,7 +410,31 @@
       "wrong_pin": "PIN doesn't match the one saved for this number.",
       "signup_failed": "Couldn't create the account. Try again.",
       "auth_error": "Something failed. Try again.",
+      "blocked": "Your account is blocked. Reach us at hello@mefaltauna.com.",
       "not_configured": "Service unavailable."
+    }
+  },
+  "recoverPin": {
+    "title": "Recover your PIN",
+    "subtitle": "We verify your national ID against the data from your first publish, then let you set a new PIN. Don't share your national ID with anyone.",
+    "phoneLabel": "WhatsApp",
+    "nationalIdLabel": "National ID",
+    "nationalIdHint": "The same ID you typed when publishing your first sticker.",
+    "newPinLabel": "Choose a new PIN (6 digits)",
+    "confirmPinLabel": "Repeat your PIN",
+    "submit": "Reset my PIN",
+    "pending": "Verifying…",
+    "backToSignIn": "Back to sign in",
+    "errors": {
+      "not_configured": "Service unavailable.",
+      "service_unavailable": "Automated recovery isn't enabled in this environment yet. Reach us at hello@mefaltauna.com.",
+      "invalid_phone": "Invalid WhatsApp number.",
+      "invalid_id": "Invalid national ID (between 6 and 12 digits).",
+      "invalid_pin": "PIN must be 6 digits.",
+      "pins_mismatch": "PINs don't match.",
+      "no_match": "We couldn't find a profile with that WhatsApp + ID combination.",
+      "blocked": "That account was blocked by moderation. We can't restore it automatically.",
+      "reset_failed": "Couldn't change your PIN. Try again."
     }
   },
   "userMenu": {

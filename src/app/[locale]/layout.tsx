@@ -49,6 +49,17 @@ export async function generateMetadata({
     title: t("title"),
     description: t("description"),
     metadataBase: new URL("https://mefaltauna.vercel.app"),
+    manifest: "/manifest.webmanifest",
+    icons: {
+      icon: "/icon.svg",
+      apple: "/icon.svg",
+    },
+    appleWebApp: {
+      capable: true,
+      statusBarStyle: "black-translucent",
+      title: "mefaltauna",
+    },
+    themeColor: "#1a0b3d",
   };
 }
 

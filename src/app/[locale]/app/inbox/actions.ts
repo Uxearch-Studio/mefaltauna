@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { detectPii, type PiiHit } from "@/lib/pii";
 
 /**
  * Open or create a conversation between the current user and the
@@ -66,7 +67,19 @@ export async function openConversationAction(
 }
 
 export type SendMessageState = {
-  error?: "empty" | "too_long" | "not_participant" | "not_configured" | "db_error";
+  error?:
+    | "empty"
+    | "too_long"
+    | "not_participant"
+    | "not_configured"
+    | "db_error"
+    | "pii_phone"
+    | "pii_email"
+    | "blocked";
+  /** When the message was rejected for PII, how many strikes the user
+   * has accumulated and whether the account is now blocked. */
+  strikes?: number;
+  blocked?: boolean;
 };
 
 /**
@@ -98,6 +111,21 @@ export async function sendMessageAction(
   } = await supabase.auth.getUser();
   if (!user) return { error: "not_participant" };
 
+  // Hard block — once an account has crossed the 3-strike threshold
+  // it can't send anything else until support manually clears it.
+  const { data: meProfile } = await supabase
+    .from("profiles")
+    .select("is_blocked, strikes")
+    .eq("id", user.id)
+    .maybeSingle();
+  if (meProfile?.is_blocked) {
+    return {
+      error: "blocked",
+      blocked: true,
+      strikes: meProfile.strikes ?? 3,
+    };
+  }
+
   const trimmed = body.trim();
   if (!trimmed) return { error: "empty" };
   if (trimmed.length > 2000) return { error: "too_long" };
@@ -110,6 +138,21 @@ export async function sendMessageAction(
   if (!conv) return { error: "not_participant" };
   if (conv.user_a !== user.id && conv.user_b !== user.id) {
     return { error: "not_participant" };
+  }
+
+  // Anti-PII guard. Phone numbers + emails (including obfuscated
+  // forms) are rejected before they reach the conversation, and the
+  // sender is hit with a strike via the security-definer RPC.
+  const hit: PiiHit | null = detectPii(trimmed);
+  if (hit) {
+    const { data: bump } = await supabase
+      .rpc("bump_strike", { target: user.id })
+      .single<{ strikes: number; is_blocked: boolean }>();
+    return {
+      error: hit === "phone" ? "pii_phone" : "pii_email",
+      strikes: bump?.strikes ?? 1,
+      blocked: bump?.is_blocked ?? false,
+    };
   }
 
   const { error } = await supabase.from("messages").insert({

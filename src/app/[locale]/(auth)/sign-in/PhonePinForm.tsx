@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { phonePinAction, type AuthState } from "./actions";
 
 type Props = {
@@ -111,6 +112,15 @@ export function PhonePinForm({ locale, next }: Props) {
             ? t("createAccount")
             : t("continue")}
       </button>
+
+      {!showConfirm && (
+        <Link
+          href="/recover-pin"
+          className="self-center text-xs text-muted-foreground hover:text-accent transition-colors"
+        >
+          {t("forgotPin")}
+        </Link>
+      )}
     </form>
   );
 }

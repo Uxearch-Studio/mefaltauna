@@ -24,6 +24,15 @@
     "dark": "Oscuro",
     "auto": "Auto"
   },
+  "install": {
+    "install": "Instalar",
+    "iosTitle": "Añadir a tu Inicio",
+    "iosStep1": "Toca el botón Compartir en la barra de Safari.",
+    "iosStep2": "Selecciona “Añadir a la pantalla de inicio”.",
+    "iosStep3": "Confirma “Añadir”. Listo, mefaltauna queda como app.",
+    "gotIt": "Entendido",
+    "close": "Cerrar"
+  },
   "home": {
     "hero": {
       "kicker": "Mundial 2026",
@@ -240,7 +249,14 @@
       "not_participant": "No puedes enviar a esta conversación",
       "not_configured": "Servicio no disponible",
       "db_error": "No pudimos enviar. Intenta de nuevo."
-    }
+    },
+    "disclaimerTitle": "Mantén el contacto en mefaltauna",
+    "disclaimerBody": "Toda la comunicación debe hacerse por la plataforma o tu cuenta podrá ser bloqueada. No compartas correos ni números de WhatsApp.",
+    "piiKindPhone": "número de teléfono",
+    "piiKindEmail": "correo electrónico",
+    "piiRejected": "Mensaje no permitido — contiene un {kind}. Aviso {n} de 3.",
+    "blockedNotice": "Tu cuenta fue bloqueada por compartir información de contacto. Escríbenos a hello@mefaltauna.com para revisarla.",
+    "blockedPlaceholder": "Tu cuenta está bloqueada"
   },
   "profile": {
     "title": "Mi perfil",
@@ -385,6 +401,7 @@
     "continue": "Continuar",
     "createAccount": "Crear cuenta",
     "pending": "Verificando…",
+    "forgotPin": "¿Olvidaste tu PIN?",
     "disclaimer": "Al continuar aceptas los términos. Tus datos quedan privados.",
     "errors": {
       "invalid_phone": "Número de WhatsApp no válido. Debe ser de 10 dígitos.",
@@ -393,7 +410,31 @@
       "wrong_pin": "El PIN no coincide con el que tienes guardado para este número.",
       "signup_failed": "No pudimos crear la cuenta. Intenta de nuevo.",
       "auth_error": "Algo falló. Intenta de nuevo.",
+      "blocked": "Tu cuenta está bloqueada. Escríbenos a hello@mefaltauna.com.",
       "not_configured": "Servicio no disponible."
+    }
+  },
+  "recoverPin": {
+    "title": "Recuperar tu PIN",
+    "subtitle": "Verificamos tu cédula contra los datos del primer publicado y te dejamos crear un PIN nuevo. No compartas tu cédula con nadie.",
+    "phoneLabel": "WhatsApp",
+    "nationalIdLabel": "Cédula",
+    "nationalIdHint": "La misma cédula que pusiste al publicar tu primera lámina.",
+    "newPinLabel": "Crea un nuevo PIN (6 dígitos)",
+    "confirmPinLabel": "Repite tu PIN",
+    "submit": "Cambiar mi PIN",
+    "pending": "Verificando…",
+    "backToSignIn": "Volver a iniciar sesión",
+    "errors": {
+      "not_configured": "Servicio no disponible.",
+      "service_unavailable": "La recuperación automática aún no está habilitada en este entorno. Escríbenos a hello@mefaltauna.com.",
+      "invalid_phone": "Número de WhatsApp no válido.",
+      "invalid_id": "Cédula no válida (entre 6 y 12 dígitos).",
+      "invalid_pin": "El PIN debe ser de 6 números.",
+      "pins_mismatch": "Los PIN no coinciden.",
+      "no_match": "No encontramos un perfil con ese WhatsApp y esa cédula.",
+      "blocked": "Esa cuenta fue bloqueada por la moderación. No podemos restaurarla automáticamente.",
+      "reset_failed": "No pudimos cambiar tu PIN. Intenta de nuevo."
     }
   },
   "userMenu": {

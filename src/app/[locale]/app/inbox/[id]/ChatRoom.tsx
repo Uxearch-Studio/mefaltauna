@@ -26,6 +26,7 @@ export function ChatRoom({
   const [body, setBody] = useState("");
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [blocked, setBlocked] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -122,15 +123,49 @@ export function ChatRoom({
     startTransition(async () => {
       const res = await sendMessageAction(conversationId, value);
       if (res.error) {
+        // Roll back the optimistic insert — the message was never
+        // accepted by the server.
         setMessages((prev) => prev.filter((m) => m.id !== tempId));
-        setError(t(`sendErrors.${res.error}`));
-        setBody(value);
+        if (res.error === "pii_phone" || res.error === "pii_email") {
+          // Render the bilingual "Aviso N de 3" + the kicker that
+          // explains why the message was blocked.
+          setError(
+            t("piiRejected", {
+              kind: t(
+                res.error === "pii_phone"
+                  ? "piiKindPhone"
+                  : "piiKindEmail",
+              ),
+              n: res.strikes ?? 1,
+            }),
+          );
+          setBody("");
+          if (res.blocked) setBlocked(true);
+        } else if (res.error === "blocked") {
+          setError(t("blockedNotice"));
+          setBlocked(true);
+          setBody("");
+        } else {
+          setError(t(`sendErrors.${res.error}`));
+          setBody(value);
+        }
       }
     });
   }
 
   return (
     <div className="flex flex-col h-[calc(100vh-3.5rem-7rem)]">
+      {/* Safety disclaimer — visible on every chat so users can't say
+          they didn't know contact info isn't allowed. */}
+      <div
+        role="note"
+        className="px-4 py-2.5 text-[11px] leading-snug bg-accent/10 text-accent border-b border-accent/20"
+      >
+        <strong className="font-semibold">⚠ {t("disclaimerTitle")}</strong>
+        {" — "}
+        {t("disclaimerBody")}
+      </div>
+
       <div
         ref={listRef}
         className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-1"
@@ -175,6 +210,15 @@ export function ChatRoom({
         )}
       </div>
 
+      {error && (
+        <p
+          role="alert"
+          className="mx-3 mb-2 px-3 py-2 text-xs font-medium leading-snug bg-red-600/10 text-red-600 border border-red-600/30 rounded-xl"
+        >
+          {error}
+        </p>
+      )}
+
       <form
         onSubmit={handleSend}
         className="border-t border-border bg-background p-3 flex gap-2 items-center"
@@ -184,14 +228,14 @@ export function ChatRoom({
           type="text"
           value={body}
           onChange={(e) => setBody(e.target.value)}
-          placeholder={t("inputPlaceholder")}
+          placeholder={blocked ? t("blockedPlaceholder") : t("inputPlaceholder")}
           maxLength={2000}
-          disabled={pending}
-          className="flex-1 h-11 px-4 rounded-full border border-border bg-background text-base focus:outline-none focus:border-accent"
+          disabled={pending || blocked}
+          className="flex-1 h-11 px-4 rounded-full border border-border bg-background text-base focus:outline-none focus:border-accent disabled:opacity-50"
         />
         <button
           type="submit"
-          disabled={pending || !body.trim()}
+          disabled={pending || blocked || !body.trim()}
           aria-label={t("send")}
           className="size-11 rounded-full bg-foreground text-background flex items-center justify-center hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
         >
@@ -208,10 +252,6 @@ export function ChatRoom({
           </svg>
         </button>
       </form>
-
-      {error && (
-        <p className="text-xs text-accent text-center pb-2">{error}</p>
-      )}
     </div>
   );
 }
