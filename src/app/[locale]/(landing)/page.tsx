@@ -4,8 +4,7 @@ import { Pricing } from "@/components/vintage/Pricing";
 import { StickerPreview } from "@/components/vintage/StickerPreview";
 import { FinalCta } from "@/components/vintage/FinalCta";
 import { Countdown } from "@/components/vintage/Countdown";
-import { StadiumScene } from "@/components/vintage/StadiumScene";
-import { HeroSpotlight } from "@/components/vintage/HeroSpotlight";
+import { HeroCanvas } from "@/components/vintage/HeroCanvas";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth";
 
@@ -23,10 +22,21 @@ export default async function HomePage({
 
   return (
     <main>
-      {/* HERO — cinematic stadium scene */}
-      <section className="relative overflow-hidden text-white grain min-h-[82vh] flex items-center">
-        <StadiumScene />
-        <HeroSpotlight />
+      {/* HERO — cinematic football canvas animation */}
+      <section
+        className="relative overflow-hidden text-white grain min-h-[82vh] flex items-center"
+        style={{ background: "var(--stage-bg)" }}
+      >
+        <HeroCanvas />
+        {/* Soft vignette so text reads cleanly over the animation */}
+        <div
+          aria-hidden
+          className="absolute inset-0 z-[1] pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(ellipse at 30% 50%, rgba(13,5,33,0.55) 0%, rgba(13,5,33,0.85) 60%, rgba(13,5,33,0.95) 100%)",
+          }}
+        />
 
         <div className="relative mx-auto max-w-6xl px-6 pt-20 pb-32 flex flex-col md:items-start items-center md:text-left text-center gap-6 w-full z-10">
           <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur text-xs font-semibold uppercase tracking-widest">
@@ -51,13 +61,13 @@ export default async function HomePage({
           <div className="flex flex-row gap-3 mt-2">
             <Link
               href="/sign-in"
-              className="h-12 px-6 inline-flex items-center justify-center rounded-full bg-[var(--stage-yellow)] text-[var(--stage-bg)] text-sm font-bold hover:opacity-90 transition-opacity shadow-lg shadow-[var(--stage-yellow)]/30 whitespace-nowrap"
+              className="h-10 px-5 inline-flex items-center justify-center rounded-full bg-[var(--stage-yellow)] text-[var(--stage-bg)] text-sm font-bold hover:opacity-90 transition-opacity shadow-lg shadow-[var(--stage-yellow)]/30 whitespace-nowrap"
             >
               {t("ctaPrimary")}
             </Link>
             <Link
               href="/matches"
-              className="h-12 px-6 inline-flex items-center justify-center rounded-full bg-white/10 text-white border border-white/20 backdrop-blur text-sm font-medium hover:bg-white/20 transition-colors whitespace-nowrap"
+              className="h-10 px-5 inline-flex items-center justify-center rounded-full bg-white/10 text-white border border-white/20 backdrop-blur text-sm font-medium hover:bg-white/20 transition-colors whitespace-nowrap"
             >
               {t("ctaSecondary")}
             </Link>

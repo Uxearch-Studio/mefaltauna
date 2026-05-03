@@ -99,8 +99,11 @@
       "full": "Full catalog and live feed",
       "chat": "Direct chat with any collector",
       "unlimited": "Publish every duplicate",
-      "noCommission": "0% commission per trade or sale"
-    }
+      "noCommission": "0% commission per trade or sale",
+      "albumProgress": "Live album progress",
+      "findMissing": "Find what's missing from your phone"
+    },
+    "passCta": "Join the club"
   },
   "preview": {
     "kicker": "Every sticker",

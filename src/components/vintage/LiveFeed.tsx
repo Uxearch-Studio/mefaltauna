@@ -86,6 +86,7 @@ export function LiveFeed({ initial, catalog, locale, currentUserId }: Props) {
               number: sticker.number,
             },
             username: null,
+            display_name: null,
           };
           setItems((prev) => [item, ...prev].slice(0, 50));
         },
@@ -344,10 +345,13 @@ function FeedCard({
     });
   }
 
-  // Show only the first name token from the username/display_name.
-  const senderLabel = item.username
-    ? item.username.split(/[\s_·]/)[0]
-    : t("someone");
+  // Public name: prefer display_name (set from contact first_name on
+  // first publish), fall back to username, then to a generic label.
+  const senderLabel = item.display_name
+    ? item.display_name.split(/[\s_·]/)[0]
+    : item.username
+      ? item.username.split(/[\s_·]/)[0]
+      : t("someone");
 
   return (
     <li className="animate-feed-in surface-card overflow-hidden">

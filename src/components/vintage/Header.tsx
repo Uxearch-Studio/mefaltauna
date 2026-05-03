@@ -45,14 +45,14 @@ export async function Header() {
           {user ? (
             <Link
               href="/app/feed"
-              className="inline-flex items-center h-9 px-4 text-sm font-medium rounded-full bg-foreground text-background hover:opacity-90 transition-opacity whitespace-nowrap"
+              className="inline-flex items-center h-8 px-3.5 text-xs font-medium rounded-full bg-foreground text-background hover:opacity-90 transition-opacity whitespace-nowrap"
             >
               {t("openApp")} →
             </Link>
           ) : (
             <Link
               href="/sign-in"
-              className="inline-flex items-center h-9 px-4 text-sm font-semibold rounded-full bg-foreground text-background hover:opacity-90 transition-opacity whitespace-nowrap"
+              className="inline-flex items-center h-8 px-3.5 text-xs font-semibold rounded-full bg-foreground text-background hover:opacity-90 transition-opacity whitespace-nowrap"
             >
               {t("signIn")}
             </Link>

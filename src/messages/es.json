@@ -99,8 +99,11 @@
       "full": "Catálogo completo y feed en vivo",
       "chat": "Chat directo con cualquier coleccionista",
       "unlimited": "Publica todas tus repetidas",
-      "noCommission": "0% comisión en cambio o venta"
-    }
+      "noCommission": "0% comisión en cambio o venta",
+      "albumProgress": "Progreso de tu álbum en tiempo real",
+      "findMissing": "Encuentra la que te falta desde tu móvil"
+    },
+    "passCta": "Entrar al club"
   },
   "preview": {
     "kicker": "Cada lámina",

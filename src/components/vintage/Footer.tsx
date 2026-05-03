@@ -1,4 +1,3 @@
-import { useTranslations } from "next-intl";
 import { LogoMark } from "./Logo";
 
 const SOCIALS = [
@@ -15,7 +14,6 @@ const MARQUEE_ITEMS = [
 ];
 
 export function Footer() {
-  const t = useTranslations("footer");
   const year = new Date().getFullYear();
   const stream = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS];
 
@@ -62,22 +60,30 @@ export function Footer() {
 
       {/* Hairline + tiny credit */}
       <div className="border-t border-white/10">
-        <div className="mx-auto max-w-6xl px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-1 text-[10px] text-white/50 text-center sm:text-left">
-          <p>
-            Creado por{" "}
-            <a
-              href="https://uxearch.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-white/80 hover:text-[var(--stage-yellow)] transition-colors"
-            >
-              uxearch
-            </a>
-            {" · "}
-            <span>Javier Mora</span>
-            {" · "}
-            <span className="text-white/60">Diseñamos Apps, Softwares o websites</span>
-          </p>
+        <div className="mx-auto max-w-6xl px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-1.5 text-[10px] text-white/50 text-center sm:text-left">
+          <div className="flex flex-col gap-0.5">
+            <p>
+              Creado por{" "}
+              <a
+                href="https://uxearch.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white/80 hover:text-[var(--stage-yellow)] transition-colors"
+              >
+                uxearch
+              </a>
+              {" — Javier Mora"}
+            </p>
+            <p className="text-white/60">
+              Diseñamos Apps, Softwares o Websites{" "}
+              <a
+                href="mailto:hello@uxearch.com"
+                className="underline decoration-white/40 underline-offset-2 hover:text-[var(--stage-yellow)] hover:decoration-[var(--stage-yellow)] transition-colors"
+              >
+                [Contacto]
+              </a>
+            </p>
+          </div>
           <p className="text-white/30">© {year}</p>
         </div>
       </div>

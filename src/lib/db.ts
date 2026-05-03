@@ -310,6 +310,7 @@ export type Listing = {
 export type FeedItem = Listing & {
   sticker: Pick<Sticker, "code" | "name" | "team_code" | "type" | "number">;
   username: string | null;
+  display_name: string | null;
 };
 
 // ────────────────────────────────────────────────────────────
@@ -387,28 +388,42 @@ export async function fetchActiveListings(
   }>;
 
   const userIds = [...new Set(rows.map((r) => r.user_id))];
-  const usernames = new Map<string, string | null>();
+  const profileMap = new Map<
+    string,
+    { username: string | null; display_name: string | null }
+  >();
 
   if (userIds.length > 0) {
     const { data: profiles } = await supabase
       .from("profiles")
-      .select("id, username")
+      .select("id, username, display_name")
       .in("id", userIds);
-    for (const p of (profiles ?? []) as Array<{ id: string; username: string | null }>) {
-      usernames.set(p.id, p.username);
+    for (const p of (profiles ?? []) as Array<{
+      id: string;
+      username: string | null;
+      display_name: string | null;
+    }>) {
+      profileMap.set(p.id, {
+        username: p.username,
+        display_name: p.display_name,
+      });
     }
   }
 
-  return rows.map((row) => ({
-    id: row.id,
-    user_id: row.user_id,
-    sticker_id: row.sticker_id,
-    type: row.type,
-    price_cop: row.price_cop,
-    status: row.status,
-    created_at: row.created_at,
-    photo_url: row.photo_url,
-    sticker: row.sticker,
-    username: usernames.get(row.user_id) ?? null,
-  }));
+  return rows.map((row) => {
+    const p = profileMap.get(row.user_id);
+    return {
+      id: row.id,
+      user_id: row.user_id,
+      sticker_id: row.sticker_id,
+      type: row.type,
+      price_cop: row.price_cop,
+      status: row.status,
+      created_at: row.created_at,
+      photo_url: row.photo_url,
+      sticker: row.sticker,
+      username: p?.username ?? null,
+      display_name: p?.display_name ?? null,
+    };
+  });
 }

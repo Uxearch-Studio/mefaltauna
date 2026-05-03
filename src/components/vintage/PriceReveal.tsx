@@ -16,6 +16,7 @@ type Props = { className?: string };
 
 export function PriceReveal({ className = "" }: Props) {
   const t = useTranslations("pricing.benefits");
+  const tp = useTranslations("pricing");
   const [progress, setProgress] = useState(0);
   const [open, setOpen] = useState(false);
 
@@ -73,7 +74,10 @@ export function PriceReveal({ className = "" }: Props) {
             chat: t("chat"),
             unlimited: t("unlimited"),
             noCommission: t("noCommission"),
+            albumProgress: t("albumProgress"),
+            findMissing: t("findMissing"),
           }}
+          ctaLabel={tp("passCta")}
         />
       )}
 
@@ -115,10 +119,10 @@ export function PriceReveal({ className = "" }: Props) {
         <button
           type="button"
           onClick={reset}
-          className="absolute top-3 right-3 size-9 rounded-full bg-[#1a0b3d]/85 text-[var(--stage-yellow)] flex items-center justify-center hover:bg-[#1a0b3d] transition-colors backdrop-blur z-10"
+          className="absolute top-3 left-3 size-7 rounded-full bg-white/15 text-white/80 flex items-center justify-center hover:bg-white/25 transition-colors backdrop-blur z-20"
           aria-label="Cerrar el sobre"
         >
-          <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5" />
           </svg>
         </button>
@@ -287,14 +291,23 @@ function PackWrapper({ torn }: { torn: number }) {
 
 function GoldCollectorCard({
   labels,
+  ctaLabel,
 }: {
-  labels: { full: string; chat: string; unlimited: string; noCommission: string };
+  labels: {
+    full: string;
+    chat: string;
+    unlimited: string;
+    noCommission: string;
+    albumProgress: string;
+    findMissing: string;
+  };
+  ctaLabel: string;
 }) {
   return (
     <div className="absolute inset-0 flex flex-col">
       <div className="relative px-3 pt-3 pb-2 foil-holo">
         <div className="absolute inset-0 bg-gradient-to-br from-white/30 via-transparent to-black/30" />
-        <div className="relative flex items-center justify-between text-[#1a0b3d]">
+        <div className="relative flex items-center justify-between text-[#1a0b3d] pl-10">
           <span className="px-2 py-0.5 rounded-md bg-[#1a0b3d] text-[var(--stage-yellow)] text-[10px] font-bold tracking-widest">
             COP
           </span>
@@ -304,25 +317,51 @@ function GoldCollectorCard({
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col items-center justify-center gap-3 px-4 py-3 relative bg-[#1a0b3d] text-white">
+      <div className="flex-1 flex flex-col gap-2.5 px-4 py-3 relative bg-[#1a0b3d] text-white">
         <div
           aria-hidden
           className="absolute inset-2 rounded-xl pointer-events-none"
           style={{
             background:
               "linear-gradient(135deg, #ffd97a 0%, transparent 30%, transparent 70%, #ffd97a 100%)",
-            opacity: 0.25,
+            opacity: 0.2,
           }}
         />
 
-        <div className="relative flex flex-col items-center gap-1">
-          <p className="text-[10px] uppercase tracking-widest text-[var(--stage-yellow)]">
-            Pase único
-          </p>
+        {/* Header: brand + price */}
+        <div className="relative flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 min-w-0">
+            <svg
+              viewBox="0 0 32 32"
+              className="size-7 text-[var(--stage-yellow)] shrink-0"
+              aria-hidden
+            >
+              <g fill="currentColor">
+                <rect x="3" y="6" width="7" height="9" rx="1.4" />
+                <rect x="12.5" y="6" width="7" height="9" rx="1.4" />
+                <rect x="22" y="6" width="7" height="9" rx="1.4" />
+                <rect x="3" y="17" width="7" height="9" rx="1.4" />
+                <rect x="22" y="17" width="7" height="9" rx="1.4" />
+              </g>
+              <rect
+                x="12.5" y="17" width="7" height="9" rx="1.4"
+                fill="none" stroke="currentColor" strokeWidth="1.4"
+                strokeDasharray="2 1.6"
+              />
+            </svg>
+            <div className="flex flex-col min-w-0">
+              <span className="font-display text-sm md:text-base lowercase leading-none truncate text-white">
+                mefaltauna
+              </span>
+              <span className="text-[9px] uppercase tracking-widest text-[var(--stage-yellow)] mt-0.5">
+                Pase único
+              </span>
+            </div>
+          </div>
           <p
-            className="font-display tabular-nums leading-none"
+            className="font-display tabular-nums leading-none shrink-0"
             style={{
-              fontSize: "clamp(2.25rem, 9vw, 3.75rem)",
+              fontSize: "clamp(1.5rem, 6vw, 2.25rem)",
               textShadow: "2px 2px 0 rgba(0,0,0,0.4)",
               color: "var(--stage-yellow)",
             }}
@@ -331,20 +370,32 @@ function GoldCollectorCard({
           </p>
         </div>
 
-        <ul className="relative flex flex-col gap-1.5 mt-1 text-[11px] md:text-xs w-full">
-          {[labels.full, labels.chat, labels.unlimited, labels.noCommission].map(
-            (label, i) => (
-              <li key={i} className="flex items-start gap-2">
-                <span className="mt-0.5 size-3.5 rounded-full bg-[var(--stage-yellow)] text-[#1a0b3d] flex items-center justify-center shrink-0">
-                  <svg viewBox="0 0 16 16" className="size-2.5" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M3 8 L7 12 L13 4" />
-                  </svg>
-                </span>
-                <span className="leading-tight text-white/90">{label}</span>
-              </li>
-            ),
-          )}
+        <ul className="relative grid grid-cols-1 gap-1.5 text-[11px] md:text-xs w-full">
+          {[
+            labels.full,
+            labels.chat,
+            labels.unlimited,
+            labels.noCommission,
+            labels.albumProgress,
+            labels.findMissing,
+          ].map((label, i) => (
+            <li key={i} className="flex items-start gap-2">
+              <span className="mt-0.5 size-3.5 rounded-full bg-emerald-400 text-[#0a2a18] flex items-center justify-center shrink-0">
+                <svg viewBox="0 0 16 16" className="size-2.5" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 8 L7 12 L13 4" />
+                </svg>
+              </span>
+              <span className="leading-tight text-white/90">{label}</span>
+            </li>
+          ))}
         </ul>
+
+        <a
+          href="/sign-in"
+          className="relative mt-auto h-10 rounded-full bg-[var(--stage-yellow)] text-[#1a0b3d] text-xs font-bold uppercase tracking-widest flex items-center justify-center hover:opacity-90 transition-opacity shadow-lg shadow-black/30"
+        >
+          {ctaLabel}
+        </a>
       </div>
     </div>
   );

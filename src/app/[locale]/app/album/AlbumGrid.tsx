@@ -22,7 +22,12 @@ export function AlbumGrid({ catalog, initialInventory, locale }: Props) {
   const [inventory, setInventory] = useState(initialInventory);
   const [filter, setFilter] = useState<FilterId>("all");
   const [pops, setPops] = useState<Pop[]>([]);
-  const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
+  const [collapsed, setCollapsed] = useState<Set<string>>(() => {
+    // Default: every section collapsed. Users open what they want.
+    const init = new Set<string>();
+    for (const g of groupByPage(catalog)) init.add(g.key);
+    return init;
+  });
   const [, startTransition] = useTransition();
 
   const grouped = useMemo(() => groupByPage(catalog), [catalog]);
@@ -160,11 +165,31 @@ function order(key: string) {
   return 100;
 }
 
+// FIFA country code → emoji flag (regional indicator pair).
+// FIFA codes don't always match ISO-3166 alpha-2; this map covers
+// the World Cup 2026 qualified nations.
+const TEAM_FLAGS: Record<string, string> = {
+  ARG: "🇦🇷", BRA: "🇧🇷", URU: "🇺🇾", PAR: "🇵🇾", ECU: "🇪🇨",
+  COL: "🇨🇴", VEN: "🇻🇪", CHI: "🇨🇱", BOL: "🇧🇴", PER: "🇵🇪",
+  USA: "🇺🇸", MEX: "🇲🇽", CAN: "🇨🇦", CRC: "🇨🇷", PAN: "🇵🇦",
+  JAM: "🇯🇲", HON: "🇭🇳",
+  ESP: "🇪🇸", FRA: "🇫🇷", GER: "🇩🇪", POR: "🇵🇹", ENG: "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+  NED: "🇳🇱", BEL: "🇧🇪", CRO: "🇭🇷", POL: "🇵🇱", DEN: "🇩🇰",
+  SUI: "🇨🇭", AUT: "🇦🇹", SWE: "🇸🇪", NOR: "🇳🇴", SCO: "🏴󠁧󠁢󠁳󠁣󠁴󠁿",
+  JPN: "🇯🇵", KOR: "🇰🇷", AUS: "🇦🇺", IRN: "🇮🇷", KSA: "🇸🇦",
+  QAT: "🇶🇦", UAE: "🇦🇪", IRQ: "🇮🇶", UZB: "🇺🇿",
+  MAR: "🇲🇦", SEN: "🇸🇳", TUN: "🇹🇳", EGY: "🇪🇬", ALG: "🇩🇿",
+  GHA: "🇬🇭", CIV: "🇨🇮", CMR: "🇨🇲", NGA: "🇳🇬", RSA: "🇿🇦",
+  NZL: "🇳🇿",
+};
+
 function pageTitle(key: string, sample: Sticker) {
   if (key === "GROUPS") return "Grupos";
   if (key === "STADIUMS") return "Estadios";
   if (key === "OTHER") return "Otros";
-  return sample.team_code ?? key;
+  const flag = TEAM_FLAGS[key];
+  const name = sample.team_code ?? key;
+  return flag ? `${flag} ${name}` : name;
 }
 
 function pageSubtitle(key: string) {

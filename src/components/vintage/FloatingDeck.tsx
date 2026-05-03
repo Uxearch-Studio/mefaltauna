@@ -40,10 +40,11 @@ export function FloatingDeck({
   const positions =
     layout === "cta"
       ? [
-          // CTA: spread across the whole final section, lower opacity
-          "absolute right-[6%] top-[12%] anim-float-1 opacity-95",
-          "absolute left-[8%] top-[20%] anim-float-2 opacity-85",
-          "absolute right-[28%] bottom-[14%] anim-float-3 opacity-90",
+          // CTA: spread far across the whole final section, very faint —
+          // pure backdrop motion behind the headline.
+          "absolute right-[-6%] top-[8%] anim-float-1 opacity-10",
+          "absolute left-[-4%] top-[28%] anim-float-2 opacity-10",
+          "absolute right-[34%] bottom-[6%] anim-float-3 opacity-10",
         ]
       : [
           "absolute right-[-4%] md:right-[8%] bottom-[6%] anim-float-1",
@@ -64,7 +65,7 @@ export function FloatingDeck({
             name={p.name}
             subtitle={p.subtitle}
             context={p.context}
-            size="md"
+            size={layout === "cta" ? "lg" : "md"}
           />
         </div>
       ))}
