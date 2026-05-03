@@ -4,7 +4,7 @@ import { Pricing } from "@/components/vintage/Pricing";
 import { StickerPreview } from "@/components/vintage/StickerPreview";
 import { FinalCta } from "@/components/vintage/FinalCta";
 import { Countdown } from "@/components/vintage/Countdown";
-import { MeshGradient } from "@/components/vintage/MeshGradient";
+import { StadiumScene } from "@/components/vintage/StadiumScene";
 import { HeroSpotlight } from "@/components/vintage/HeroSpotlight";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth";
@@ -23,14 +23,14 @@ export default async function HomePage({
 
   return (
     <main>
-      {/* HERO — mesh gradient + grain + spotlight card */}
-      <section className="relative overflow-hidden stage-purple grain min-h-[78vh] flex items-center">
-        <MeshGradient />
+      {/* HERO — cinematic stadium scene */}
+      <section className="relative overflow-hidden text-white grain min-h-[82vh] flex items-center">
+        <StadiumScene />
         <HeroSpotlight />
 
-        <div className="relative mx-auto max-w-6xl px-6 pt-20 pb-24 flex flex-col md:items-start items-center md:text-left text-center gap-6 w-full z-10">
+        <div className="relative mx-auto max-w-6xl px-6 pt-20 pb-32 flex flex-col md:items-start items-center md:text-left text-center gap-6 w-full z-10">
           <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur text-xs font-semibold uppercase tracking-widest">
-            <span className="size-1.5 rounded-full bg-[var(--stage-yellow)]" />
+            <span className="size-1.5 rounded-full bg-[var(--stage-yellow)] animate-pulse" />
             {t("kicker")}
           </span>
 
@@ -44,14 +44,14 @@ export default async function HomePage({
             {t("title")}
           </h1>
 
-          <p className="text-base md:text-lg text-white/75 max-w-md leading-relaxed">
+          <p className="text-base md:text-lg text-white/80 max-w-md leading-relaxed">
             {t("subtitle")}
           </p>
 
           <div className="flex flex-row gap-3 mt-2">
             <Link
               href="/sign-in"
-              className="h-12 px-6 inline-flex items-center justify-center rounded-full bg-[var(--stage-yellow)] text-[var(--stage-bg)] text-sm font-bold hover:opacity-90 transition-opacity shadow-lg shadow-[var(--stage-yellow)]/20 whitespace-nowrap"
+              className="h-12 px-6 inline-flex items-center justify-center rounded-full bg-[var(--stage-yellow)] text-[var(--stage-bg)] text-sm font-bold hover:opacity-90 transition-opacity shadow-lg shadow-[var(--stage-yellow)]/30 whitespace-nowrap"
             >
               {t("ctaPrimary")}
             </Link>

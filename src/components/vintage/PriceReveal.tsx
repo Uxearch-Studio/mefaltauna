@@ -65,20 +65,22 @@ export function PriceReveal({ className = "" }: Props) {
     <div
       className={`relative select-none rounded-2xl overflow-hidden border border-border shadow-2xl shadow-accent/30 ${className}`}
     >
-      {/* Gold collector card behind the wrapper */}
-      <GoldCollectorCard
-        labels={{
-          full: t("full"),
-          chat: t("chat"),
-          unlimited: t("unlimited"),
-          noCommission: t("noCommission"),
-        }}
-      />
+      {/* Gold collector card behind the wrapper — only renders when open */}
+      {open && (
+        <GoldCollectorCard
+          labels={{
+            full: t("full"),
+            chat: t("chat"),
+            unlimited: t("unlimited"),
+            noCommission: t("noCommission"),
+          }}
+        />
+      )}
 
       {/* Wrapper that tears as the slider progresses */}
       <div
         className="absolute inset-0 pointer-events-none"
-        style={{ opacity: open ? 0 : 1, transition: "opacity 220ms" }}
+        style={{ opacity: open ? 0 : 1, transition: "opacity 320ms" }}
       >
         <PackWrapper torn={progress} />
 
@@ -205,58 +207,81 @@ function PackWrapper({ torn }: { torn: number }) {
   },${92 - t * 0.4} L ${30 - t * 0.5},100 L 0,${100 - t * 0.6} Z`;
 
   return (
-    <svg
-      viewBox="0 0 100 140"
-      preserveAspectRatio="none"
-      className="w-full h-full pointer-events-none"
-      aria-hidden
-    >
-      <defs>
-        <linearGradient id="reveal-wrap-fill" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%"   stopColor="#ffd97a" />
-          <stop offset="50%"  stopColor="#ffc72c" />
-          <stop offset="100%" stopColor="#a17a30" />
-        </linearGradient>
-        <linearGradient id="reveal-wrap-shine" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%"   stopColor="rgba(255,255,255,0.6)" />
-          <stop offset="100%" stopColor="rgba(255,255,255,0)" />
-        </linearGradient>
-      </defs>
-      <path d={path} fill="url(#reveal-wrap-fill)" />
-      <rect x="0" y="0" width="100" height="50" fill="url(#reveal-wrap-shine)" />
-      <text
-        x="50" y="40"
-        textAnchor="middle"
-        fontFamily="var(--font-display)"
-        fontSize="10"
-        fill="#1a0b3d"
-        letterSpacing="2"
+    <div className="absolute inset-0 pointer-events-none">
+      {/* Yellow tonal background — multiple layered gradients */}
+      <svg
+        viewBox="0 0 100 140"
+        preserveAspectRatio="none"
+        className="w-full h-full"
+        aria-hidden
       >
-        mefaltauna
-      </text>
-      <text
-        x="50" y="55"
-        textAnchor="middle"
-        fontFamily="var(--font-mono)"
-        fontSize="5"
-        fill="#1a0b3d"
-        opacity="0.7"
-        letterSpacing="3"
-      >
-        PASE ÚNICO
-      </text>
-      <text
-        x="50" y="70"
-        textAnchor="middle"
-        fontFamily="var(--font-mono)"
-        fontSize="4"
-        fill="#1a0b3d"
-        opacity="0.5"
-        letterSpacing="3"
-      >
-        EDICIÓN MUNDIAL 26
-      </text>
-    </svg>
+        <defs>
+          <linearGradient id="reveal-wrap-fill" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%"   stopColor="#fff3a0" />
+            <stop offset="40%"  stopColor="#ffd44a" />
+            <stop offset="70%"  stopColor="#ffc72c" />
+            <stop offset="100%" stopColor="#c4901c" />
+          </linearGradient>
+          <linearGradient id="reveal-wrap-shine" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stopColor="rgba(255,255,255,0.7)" />
+            <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+          </linearGradient>
+          <radialGradient id="reveal-wrap-glow" cx="50%" cy="40%" r="60%">
+            <stop offset="0%"   stopColor="rgba(255,255,255,0.4)" />
+            <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+          </radialGradient>
+        </defs>
+        <path d={path} fill="url(#reveal-wrap-fill)" />
+        <path d={path} fill="url(#reveal-wrap-shine)" opacity="0.6" />
+        <path d={path} fill="url(#reveal-wrap-glow)" />
+      </svg>
+
+      {/* HTML content layered on top — logo, brand, title, tagline */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 pt-6 pb-20 gap-2">
+        {/* Logo mark */}
+        <svg
+          viewBox="0 0 32 32"
+          className="size-10 md:size-12 text-[#1a0b3d]"
+          aria-hidden
+        >
+          <g fill="currentColor">
+            <rect x="3" y="6" width="7" height="9" rx="1.4" />
+            <rect x="12.5" y="6" width="7" height="9" rx="1.4" />
+            <rect x="22" y="6" width="7" height="9" rx="1.4" />
+            <rect x="3" y="17" width="7" height="9" rx="1.4" />
+            <rect x="22" y="17" width="7" height="9" rx="1.4" />
+          </g>
+          <rect
+            x="12.5" y="17" width="7" height="9" rx="1.4"
+            fill="none" stroke="currentColor" strokeWidth="1.4"
+            strokeDasharray="2 1.6"
+          />
+        </svg>
+
+        {/* Wordmark */}
+        <span className="font-display text-2xl md:text-3xl tracking-tight lowercase text-[#1a0b3d]">
+          mefaltauna
+        </span>
+
+        {/* Title — Pase único */}
+        <p className="mt-3 text-[10px] md:text-xs font-bold uppercase tracking-[0.25em] text-[#1a0b3d]/70">
+          Pase único
+        </p>
+        <p
+          className="font-display text-base md:text-xl text-[#1a0b3d] leading-tight max-w-[14ch]"
+          style={{ textShadow: "1px 1px 0 rgba(255,255,255,0.4)" }}
+        >
+          Encuentra las que te faltan
+        </p>
+
+        {/* Bottom seal */}
+        <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-[8px] md:text-[9px] uppercase tracking-[0.25em] text-[#1a0b3d]/50">
+          <span>Edición</span>
+          <span>· Mundial 2026 ·</span>
+          <span>★</span>
+        </div>
+      </div>
+    </div>
   );
 }
 

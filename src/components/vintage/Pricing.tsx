@@ -38,7 +38,7 @@ export function Pricing() {
 
         {/* Pack — same dimensions as the Luis Díaz card */}
         <div className="flex justify-center md:justify-end">
-          <PriceReveal className="w-64 md:w-80 aspect-[3/4]" />
+          <PriceReveal className="w-72 md:w-96 aspect-[3/4]" />
         </div>
       </div>
     </section>

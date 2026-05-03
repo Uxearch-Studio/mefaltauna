@@ -62,21 +62,23 @@ export function Footer() {
 
       {/* Hairline + tiny credit */}
       <div className="border-t border-white/10">
-        <div className="mx-auto max-w-6xl px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-1 text-[10px] text-white/40">
+        <div className="mx-auto max-w-6xl px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-1 text-[10px] text-white/50 text-center sm:text-left">
           <p>
-            {t("credit")}{" "}
+            Creado por{" "}
             <a
               href="https://uxearch.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-white/60 hover:text-[var(--stage-yellow)] transition-colors"
+              className="text-white/80 hover:text-[var(--stage-yellow)] transition-colors"
             >
-              uxearch.com
+              uxearch
             </a>
             {" · "}
             <span>Javier Mora</span>
+            {" · "}
+            <span className="text-white/60">Diseñamos Apps, Softwares o websites</span>
           </p>
-          <p>© {year} · todos los derechos reservados</p>
+          <p className="text-white/30">© {year}</p>
         </div>
       </div>
     </footer>
