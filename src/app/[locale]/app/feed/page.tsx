@@ -1,6 +1,7 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { AppTopBar } from "@/components/vintage/AppTopBar";
 import { LiveFeed } from "@/components/vintage/LiveFeed";
+import { requireUser } from "@/lib/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { fetchActiveListings, fetchCatalog } from "@/lib/db";
 
@@ -13,6 +14,7 @@ export default async function FeedPage({
   setRequestLocale(locale);
   const t = await getTranslations("feed");
 
+  const user = await requireUser({ locale, next: `/${locale}/app/feed` });
   const supabase = await createSupabaseServerClient();
   const [listings, catalog] = await Promise.all([
     supabase ? fetchActiveListings(supabase, 50) : Promise.resolve([]),
@@ -33,7 +35,12 @@ export default async function FeedPage({
       <AppTopBar title={t("title")} />
       <div className="mx-auto max-w-3xl px-4 py-6 flex flex-col gap-5">
         <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
-        <LiveFeed initial={listings} catalog={lightCatalog} locale={locale} />
+        <LiveFeed
+          initial={listings}
+          catalog={lightCatalog}
+          locale={locale}
+          currentUserId={user.id}
+        />
       </div>
     </>
   );

@@ -1,0 +1,73 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+
+export type ProfileEditState = {
+  ok?: boolean;
+  error?:
+    | "not_configured"
+    | "unauthenticated"
+    | "missing_fields"
+    | "invalid_phone"
+    | "db_error";
+};
+
+export async function updateProfileAction(
+  prev: ProfileEditState | undefined,
+  formData: FormData,
+): Promise<ProfileEditState> {
+  const supabase = await createSupabaseServerClient();
+  if (!supabase) return { error: "not_configured" };
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "unauthenticated" };
+
+  const firstName = String(formData.get("first_name") ?? "").trim();
+  const lastName = String(formData.get("last_name") ?? "").trim();
+  const nationalId = String(formData.get("national_id") ?? "").trim();
+  const city = String(formData.get("city") ?? "").trim();
+  const whatsapp = String(formData.get("whatsapp") ?? "").trim();
+  const username = String(formData.get("username") ?? "").trim();
+  const avatarUrl = String(formData.get("avatar_url") ?? "").trim() || null;
+  const locale = String(formData.get("locale") ?? "es");
+
+  if (!firstName || !lastName || !nationalId || !city || !whatsapp) {
+    return { error: "missing_fields" };
+  }
+
+  const idDigits = nationalId.replace(/\D/g, "");
+  const phoneDigits = whatsapp.replace(/\D/g, "");
+  if (phoneDigits.length < 7) return { error: "invalid_phone" };
+
+  const contactRes = await supabase.from("profile_contact").upsert(
+    {
+      user_id: user.id,
+      first_name: firstName,
+      last_name: lastName,
+      national_id: idDigits,
+      whatsapp,
+      city,
+    },
+    { onConflict: "user_id" },
+  );
+  if (contactRes.error) return { error: "db_error" };
+
+  const profileUpdate: Record<string, unknown> = {
+    city,
+    display_name: `${firstName} ${lastName.charAt(0)}.`,
+  };
+  if (username) profileUpdate.username = username;
+  if (avatarUrl) profileUpdate.avatar_url = avatarUrl;
+
+  const profileRes = await supabase
+    .from("profiles")
+    .update(profileUpdate)
+    .eq("id", user.id);
+  if (profileRes.error) return { error: "db_error" };
+
+  revalidatePath(`/${locale}/app/profile`);
+  return { ok: true };
+}

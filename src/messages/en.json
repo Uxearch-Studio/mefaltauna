@@ -224,14 +224,48 @@
   "inbox": {
     "title": "Messages",
     "emptyTitle": "No messages yet",
-    "emptyBody": "When someone writes you about a sticker, or you reach out to someone in the feed, your conversations show up here."
+    "emptyBody": "When someone writes you about a sticker, or you reach out to someone in the feed, your conversations show up here.",
+    "unknownUser": "User",
+    "noMessagesYet": "No messages yet",
+    "aboutSticker": "Sticker {code}",
+    "back": "Back",
+    "startConversation": "Say hi and start the deal.",
+    "inputPlaceholder": "Type a message…",
+    "send": "Send",
+    "sendErrors": {
+      "empty": "Empty message",
+      "too_long": "Message too long",
+      "not_participant": "You can't send to this conversation",
+      "not_configured": "Service unavailable",
+      "db_error": "Couldn't send. Try again."
+    }
   },
   "profile": {
-    "title": "Profile",
+    "title": "My profile",
     "noUsername": "No username yet",
+    "usernameLabel": "Public name",
+    "usernameHint": "How others see you (optional)",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "nationalId": "ID number",
+    "city": "City",
+    "whatsapp": "WhatsApp",
+    "emailLabel": "Email",
     "language": "Language",
     "appearance": "Appearance",
-    "signOut": "Sign out"
+    "save": "Save changes",
+    "saving": "Saving…",
+    "saved": "✓ Saved",
+    "reputation": "Reputation",
+    "trustedSeller": "Verified seller",
+    "signOut": "Sign out",
+    "errors": {
+      "not_configured": "Service unavailable",
+      "unauthenticated": "Sign in",
+      "missing_fields": "Fill in every required field",
+      "invalid_phone": "Invalid WhatsApp number",
+      "db_error": "Couldn't save. Try again."
+    }
   },
   "feed": {
     "kicker": "Live",
@@ -240,13 +274,27 @@
     "live": "Connected live",
     "connecting": "Connecting…",
     "empty": "No listings yet. Be the first.",
+    "noResults": "No listings match those filters.",
     "publishFirst": "Publish a sticker",
     "contact": "Message",
+    "opening": "Opening…",
+    "yourListing": "Your listing",
+    "expandPhoto": "Expand photo",
+    "countShown": "{count} of {total}",
+    "filterType": {
+      "all": "All",
+      "trade": "Trade",
+      "sale": "Sale"
+    },
+    "filterAllTeams": "All teams",
+    "filterNumber": "Number",
+    "filterMaxPrice": "Max price",
+    "clearFilters": "Clear filters",
     "someone": "Someone",
     "actions": {
-      "trade": "offered for trade",
-      "sale": "listed for sale",
-      "both": "listed for trade or sale"
+      "trade": "Trade",
+      "sale": "Sale",
+      "both": "Trade or sale"
     }
   },
   "matches": {

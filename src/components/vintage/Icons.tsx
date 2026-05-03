@@ -51,15 +51,16 @@ export function AlbumIcon({ className }: IconProps) {
 }
 
 /**
- * Publish → camera (since publishing now includes a photo capture).
- * Stays unmistakable as a "create" action via the saffron bg.
+ * Publish → sticker card with a peeled corner and a + inside.
+ * Reads as "list a new sticker", not as a camera.
  */
 export function PublishIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" className={base(className)} fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 7h3l1.5-2h7L17 7h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1Z" />
-      <circle cx="12" cy="13" r="3.5" />
-      <path d="M12 11.5v3M10.5 13h3" />
+      <path d="M5 4h11l3 3v12.5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z" />
+      <path d="M16 4v3h3" />
+      <line x1="12" y1="11" x2="12" y2="17" />
+      <line x1="9" y1="14" x2="15" y2="14" />
     </svg>
   );
 }

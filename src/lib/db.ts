@@ -52,6 +52,195 @@ export async function fetchOwnContact(
   return (data as ProfileContact | null) ?? null;
 }
 
+// ────────────────────────────────────────────────────────────
+// Conversations & messages (inbox)
+// ────────────────────────────────────────────────────────────
+
+export type Conversation = {
+  id: string;
+  user_a: string;
+  user_b: string;
+  listing_id: string | null;
+  last_message_at: string;
+  created_at: string;
+};
+
+export type Message = {
+  id: string;
+  conversation_id: string;
+  sender_id: string;
+  body: string;
+  created_at: string;
+};
+
+export type ConversationListItem = {
+  id: string;
+  other_user_id: string;
+  other_username: string | null;
+  other_avatar_url: string | null;
+  listing_id: string | null;
+  listing_sticker_code: string | null;
+  last_message_at: string;
+  last_message_body: string | null;
+};
+
+export async function fetchUserConversations(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<ConversationListItem[]> {
+  const { data: convs, error } = await supabase
+    .from("conversations")
+    .select("id, user_a, user_b, listing_id, last_message_at")
+    .or(`user_a.eq.${userId},user_b.eq.${userId}`)
+    .order("last_message_at", { ascending: false })
+    .limit(60);
+  if (error || !convs) return [];
+
+  const otherIds = [
+    ...new Set(
+      convs.map((c) => (c.user_a === userId ? c.user_b : c.user_a) as string),
+    ),
+  ];
+  const listingIds = [
+    ...new Set(convs.map((c) => c.listing_id).filter(Boolean) as string[]),
+  ];
+  const conversationIds = convs.map((c) => c.id);
+
+  const [profilesRes, listingsRes, lastMessagesRes] = await Promise.all([
+    otherIds.length
+      ? supabase
+          .from("profiles")
+          .select("id, username, avatar_url")
+          .in("id", otherIds)
+      : Promise.resolve({ data: [] as Array<{ id: string; username: string | null; avatar_url: string | null }> }),
+    listingIds.length
+      ? supabase
+          .from("listings")
+          .select(
+            "id, sticker:sticker_catalog!listings_sticker_id_fkey(code)",
+          )
+          .in("id", listingIds)
+      : Promise.resolve({ data: [] as Array<{ id: string; sticker: { code: string } | null }> }),
+    conversationIds.length
+      ? supabase
+          .from("messages")
+          .select("conversation_id, body, created_at")
+          .in("conversation_id", conversationIds)
+          .order("created_at", { ascending: false })
+      : Promise.resolve({ data: [] as Array<{ conversation_id: string; body: string; created_at: string }> }),
+  ]);
+
+  const profileMap = new Map<
+    string,
+    { username: string | null; avatar_url: string | null }
+  >();
+  for (const p of (profilesRes.data ?? []) as Array<{
+    id: string;
+    username: string | null;
+    avatar_url: string | null;
+  }>) {
+    profileMap.set(p.id, { username: p.username, avatar_url: p.avatar_url });
+  }
+
+  const listingMap = new Map<string, string | null>();
+  for (const l of (listingsRes.data ?? []) as Array<{
+    id: string;
+    sticker: { code: string } | null;
+  }>) {
+    listingMap.set(l.id, l.sticker?.code ?? null);
+  }
+
+  const lastMsgByConv = new Map<string, string>();
+  for (const m of (lastMessagesRes.data ?? []) as Array<{
+    conversation_id: string;
+    body: string;
+  }>) {
+    if (!lastMsgByConv.has(m.conversation_id)) {
+      lastMsgByConv.set(m.conversation_id, m.body);
+    }
+  }
+
+  return convs.map((c) => {
+    const other = c.user_a === userId ? c.user_b : c.user_a;
+    const p = profileMap.get(other);
+    return {
+      id: c.id as string,
+      other_user_id: other as string,
+      other_username: p?.username ?? null,
+      other_avatar_url: p?.avatar_url ?? null,
+      listing_id: c.listing_id as string | null,
+      listing_sticker_code: c.listing_id
+        ? (listingMap.get(c.listing_id as string) ?? null)
+        : null,
+      last_message_at: c.last_message_at as string,
+      last_message_body: lastMsgByConv.get(c.id as string) ?? null,
+    };
+  });
+}
+
+export async function fetchConversation(
+  supabase: SupabaseClient,
+  conversationId: string,
+  userId: string,
+): Promise<{
+  conversation: Conversation;
+  messages: Message[];
+  otherUser: {
+    id: string;
+    username: string | null;
+    avatar_url: string | null;
+  } | null;
+  listingStickerCode: string | null;
+} | null> {
+  const { data: conv } = await supabase
+    .from("conversations")
+    .select("id, user_a, user_b, listing_id, last_message_at, created_at")
+    .eq("id", conversationId)
+    .maybeSingle();
+  if (!conv) return null;
+  if (conv.user_a !== userId && conv.user_b !== userId) return null;
+
+  const otherId = conv.user_a === userId ? conv.user_b : conv.user_a;
+
+  const [{ data: msgs }, { data: profile }, listingRes] = await Promise.all([
+    supabase
+      .from("messages")
+      .select("id, conversation_id, sender_id, body, created_at")
+      .eq("conversation_id", conversationId)
+      .order("created_at", { ascending: true })
+      .limit(200),
+    supabase
+      .from("profiles")
+      .select("id, username, avatar_url")
+      .eq("id", otherId)
+      .maybeSingle(),
+    conv.listing_id
+      ? supabase
+          .from("listings")
+          .select(
+            "id, sticker:sticker_catalog!listings_sticker_id_fkey(code)",
+          )
+          .eq("id", conv.listing_id)
+          .maybeSingle()
+      : Promise.resolve({ data: null as { sticker: { code: string } | null } | null }),
+  ]);
+
+  return {
+    conversation: conv as Conversation,
+    messages: (msgs ?? []) as Message[],
+    otherUser: profile
+      ? {
+          id: (profile as { id: string }).id,
+          username: (profile as { username: string | null }).username,
+          avatar_url: (profile as { avatar_url: string | null }).avatar_url,
+        }
+      : null,
+    listingStickerCode:
+      (listingRes.data as { sticker: { code: string } | null } | null)?.sticker
+        ?.code ?? null,
+  };
+}
+
 export type ListingType = "trade" | "sale" | "both";
 export type ListingStatus = "active" | "sold" | "cancelled";
 

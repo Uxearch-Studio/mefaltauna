@@ -37,7 +37,8 @@ export function BottomNav() {
   return (
     <nav
       aria-label="App navigation"
-      className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 surface-glass rounded-full px-2 py-2 shadow-lg shadow-black/5"
+      className="fixed left-1/2 -translate-x-1/2 z-40 surface-glass rounded-full px-2 py-2 shadow-xl shadow-black/10"
+      style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 1rem)" }}
     >
       <ul className="flex items-center gap-1">
         {TABS.map((tab) => {
@@ -54,17 +55,20 @@ export function BottomNav() {
                 aria-label={t(tab.key)}
                 title={t(tab.key)}
                 className={cn(
-                  "relative flex items-center justify-center size-12 rounded-full transition-colors",
+                  "relative flex flex-col items-center justify-center gap-0.5 size-14 sm:size-12 rounded-full transition-colors",
                   isPublish
-                    ? active
-                      ? "bg-foreground text-background"
-                      : "bg-highlight text-highlight-foreground hover:bg-foreground hover:text-background"
+                    ? cn(
+                        "size-16 sm:size-14 -mx-1",
+                        active
+                          ? "bg-foreground text-background"
+                          : "bg-highlight text-highlight-foreground hover:bg-foreground hover:text-background",
+                      )
                     : active
                       ? "bg-foreground text-background"
                       : "text-muted-foreground hover:text-foreground hover:bg-muted",
                 )}
               >
-                <Icon className="size-5" />
+                <Icon className={isPublish ? "size-6" : "size-5"} />
               </Link>
             </li>
           );

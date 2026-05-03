@@ -224,14 +224,48 @@
   "inbox": {
     "title": "Mensajes",
     "emptyTitle": "Aún no tienes mensajes",
-    "emptyBody": "Cuando alguien te escriba sobre una lámina del feed o cuando tú escribas a alguien, las conversaciones aparecerán acá."
+    "emptyBody": "Cuando alguien te escriba sobre una lámina del feed o cuando tú escribas a alguien, las conversaciones aparecerán acá.",
+    "unknownUser": "Usuario",
+    "noMessagesYet": "Aún no hay mensajes",
+    "aboutSticker": "Lámina {code}",
+    "back": "Volver",
+    "startConversation": "Saluda y empieza el trato.",
+    "inputPlaceholder": "Escribe un mensaje…",
+    "send": "Enviar",
+    "sendErrors": {
+      "empty": "Mensaje vacío",
+      "too_long": "Mensaje muy largo",
+      "not_participant": "No puedes enviar a esta conversación",
+      "not_configured": "Servicio no disponible",
+      "db_error": "No pudimos enviar. Intenta de nuevo."
+    }
   },
   "profile": {
-    "title": "Perfil",
+    "title": "Mi perfil",
     "noUsername": "Sin nombre de usuario",
+    "usernameLabel": "Nombre público",
+    "usernameHint": "Como te ven los demás (opcional)",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "nationalId": "Cédula",
+    "city": "Ciudad",
+    "whatsapp": "WhatsApp",
+    "emailLabel": "Correo",
     "language": "Idioma",
     "appearance": "Apariencia",
-    "signOut": "Cerrar sesión"
+    "save": "Guardar cambios",
+    "saving": "Guardando…",
+    "saved": "✓ Cambios guardados",
+    "reputation": "Reputación",
+    "trustedSeller": "Vendedor verificado",
+    "signOut": "Cerrar sesión",
+    "errors": {
+      "not_configured": "Servicio no disponible",
+      "unauthenticated": "Inicia sesión",
+      "missing_fields": "Completa todos los campos obligatorios",
+      "invalid_phone": "WhatsApp no válido",
+      "db_error": "No pudimos guardar. Intenta de nuevo."
+    }
   },
   "feed": {
     "kicker": "En vivo",
@@ -240,13 +274,27 @@
     "live": "Conectado en vivo",
     "connecting": "Conectando…",
     "empty": "Aún no hay publicaciones. Sé el primero.",
+    "noResults": "Ninguna publicación coincide con esos filtros.",
     "publishFirst": "Publicar lámina",
     "contact": "Escribir",
+    "opening": "Abriendo…",
+    "yourListing": "Tu publicación",
+    "expandPhoto": "Ampliar foto",
+    "countShown": "{count} de {total}",
+    "filterType": {
+      "all": "Todo",
+      "trade": "Cambio",
+      "sale": "Venta"
+    },
+    "filterAllTeams": "Todos los equipos",
+    "filterNumber": "Número",
+    "filterMaxPrice": "Precio máx",
+    "clearFilters": "Limpiar filtros",
     "someone": "Alguien",
     "actions": {
-      "trade": "ofreció para cambio",
-      "sale": "puso a la venta",
-      "both": "publicó para cambio o venta"
+      "trade": "Cambio",
+      "sale": "Venta",
+      "both": "Cambio o venta"
     }
   },
   "matches": {
