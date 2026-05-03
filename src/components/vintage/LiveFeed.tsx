@@ -157,68 +157,63 @@ export function LiveFeed({ initial, catalog, locale, currentUserId }: Props) {
         </span>
       </div>
 
-      {/* Filters */}
-      <div className="surface-card p-3 flex flex-col gap-3">
-        <div className="flex gap-1.5 overflow-x-auto -mx-1 px-1 pb-1">
+      {/* Filters — single horizontal row, scrolls on narrow viewports */}
+      <div className="flex items-center gap-2 overflow-x-auto -mx-4 px-4 pb-1">
+        <select
+          value={filterType}
+          onChange={(e) => setFilterType(e.target.value as FilterType)}
+          className="h-10 px-3 text-xs rounded-full border border-border bg-background focus:outline-none focus:border-accent shrink-0"
+        >
           {(["all", "trade", "sale"] as const).map((opt) => (
-            <button
-              key={opt}
-              type="button"
-              onClick={() => setFilterType(opt)}
-              className={cn(
-                "h-8 px-3 rounded-full text-xs font-medium transition-colors whitespace-nowrap shrink-0",
-                filterType === opt
-                  ? "bg-foreground text-background"
-                  : "bg-muted text-muted-foreground hover:text-foreground",
-              )}
-            >
+            <option key={opt} value={opt}>
               {t(`filterType.${opt}`)}
-            </button>
+            </option>
           ))}
-        </div>
+        </select>
 
-        <div className="grid grid-cols-3 gap-2">
-          <select
-            value={filterTeam}
-            onChange={(e) => setFilterTeam(e.target.value)}
-            className="h-10 px-2 text-xs rounded-lg border border-border bg-background focus:outline-none focus:border-accent min-w-0"
-          >
-            <option value="all">{t("filterAllTeams")}</option>
-            {teamCodes.map((tc) => (
-              <option key={tc} value={tc}>
-                {tc}
-              </option>
-            ))}
-          </select>
-          <input
-            type="text"
-            inputMode="numeric"
-            placeholder={t("filterNumber")}
-            value={filterNumber}
-            onChange={(e) =>
-              setFilterNumber(e.target.value.replace(/\D/g, "").slice(0, 3))
-            }
-            className="h-10 px-3 text-xs rounded-lg border border-border bg-background focus:outline-none focus:border-accent min-w-0"
-          />
-          <input
-            type="text"
-            inputMode="numeric"
-            placeholder={t("filterMaxPrice")}
-            value={filterMaxPrice}
-            onChange={(e) =>
-              setFilterMaxPrice(e.target.value.replace(/\D/g, ""))
-            }
-            className="h-10 px-3 text-xs rounded-lg border border-border bg-background focus:outline-none focus:border-accent min-w-0"
-          />
-        </div>
+        <select
+          value={filterTeam}
+          onChange={(e) => setFilterTeam(e.target.value)}
+          className="h-10 px-3 text-xs rounded-full border border-border bg-background focus:outline-none focus:border-accent shrink-0"
+        >
+          <option value="all">{t("filterAllTeams")}</option>
+          {teamCodes.map((tc) => (
+            <option key={tc} value={tc}>
+              {tc}
+            </option>
+          ))}
+        </select>
+
+        <input
+          type="text"
+          inputMode="numeric"
+          placeholder={t("filterNumber")}
+          value={filterNumber}
+          onChange={(e) =>
+            setFilterNumber(e.target.value.replace(/\D/g, "").slice(0, 3))
+          }
+          className="h-10 w-20 px-3 text-xs rounded-full border border-border bg-background focus:outline-none focus:border-accent shrink-0"
+        />
+
+        <input
+          type="text"
+          inputMode="numeric"
+          placeholder={t("filterMaxPrice")}
+          value={filterMaxPrice}
+          onChange={(e) =>
+            setFilterMaxPrice(e.target.value.replace(/\D/g, ""))
+          }
+          className="h-10 w-28 px-3 text-xs rounded-full border border-border bg-background focus:outline-none focus:border-accent shrink-0"
+        />
 
         {hasFilters && (
           <button
             type="button"
             onClick={clearFilters}
-            className="self-start text-xs text-accent hover:underline"
+            aria-label={t("clearFilters")}
+            className="h-10 px-3 text-xs text-muted-foreground hover:text-accent transition-colors shrink-0"
           >
-            {t("clearFilters")}
+            ×
           </button>
         )}
       </div>
