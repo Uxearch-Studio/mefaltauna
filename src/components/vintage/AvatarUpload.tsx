@@ -14,11 +14,18 @@ type Props = {
   onChange: (url: string | null) => void;
 };
 
+/**
+ * Avatar picker with two distinct entry points: camera (uses the
+ * front camera on mobile via `capture="user"`) and gallery (omits
+ * `capture` so the OS picker presents the photo library + recent
+ * photos). On desktop both behave the same — the file dialog opens.
+ */
 export function AvatarUpload({ value, initialFallback, onChange }: Props) {
   const t = useTranslations("photo");
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const cameraRef = useRef<HTMLInputElement>(null);
+  const galleryRef = useRef<HTMLInputElement>(null);
 
   async function handleFile(file: File) {
     setError(null);
@@ -49,8 +56,9 @@ export function AvatarUpload({ value, initialFallback, onChange }: Props) {
 
   return (
     <div className="flex items-center gap-4">
+      {/* Hidden camera input — browser opens the camera directly */}
       <input
-        ref={inputRef}
+        ref={cameraRef}
         type="file"
         accept="image/*"
         capture="user"
@@ -58,12 +66,25 @@ export function AvatarUpload({ value, initialFallback, onChange }: Props) {
         onChange={(e) => {
           const f = e.target.files?.[0];
           if (f) handleFile(f);
+          e.target.value = "";
+        }}
+      />
+      {/* Hidden gallery input — no capture attr → OS gallery picker */}
+      <input
+        ref={galleryRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => {
+          const f = e.target.files?.[0];
+          if (f) handleFile(f);
+          e.target.value = "";
         }}
       />
 
       <button
         type="button"
-        onClick={() => inputRef.current?.click()}
+        onClick={() => galleryRef.current?.click()}
         disabled={uploading}
         className="size-20 rounded-full overflow-hidden bg-foreground text-background flex items-center justify-center text-2xl font-bold hover:opacity-90 transition-opacity relative shrink-0"
       >
@@ -80,15 +101,34 @@ export function AvatarUpload({ value, initialFallback, onChange }: Props) {
         )}
       </button>
 
-      <div className="flex flex-col gap-1">
-        <button
-          type="button"
-          onClick={() => inputRef.current?.click()}
-          disabled={uploading}
-          className="self-start text-sm font-medium hover:underline disabled:opacity-50"
-        >
-          {value ? t("retake") : t("takePhoto")}
-        </button>
+      <div className="flex flex-col gap-2">
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => cameraRef.current?.click()}
+            disabled={uploading}
+            className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full border border-border text-xs font-medium hover:bg-muted transition-colors disabled:opacity-50"
+          >
+            <svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M23 7l-7 5 7 5V7zM4 6h13v12H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z" />
+              <circle cx="9" cy="12" r="3" />
+            </svg>
+            {t("takePhoto")}
+          </button>
+          <button
+            type="button"
+            onClick={() => galleryRef.current?.click()}
+            disabled={uploading}
+            className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full border border-border text-xs font-medium hover:bg-muted transition-colors disabled:opacity-50"
+          >
+            <svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <path d="M21 15l-5-5L5 21" />
+            </svg>
+            {t("gallery")}
+          </button>
+        </div>
         {value && (
           <button
             type="button"

@@ -5,6 +5,7 @@ import { ThemeSwitcher } from "@/components/vintage/ThemeSwitcher";
 import { requireUser, emailToPhone } from "@/lib/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { fetchOwnContact } from "@/lib/db";
+import type { FifaProfileStats } from "@/components/vintage/FifaProfileCard";
 import { ProfileEditor } from "./ProfileEditor";
 
 export default async function ProfilePage({
@@ -20,71 +21,78 @@ export default async function ProfilePage({
   const supabase = await createSupabaseServerClient();
   if (!supabase) return null;
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("username, avatar_url, reputation")
-    .eq("id", user.id)
-    .maybeSingle();
-  const contact = await fetchOwnContact(supabase, user.id);
+  const [
+    profileRes,
+    contact,
+    inventoryRes,
+    catalogRes,
+    listingsRes,
+    soldRes,
+  ] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("username, avatar_url, reputation, city")
+      .eq("id", user.id)
+      .maybeSingle(),
+    fetchOwnContact(supabase, user.id),
+    supabase
+      .from("inventory")
+      .select("count")
+      .eq("user_id", user.id),
+    supabase
+      .from("sticker_catalog")
+      .select("id", { count: "exact", head: true }),
+    supabase
+      .from("listings")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id),
+    supabase
+      .from("listings")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .eq("status", "sold"),
+  ]);
+
+  const profile = profileRes.data as
+    | {
+        username: string | null;
+        avatar_url: string | null;
+        reputation: number | null;
+        city: string | null;
+      }
+    | null;
+
+  const inventoryRows = (inventoryRes.data ?? []) as Array<{ count: number }>;
+  const ownedCount = inventoryRows.filter((r) => r.count >= 1).length;
+  const duplicatesCount = inventoryRows.filter((r) => r.count >= 2).length;
+
+  const stats: FifaProfileStats = {
+    ownedCount,
+    totalCount: catalogRes.count ?? 0,
+    listingsCount: listingsRes.count ?? 0,
+    tradesCount: soldRes.count ?? 0,
+    reputation: profile?.reputation ?? 0,
+    duplicatesCount,
+  };
 
   const phoneFromEmail = emailToPhone(user.email);
-
   const initial = {
-    username: (profile?.username as string | null) ?? null,
-    avatar_url: (profile?.avatar_url as string | null) ?? null,
+    username: profile?.username ?? null,
+    avatar_url: profile?.avatar_url ?? null,
     first_name: contact?.first_name ?? "",
     last_name: contact?.last_name ?? "",
     national_id: contact?.national_id ?? "",
     whatsapp: contact?.whatsapp ?? phoneFromEmail ?? "",
-    city: contact?.city ?? "",
+    city: contact?.city ?? profile?.city ?? "",
     email: phoneFromEmail ? null : (user.email ?? null),
   };
-
-  const reputation = (profile?.reputation as number | null) ?? 0;
-  const displayName =
-    [initial.first_name, initial.last_name].filter(Boolean).join(" ") ||
-    initial.username ||
-    t("noUsername");
-  const initialChar = displayName.charAt(0).toUpperCase();
 
   return (
     <>
       <AppTopBar title={t("title")} />
       <div className="mx-auto max-w-md px-4 py-6 flex flex-col gap-5">
-        {/* Hero card — avatar + name + reputation */}
-        <section className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-accent/10 via-background to-highlight/10 p-6 flex items-center gap-4">
-          {initial.avatar_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={initial.avatar_url}
-              alt=""
-              className="size-16 rounded-full object-cover ring-2 ring-background shadow-md"
-            />
-          ) : (
-            <div className="size-16 rounded-full bg-foreground text-background flex items-center justify-center text-2xl font-bold ring-2 ring-background shadow-md">
-              {initialChar}
-            </div>
-          )}
-          <div className="flex flex-col min-w-0">
-            <p className="text-lg font-semibold tracking-tight truncate">
-              {displayName}
-            </p>
-            <div className="flex items-center gap-2 mt-1">
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-highlight/20 text-highlight text-[10px] font-semibold uppercase tracking-wide">
-                ★ {reputation}
-              </span>
-              {reputation > 0 && (
-                <span className="text-[10px] text-muted-foreground">
-                  {t("trustedSeller")}
-                </span>
-              )}
-            </div>
-          </div>
-        </section>
+        <ProfileEditor locale={locale} initial={initial} stats={stats} />
 
-        <ProfileEditor locale={locale} initial={initial} />
-
-        {/* Settings */}
         <section className="surface-card divide-y divide-border">
           <Row label={t("language")}>
             <LocaleSwitcher />
@@ -94,7 +102,6 @@ export default async function ProfilePage({
           </Row>
         </section>
 
-        {/* Sign out — destructive */}
         <form method="post" action={`/${locale}/sign-out`}>
           <button
             type="submit"

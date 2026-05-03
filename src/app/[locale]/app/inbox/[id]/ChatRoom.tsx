@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { sendMessageAction, markConversationReadAction } from "../actions";
@@ -20,6 +21,7 @@ export function ChatRoom({
   initialMessages,
 }: Props) {
   const t = useTranslations("inbox");
+  const router = useRouter();
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [body, setBody] = useState("");
   const [pending, startTransition] = useTransition();
@@ -33,9 +35,14 @@ export function ChatRoom({
 
   // Mark read on mount — client-side fire-and-forget so the server
   // render doesn't have to invoke the action (which crashed in 16).
+  // After the server-side revalidate fires, refresh the router so the
+  // bottom-nav badge and the inbox list pick up the new last_read_at
+  // without waiting for a manual page reload.
   useEffect(() => {
-    markConversationReadAction(conversationId).catch(() => {});
-  }, [conversationId]);
+    markConversationReadAction(conversationId)
+      .then(() => router.refresh())
+      .catch(() => {});
+  }, [conversationId, router]);
 
   useEffect(() => {
     const supabase = getSupabaseBrowserClient();
@@ -61,7 +68,28 @@ export function ChatRoom({
             created_at: row.created_at as string,
           };
           setMessages((prev) => {
+            // Already in the list by real id — server insert + realtime
+            // both arrived. Nothing to do.
             if (prev.some((m) => m.id === incoming.id)) return prev;
+
+            // Realtime echo of a message WE just sent: replace the
+            // optimistic temp entry instead of appending a duplicate.
+            // Match on sender + body and only swap the most recent
+            // pending temp so we don't cross-collide on identical text.
+            if (incoming.sender_id === currentUserId) {
+              for (let i = prev.length - 1; i >= 0; i--) {
+                const m = prev[i];
+                if (
+                  m.id.startsWith("temp-") &&
+                  m.sender_id === currentUserId &&
+                  m.body === incoming.body
+                ) {
+                  const next = prev.slice();
+                  next[i] = incoming;
+                  return next;
+                }
+              }
+            }
             return [...prev, incoming];
           });
         },

@@ -4,6 +4,11 @@ import { useActionState, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { AvatarUpload } from "@/components/vintage/AvatarUpload";
 import {
+  FifaProfileCard,
+  Achievements,
+  type FifaProfileStats,
+} from "@/components/vintage/FifaProfileCard";
+import {
   updateProfileAction,
   type ProfileEditState,
 } from "./actions";
@@ -20,40 +25,45 @@ type Props = {
     city: string;
     email: string | null;
   };
+  stats: FifaProfileStats;
 };
 
 const INITIAL: ProfileEditState = {};
 
 /**
- * FIFA-style profile: read-only by default, "Editar" button toggles
- * to edit mode. WhatsApp and cédula are immutable after first set —
- * shown as read-only fields even in edit mode.
+ * Profile shell — by default renders the FIFA-style hero card and the
+ * achievements grid. Tapping "Edit" expands the form (WhatsApp and
+ * cédula stay locked since they're identity-bound).
  */
-export function ProfileEditor({ locale, initial }: Props) {
+export function ProfileEditor({ locale, initial, stats }: Props) {
   const t = useTranslations("profile");
   const [state, action, pending] = useActionState(updateProfileAction, INITIAL);
   const [editing, setEditing] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(initial.avatar_url);
 
-  // Reset edit mode after successful save.
   useEffect(() => {
     if (state.ok) setEditing(false);
   }, [state.ok]);
 
-  const initialChar =
-    (initial.first_name || initial.username || "?").charAt(0).toUpperCase();
+  const fullName =
+    [initial.first_name, initial.last_name].filter(Boolean).join(" ") ||
+    initial.username ||
+    t("noUsername");
+  const initialChar = fullName.charAt(0).toUpperCase();
 
   if (!editing) {
     return (
       <div className="flex flex-col gap-4">
-        <ReadOnlyView initial={initial} avatarUrl={avatarUrl} initialChar={initialChar} />
-        <button
-          type="button"
-          onClick={() => setEditing(true)}
-          className="self-stretch h-12 rounded-full bg-foreground text-background text-sm font-medium hover:opacity-90 transition-opacity"
-        >
-          {t("edit")}
-        </button>
+        <FifaProfileCard
+          displayName={fullName}
+          username={initial.username}
+          city={initial.city}
+          avatarUrl={avatarUrl}
+          initialChar={initialChar}
+          stats={stats}
+          onEdit={() => setEditing(true)}
+        />
+        <Achievements stats={stats} />
         {state.ok && (
           <p className="text-xs text-accent text-center">{t("saved")}</p>
         )}
@@ -69,7 +79,6 @@ export function ProfileEditor({ locale, initial }: Props) {
       <input type="hidden" name="national_id" value={initial.national_id} />
       <input type="hidden" name="whatsapp" value={initial.whatsapp} />
 
-      {/* Identity */}
       <section className="surface-card p-6 flex flex-col gap-5">
         <header className="flex items-baseline justify-between">
           <h2 className="text-base font-semibold tracking-tight">
@@ -98,7 +107,6 @@ export function ProfileEditor({ locale, initial }: Props) {
         </Field>
       </section>
 
-      {/* Contact info */}
       <section className="surface-card p-6 flex flex-col gap-4">
         <header className="flex items-baseline justify-between">
           <h2 className="text-base font-semibold tracking-tight">
@@ -143,7 +151,6 @@ export function ProfileEditor({ locale, initial }: Props) {
           />
         </Field>
 
-        {/* Locked fields — visible but not editable */}
         <Field label={t("nationalId")} locked>
           <p className="h-11 px-3 rounded-xl bg-muted/40 flex items-center text-sm text-muted-foreground truncate">
             {initial.national_id || "—"}
@@ -171,7 +178,6 @@ export function ProfileEditor({ locale, initial }: Props) {
         </p>
       )}
 
-      {/* Action buttons */}
       <div className="flex gap-3">
         <button
           type="button"
@@ -191,116 +197,6 @@ export function ProfileEditor({ locale, initial }: Props) {
       </div>
     </form>
   );
-}
-
-function ReadOnlyView({
-  initial,
-  avatarUrl,
-  initialChar,
-}: {
-  initial: Props["initial"];
-  avatarUrl: string | null;
-  initialChar: string;
-}) {
-  const t = useTranslations("profile");
-  const fullName = [initial.first_name, initial.last_name]
-    .filter(Boolean)
-    .join(" ");
-
-  return (
-    <div className="flex flex-col gap-4">
-      {/* Identity card */}
-      <section className="surface-card p-6 flex flex-col gap-5">
-        <header>
-          <h2 className="text-base font-semibold tracking-tight">
-            {t("identity")}
-          </h2>
-        </header>
-
-        <div className="flex items-center gap-4">
-          {avatarUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={avatarUrl}
-              alt=""
-              className="size-20 rounded-full object-cover ring-2 ring-background shadow-md"
-            />
-          ) : (
-            <div className="size-20 rounded-full bg-foreground text-background flex items-center justify-center text-2xl font-bold ring-2 ring-background shadow-md">
-              {initialChar}
-            </div>
-          )}
-          <div className="flex flex-col min-w-0">
-            <p className="text-base font-semibold truncate">
-              {fullName || t("noUsername")}
-            </p>
-            {initial.username && (
-              <p className="text-xs text-muted-foreground truncate">
-                @{initial.username}
-              </p>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* Contact card */}
-      <section className="surface-card divide-y divide-border">
-        <ReadRow label={t("city")} value={initial.city} />
-        <ReadRow
-          label={t("nationalId")}
-          value={initial.national_id}
-          masked
-          locked
-        />
-        <ReadRow label={t("whatsapp")} value={initial.whatsapp} masked locked />
-        {initial.email && (
-          <ReadRow label={t("emailLabel")} value={initial.email} locked />
-        )}
-      </section>
-    </div>
-  );
-}
-
-function ReadRow({
-  label,
-  value,
-  masked = false,
-  locked = false,
-}: {
-  label: string;
-  value: string;
-  masked?: boolean;
-  locked?: boolean;
-}) {
-  const display = masked && value ? maskValue(value) : value || "—";
-  return (
-    <div className="px-5 py-3.5 flex items-center justify-between gap-4">
-      <span className="text-xs uppercase tracking-wide text-muted-foreground flex items-center gap-1.5">
-        {label}
-        {locked && (
-          <svg
-            viewBox="0 0 24 24"
-            className="size-3"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden
-          >
-            <rect x="5" y="11" width="14" height="9" rx="1.5" />
-            <path d="M8 11V7a4 4 0 0 1 8 0v4" />
-          </svg>
-        )}
-      </span>
-      <span className="text-sm truncate">{display}</span>
-    </div>
-  );
-}
-
-function maskValue(value: string): string {
-  if (value.length <= 4) return value;
-  return value.slice(0, 2) + "•".repeat(value.length - 4) + value.slice(-2);
 }
 
 function Field({

@@ -79,7 +79,11 @@ export async function markConversationReadAction(
   const supabase = await createSupabaseServerClient();
   if (!supabase) return;
   await supabase.rpc("mark_conversation_read", { conv_id: conversationId });
+  // Refresh the inbox list (per-row unread chip) AND the app layout
+  // (bottom-nav unread badge). Without the layout invalidation the
+  // badge stays stuck until the user reloads the tab.
   revalidatePath("/[locale]/app/inbox", "page");
+  revalidatePath("/[locale]/app", "layout");
 }
 
 export async function sendMessageAction(
@@ -115,6 +119,11 @@ export async function sendMessageAction(
   });
   if (error) return { error: "db_error" };
 
+  // Server-side cache: refresh both the conversation page and the
+  // inbox list so last_message_at + ordering stay accurate. Layout
+  // also refreshes for the recipient's badge on next render.
   revalidatePath(`/[locale]/app/inbox/${conversationId}`, "page");
+  revalidatePath("/[locale]/app/inbox", "page");
+  revalidatePath("/[locale]/app", "layout");
   return {};
 }
