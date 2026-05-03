@@ -90,11 +90,23 @@ export async function saveContactAction(
   }
 
   // Mirror the city onto the public profile so reputation/match
-  // pages can use it without exposing PII.
+  // pages can use it without exposing PII. display_name carries the
+  // public name (used by the FUT card and inbox).
+  const displayName = `${firstName} ${lastName.charAt(0)}.`;
   await supabase
     .from("profiles")
-    .update({ city, display_name: `${firstName} ${lastName.charAt(0)}.` })
+    .update({ city, display_name: displayName })
     .eq("id", user.id);
+
+  // Mirror display_name into auth.users.user_metadata so the Supabase
+  // Auth admin panel shows it. Doesn't require service role.
+  await supabase.auth.updateUser({
+    data: {
+      display_name: displayName,
+      first_name: firstName,
+      last_name: lastName,
+    },
+  });
 
   revalidatePath(`/${locale}/app/publish`);
   return {};

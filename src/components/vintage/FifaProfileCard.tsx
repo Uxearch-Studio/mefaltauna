@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
 
 export type FifaProfileStats = {
   /** How many distinct stickers the user owns. */
@@ -137,7 +136,7 @@ export function FifaProfileCard({
         style={{ mixBlendMode: "screen", opacity: 0.35 }}
       />
 
-      {/* Gold foil frame + corner carets */}
+      {/* Gold foil frame */}
       <div
         aria-hidden
         className="absolute inset-2 rounded-[22px] pointer-events-none"
@@ -147,21 +146,6 @@ export function FifaProfileCard({
             "inset 0 0 0 2px rgba(255,199,44,0.10), 0 0 24px rgba(255,199,44,0.15)",
         }}
       />
-      {(["tl", "tr", "bl", "br"] as const).map((c) => (
-        <span
-          key={c}
-          aria-hidden
-          className={`absolute size-3 border-[var(--stage-yellow)] pointer-events-none ${
-            c === "tl"
-              ? "top-3 left-3 border-t-2 border-l-2"
-              : c === "tr"
-                ? "top-3 right-3 border-t-2 border-r-2"
-                : c === "bl"
-                  ? "bottom-3 left-3 border-b-2 border-l-2"
-                  : "bottom-3 right-3 border-b-2 border-r-2"
-          }`}
-        />
-      ))}
 
       <div className="relative p-6 flex flex-col gap-6">
         {/* Top: rating + photo */}
@@ -285,28 +269,18 @@ export function FifaProfileCard({
           pct={collectionPct}
         />
 
-        {/* Quick actions */}
-        <div className="grid grid-cols-3 gap-2">
-          <Link
-            href="/app/album"
-            className="h-10 rounded-full bg-[var(--stage-yellow)] text-[#1a0b3d] text-[11px] font-bold uppercase tracking-wider flex items-center justify-center hover:opacity-90 transition-opacity"
-          >
-            {t("viewAlbum")}
-          </Link>
-          <Link
-            href="/app/feed"
-            className="h-10 rounded-full bg-white/10 border border-white/15 text-white text-[11px] font-bold uppercase tracking-wider flex items-center justify-center hover:bg-white/15 transition-colors"
-          >
-            {t("viewListings")}
-          </Link>
-          <button
-            type="button"
-            onClick={onEdit}
-            className="h-10 rounded-full bg-white/10 border border-white/15 text-white text-[11px] font-bold uppercase tracking-wider hover:bg-white/15 transition-colors"
-          >
-            ✎
-          </button>
-        </div>
+        {/* Edit CTA — single primary action on the card */}
+        <button
+          type="button"
+          onClick={onEdit}
+          className="h-11 rounded-full bg-[var(--stage-yellow)] text-[#1a0b3d] text-xs font-bold uppercase tracking-[0.2em] flex items-center justify-center gap-2 hover:opacity-90 transition-opacity shadow-[0_8px_20px_rgba(255,199,44,0.3)]"
+        >
+          <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+          </svg>
+          {t("editProfile")}
+        </button>
       </div>
     </article>
   );

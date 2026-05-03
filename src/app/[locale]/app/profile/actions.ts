@@ -83,6 +83,18 @@ export async function updateProfileAction(
     .eq("id", user.id);
   if (profileRes.error) return { error: "db_error" };
 
+  // Mirror the public name into auth.users.user_metadata so the
+  // Supabase Auth admin panel surfaces it under "Display name". This
+  // doesn't require service-role privileges — auth.updateUser writes
+  // the current session user's metadata.
+  await supabase.auth.updateUser({
+    data: {
+      display_name: profileUpdate.display_name,
+      first_name: firstName,
+      last_name: lastName,
+    },
+  });
+
   revalidatePath(`/${locale}/app/profile`);
   return { ok: true };
 }

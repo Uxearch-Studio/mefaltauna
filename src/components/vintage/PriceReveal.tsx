@@ -359,23 +359,6 @@ function GoldCollectorCard({
         }}
       />
 
-      {/* Corner carets */}
-      {(["tl", "tr", "bl", "br"] as const).map((c) => (
-        <span
-          key={c}
-          aria-hidden
-          className={`absolute size-3 border-[var(--stage-yellow)] pointer-events-none ${
-            c === "tl"
-              ? "top-3 left-3 border-t-2 border-l-2"
-              : c === "tr"
-                ? "top-3 right-3 border-t-2 border-r-2"
-                : c === "bl"
-                  ? "bottom-3 left-3 border-b-2 border-l-2"
-                  : "bottom-3 right-3 border-b-2 border-r-2"
-          }`}
-        />
-      ))}
-
       {/* Brand row — logo medallion + wordmark inline */}
       <div className="relative flex items-center gap-3 pl-10">
         <div

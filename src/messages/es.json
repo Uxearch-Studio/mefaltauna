@@ -325,6 +325,7 @@
       },
       "viewAlbum": "Ver mi álbum",
       "viewListings": "Mis publicaciones",
+      "editProfile": "Editar perfil",
       "share": "Compartir",
       "shareCopied": "¡Copiado!",
       "rookieHint": "Ve al álbum y marca tu primera lámina para empezar."
@@ -390,9 +391,9 @@
     "empty": "No hay partidos con ese filtro. Prueba con otro equipo o grupo."
   },
   "signIn": {
-    "kicker": "Entrar al álbum",
+    "kicker": "Entrar al club",
     "title": "Tu WhatsApp y un PIN",
-    "subtitle": "Igual que Nequi. Si es la primera vez, creas tu PIN ahora.",
+    "subtitle": "Si es la primera vez, creas tu PIN ahora.",
     "phoneLabel": "WhatsApp",
     "pinLabel": "PIN de 6 dígitos",
     "pinNewLabel": "Crea tu PIN (6 dígitos)",

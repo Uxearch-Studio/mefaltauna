@@ -155,12 +155,18 @@ function groupByPage(catalog: Sticker[]): PageGroup[] {
     }
     map.get(key)!.stickers.push(s);
   }
-  return [...map.values()].sort((a, b) => order(a.key) - order(b.key));
+  // Sort: groups → stadiums → teams (alphabetical by code) → other.
+  return [...map.values()].sort((a, b) => {
+    const oa = order(a.key);
+    const ob = order(b.key);
+    if (oa !== ob) return oa - ob;
+    return a.key.localeCompare(b.key);
+  });
 }
 
 function order(key: string) {
   if (key === "GROUPS") return 0;
-  if (key === "STADIUMS") return 1000;
+  if (key === "STADIUMS") return 1;
   if (key === "OTHER") return 1001;
   return 100;
 }
@@ -184,8 +190,8 @@ const TEAM_FLAGS: Record<string, string> = {
 };
 
 function pageTitle(key: string, sample: Sticker) {
-  if (key === "GROUPS") return "Grupos";
-  if (key === "STADIUMS") return "Estadios";
+  if (key === "GROUPS") return "🏆 Grupos";
+  if (key === "STADIUMS") return "🏟️ Estadios";
   if (key === "OTHER") return "Otros";
   const flag = TEAM_FLAGS[key];
   const name = sample.team_code ?? key;

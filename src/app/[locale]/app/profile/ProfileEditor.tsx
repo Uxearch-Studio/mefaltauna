@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { AvatarUpload } from "@/components/vintage/AvatarUpload";
 import {
@@ -37,13 +38,20 @@ const INITIAL: ProfileEditState = {};
  */
 export function ProfileEditor({ locale, initial, stats }: Props) {
   const t = useTranslations("profile");
+  const router = useRouter();
   const [state, action, pending] = useActionState(updateProfileAction, INITIAL);
   const [editing, setEditing] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(initial.avatar_url);
 
+  // Drop the form once the server confirms the save AND refresh the
+  // server component tree so the FUT card picks up the new avatar /
+  // name / city without a hard reload.
   useEffect(() => {
-    if (state.ok) setEditing(false);
-  }, [state.ok]);
+    if (state.ok) {
+      setEditing(false);
+      router.refresh();
+    }
+  }, [state.ok, router]);
 
   const fullName =
     [initial.first_name, initial.last_name].filter(Boolean).join(" ") ||

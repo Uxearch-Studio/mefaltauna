@@ -325,6 +325,7 @@
       },
       "viewAlbum": "Open my album",
       "viewListings": "My listings",
+      "editProfile": "Edit profile",
       "share": "Share",
       "shareCopied": "Copied!",
       "rookieHint": "Head to the album and mark your first sticker to begin."
@@ -390,9 +391,9 @@
     "empty": "No matches with that filter. Try another team or group."
   },
   "signIn": {
-    "kicker": "Enter the album",
+    "kicker": "Join the club",
     "title": "Your WhatsApp and a PIN",
-    "subtitle": "Like Nequi. First time? You create your PIN right now.",
+    "subtitle": "First time here? You create your PIN right now.",
     "phoneLabel": "WhatsApp",
     "pinLabel": "6-digit PIN",
     "pinNewLabel": "Create your PIN (6 digits)",
