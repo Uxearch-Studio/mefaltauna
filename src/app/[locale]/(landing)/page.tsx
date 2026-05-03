@@ -5,7 +5,7 @@ import { StickerPreview } from "@/components/vintage/StickerPreview";
 import { FinalCta } from "@/components/vintage/FinalCta";
 import { Countdown } from "@/components/vintage/Countdown";
 import { MeshGradient } from "@/components/vintage/MeshGradient";
-import { RunningPlayer } from "@/components/vintage/RunningPlayer";
+import { FloatingDeck } from "@/components/vintage/FloatingDeck";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth";
 
@@ -23,11 +23,12 @@ export default async function HomePage({
 
   return (
     <main>
-      {/* HERO — Apple-style purple mesh + running player */}
-      <section className="relative overflow-hidden stage-purple min-h-[80vh] flex items-center">
+      {/* HERO — purple stage with mesh gradient + grain + floating cards */}
+      <section className="relative overflow-hidden stage-purple grain min-h-[78vh] flex items-center">
         <MeshGradient />
+        <FloatingDeck />
 
-        <div className="relative mx-auto max-w-6xl px-6 pt-20 pb-40 md:pb-48 flex flex-col items-center text-center gap-6 w-full">
+        <div className="relative mx-auto max-w-6xl px-6 pt-20 pb-24 flex flex-col items-center text-center gap-6 w-full z-10">
           <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur text-xs font-semibold uppercase tracking-widest">
             <span className="size-1.5 rounded-full bg-[var(--stage-yellow)]" />
             {t("kicker")}
@@ -36,7 +37,7 @@ export default async function HomePage({
           <h1
             className="font-display whitespace-nowrap leading-none"
             style={{
-              fontSize: "clamp(2.5rem, 11vw, 7.5rem)",
+              fontSize: "clamp(2.25rem, 9vw, 6rem)",
               textShadow: "0 8px 32px rgba(0,0,0,0.4)",
             }}
           >
@@ -62,14 +63,18 @@ export default async function HomePage({
             </Link>
           </div>
         </div>
-
-        <RunningPlayer />
       </section>
 
-      {/* Countdown — sits below the hero on its own dark band */}
-      <section className="border-y border-border bg-foreground text-background">
-        <div className="mx-auto max-w-6xl px-6 py-16">
-          <Countdown />
+      {/* Countdown — yellow stage */}
+      <section
+        className="relative border-y border-border overflow-hidden grain"
+        style={{
+          background: "var(--highlight)",
+          color: "var(--highlight-foreground)",
+        }}
+      >
+        <div className="relative mx-auto max-w-6xl px-6 py-16 md:py-20 z-10">
+          <Countdown variant="onYellow" />
         </div>
       </section>
 
