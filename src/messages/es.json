@@ -26,11 +26,11 @@
   },
   "home": {
     "hero": {
-      "kicker": "Edición Mundial 2026",
+      "kicker": "Mundial 2026",
       "title": "Abre el sobre.",
-      "subtitle": "Otros coleccionistas ya están abriendo los suyos. Encuentra las que te faltan, cambia las que te sobran. En tiempo real.",
-      "ctaPrimary": "Abrir mi álbum",
-      "ctaSecondary": "Ver el calendario"
+      "subtitle": "Encuentra las que te faltan, cambia las que te sobran. En vivo, con coleccionistas reales.",
+      "ctaPrimary": "Registrarse",
+      "ctaSecondary": "Ver Calendario"
     }
   },
   "countdown": {
@@ -87,25 +87,24 @@
   },
   "pricing": {
     "kicker": "Acceso",
-    "title": "Un solo pase. Todo desbloqueado.",
-    "subtitle": "Sin niveles, sin enredos. Pagas una vez y puedes publicar, escribir por chat, comprar e intercambiar sin tope.",
+    "title": "Un solo pase.",
+    "subtitle": "Sin niveles, sin enredos. Pagas una vez y desbloqueas todo lo de mefaltauna.",
     "singlePass": "Pase único",
     "planName": "Acceso completo",
-    "planTagline": "Todo lo que ofrece mefaltauna, sin restricciones",
+    "planTagline": "Sin restricciones",
     "cta": "Activar pase",
-    "disclaimer": "Pagos en pesos colombianos vía Wompi · Próximamente",
+    "disclaimer": "Pago en pesos colombianos vía Wompi · Próximamente",
     "benefits": {
-      "full": "Acceso a todo el catálogo y al feed en vivo",
+      "full": "Catálogo completo y feed en vivo",
       "chat": "Chat directo con cualquier coleccionista",
-      "unlimited": "Publica todas las láminas que tengas repetidas",
-      "noCommission": "Cero comisión por venta o intercambio"
+      "unlimited": "Publica todas tus repetidas sin tope",
+      "noCommission": "0% comisión en cambio o venta"
     }
   },
   "preview": {
-    "kicker": "Cómo se ve una lámina",
-    "title": "Cada lámina, una historia.",
-    "body": "Datos verificados de cada jugador, foto real del coleccionista, y un click para cambiarla o comprarla.",
-    "hint": "Tócala para sentir el destello. Igual que cuando abres el sobre.",
+    "kicker": "Cada lámina",
+    "title": "Una historia.",
+    "body": "Foto real, datos verificados, un toque para cambiar o comprar. Sin filtros raros, sin intermediarios.",
     "ctaTrade": "Cambiar",
     "ctaBuy": "Comprar"
   },
@@ -332,9 +331,9 @@
   },
   "finalCta": {
     "kicker": "Pitazo final",
-    "title": "Tu álbum no se completa solo.",
-    "subtitle": "Otros coleccionistas ya tienen las que te faltan. Encuéntralos hoy.",
-    "cta": "Crear cuenta gratis"
+    "title": "No se completa solo.",
+    "subtitle": "Otros ya tienen las que te faltan. Es ahora.",
+    "cta": "Empezar"
   },
   "footer": {
     "tagline": "¿Tienes una idea de app, software o sitio web? Te ayudamos a llevarla a producción.",

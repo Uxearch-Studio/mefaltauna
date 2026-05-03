@@ -9,6 +9,9 @@
    Navy carries the structure (buttons, links, focus, active state).
    Highlight is reserved for trophy/MVP/featured moments only. */
 
+/* Royal purple + World Cup yellow.
+   Cream bg keeps content sections legible; purple owns the hero. */
+
 :root {
   --background: #fafaf7;
   --foreground: #1c1c1a;
@@ -16,11 +19,18 @@
   --muted-foreground: #767470;
   --border: #e7e4dc;
 
-  --accent: #173554;
+  --accent: #6d28d9;
   --accent-foreground: #fafaf7;
 
-  --highlight: #c89b3c;
+  --highlight: #ffc72c;
   --highlight-foreground: #1c1c1a;
+
+  /* Hero stage colors — used by .stage-purple */
+  --stage-bg: #1a0b3d;
+  --stage-fg: #fafaf7;
+  --stage-purple-1: #7c3aed;
+  --stage-purple-2: #5b21b6;
+  --stage-yellow: #ffc72c;
 
   --radius: 10px;
   --radius-lg: 14px;
@@ -28,15 +38,15 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0d1620;
+    --background: #0d0521;
     --foreground: #f3f0e8;
-    --muted: #16222e;
-    --muted-foreground: #8a929c;
-    --border: #1d2935;
-    --accent: #4d80b8;
-    --accent-foreground: #0d1620;
-    --highlight: #d4a64a;
-    --highlight-foreground: #0d1620;
+    --muted: #1a0e35;
+    --muted-foreground: #a99ec0;
+    --border: #25184a;
+    --accent: #a78bfa;
+    --accent-foreground: #0d0521;
+    --highlight: #ffd744;
+    --highlight-foreground: #0d0521;
   }
 }
 
@@ -46,22 +56,22 @@
   --muted: #f1f0ea;
   --muted-foreground: #767470;
   --border: #e7e4dc;
-  --accent: #173554;
+  --accent: #6d28d9;
   --accent-foreground: #fafaf7;
-  --highlight: #c89b3c;
+  --highlight: #ffc72c;
   --highlight-foreground: #1c1c1a;
 }
 
 [data-theme="dark"] {
-  --background: #0d1620;
+  --background: #0d0521;
   --foreground: #f3f0e8;
-  --muted: #16222e;
-  --muted-foreground: #8a929c;
-  --border: #1d2935;
-  --accent: #4d80b8;
-  --accent-foreground: #0d1620;
-  --highlight: #d4a64a;
-  --highlight-foreground: #0d1620;
+  --muted: #1a0e35;
+  --muted-foreground: #a99ec0;
+  --border: #25184a;
+  --accent: #a78bfa;
+  --accent-foreground: #0d0521;
+  --highlight: #ffd744;
+  --highlight-foreground: #0d0521;
 }
 
 @theme inline {
@@ -241,10 +251,37 @@ body {
 }
 
 /* ─────────────────────────────────────────────
-   Landing — pack-drop / broadcast / street mix
+   Landing hero — purple stage + animated mesh
    ───────────────────────────────────────────── */
 
-/* Stage backdrop — deep midnight + gold + paper grain */
+.stage-purple {
+  background: var(--stage-bg);
+  color: var(--stage-fg);
+}
+
+/* Soft glowing orbs that drift to give a "Apple mesh gradient" effect */
+@keyframes orb-1 {
+  0%   { transform: translate(0%, 0%) scale(1); }
+  33%  { transform: translate(20%, -15%) scale(1.1); }
+  66%  { transform: translate(-10%, 25%) scale(0.95); }
+  100% { transform: translate(0%, 0%) scale(1); }
+}
+@keyframes orb-2 {
+  0%   { transform: translate(0%, 0%) scale(1); }
+  50%  { transform: translate(-25%, 20%) scale(1.2); }
+  100% { transform: translate(0%, 0%) scale(1); }
+}
+@keyframes orb-3 {
+  0%   { transform: translate(0%, 0%) scale(1); }
+  40%  { transform: translate(15%, 10%) scale(0.9); }
+  80%  { transform: translate(-20%, -10%) scale(1.05); }
+  100% { transform: translate(0%, 0%) scale(1); }
+}
+.anim-orb-1 { animation: orb-1 24s ease-in-out infinite; }
+.anim-orb-2 { animation: orb-2 18s ease-in-out infinite; }
+.anim-orb-3 { animation: orb-3 30s ease-in-out infinite; }
+
+/* Stage backdrop — kept for fallback though stage-purple is the new default */
 .stage-pack {
   background:
     radial-gradient(circle at 30% 20%, rgba(247, 201, 72, 0.18), transparent 60%),
@@ -252,6 +289,42 @@ body {
     linear-gradient(180deg, #0a1426 0%, #0d1830 100%);
   color: #f5efe1;
 }
+
+/* Running player loop — translates across with subtle bob */
+@keyframes run-across {
+  0%   { transform: translateX(-15%); }
+  100% { transform: translateX(115%); }
+}
+.anim-run-across {
+  animation: run-across 18s linear infinite;
+}
+
+@keyframes leg-swing {
+  0%, 100% { transform: rotate(-25deg); }
+  50%      { transform: rotate(25deg); }
+}
+.anim-leg-l { animation: leg-swing 0.5s ease-in-out infinite; transform-origin: top center; }
+.anim-leg-r { animation: leg-swing 0.5s ease-in-out 0.25s infinite; transform-origin: top center; }
+
+@keyframes arm-swing {
+  0%, 100% { transform: rotate(20deg); }
+  50%      { transform: rotate(-20deg); }
+}
+.anim-arm-l { animation: arm-swing 0.5s ease-in-out infinite; transform-origin: top center; }
+.anim-arm-r { animation: arm-swing 0.5s ease-in-out 0.25s infinite; transform-origin: top center; }
+
+@keyframes torso-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-3px); }
+}
+.anim-torso-bob { animation: torso-bob 0.5s ease-in-out infinite; }
+
+@keyframes ball-spin {
+  0%   { transform: translateY(0)    rotate(0deg); }
+  50%  { transform: translateY(-8px) rotate(180deg); }
+  100% { transform: translateY(0)    rotate(360deg); }
+}
+.anim-ball-spin { animation: ball-spin 0.4s linear infinite; }
 .paper-grain::before {
   content: "";
   position: absolute;

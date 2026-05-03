@@ -22,10 +22,6 @@ function diff(now: number): Parts {
 
 const pad = (n: number, w = 2) => String(n).padStart(w, "0");
 
-/**
- * Broadcast-style scoreboard countdown — bold tabular nums, no leading
- * zero on the day number, kicker copy in marker font.
- */
 export function Countdown() {
   const t = useTranslations("countdown");
   const [parts, setParts] = useState<Parts | null>(null);
@@ -39,7 +35,7 @@ export function Countdown() {
 
   return (
     <div className="flex flex-col items-center gap-4">
-      <p className="font-marker text-base md:text-lg text-[#f7c948]">
+      <p className="text-xs md:text-sm uppercase tracking-widest text-[var(--highlight)]">
         {parts?.over ? t("live") : t("kickoff")}
       </p>
 
@@ -53,7 +49,7 @@ export function Countdown() {
         <Cell value={parts ? pad(parts.s) : "··"} label={t("seconds")} />
       </div>
 
-      <p className="text-xs text-white/60 uppercase tracking-widest">
+      <p className="text-xs uppercase tracking-widest opacity-60">
         {t("location")}
       </p>
     </div>
@@ -62,14 +58,14 @@ export function Countdown() {
 
 function Cell({ value, label }: { value: string; label: string }) {
   return (
-    <div className="flex flex-col items-center gap-1.5 min-w-[3.5rem] md:min-w-[5rem] px-2 py-3 rounded-xl bg-black/40 border border-white/10 backdrop-blur">
+    <div className="flex flex-col items-center gap-1.5 min-w-[3.5rem] md:min-w-[5rem] px-2 py-3 rounded-xl bg-white/5 border border-white/10 backdrop-blur">
       <span
-        className="font-display text-3xl md:text-5xl leading-none tabular-nums text-white"
+        className="font-display text-3xl md:text-5xl leading-none tabular-nums"
         suppressHydrationWarning
       >
         {value}
       </span>
-      <span className="text-[9px] uppercase tracking-widest text-white/60">
+      <span className="text-[9px] uppercase tracking-widest opacity-60">
         {label}
       </span>
     </div>
@@ -80,7 +76,7 @@ function Sep() {
   return (
     <span
       aria-hidden
-      className="self-center text-2xl md:text-4xl font-bold text-[#f7c948] leading-none animate-pulse"
+      className="self-center text-2xl md:text-4xl font-bold text-[var(--highlight)] leading-none animate-pulse"
     >
       :
     </span>
