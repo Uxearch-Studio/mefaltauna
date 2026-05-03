@@ -23,6 +23,8 @@ export type ContactState = {
     | "missing_fields"
     | "invalid_id"
     | "invalid_phone"
+    | "whatsapp_taken"
+    | "national_id_taken"
     | "db_error";
 };
 
@@ -66,12 +68,26 @@ export async function saveContactAction(
       first_name: firstName,
       last_name: lastName,
       national_id: idDigits,
-      whatsapp: whatsapp,
+      whatsapp: phoneDigits,
       city,
     },
     { onConflict: "user_id" },
   );
-  if (error) return { error: "db_error" };
+  if (error) {
+    // Postgres unique violation — surface which field collided so the
+    // form can highlight it. The DB trigger normalises both fields to
+    // digits-only before the unique index is checked.
+    if ((error as { code?: string }).code === "23505") {
+      const target = (
+        (error as { details?: string }).details ?? error.message ?? ""
+      ).toLowerCase();
+      if (target.includes("whatsapp")) return { error: "whatsapp_taken" };
+      if (target.includes("national_id")) {
+        return { error: "national_id_taken" };
+      }
+    }
+    return { error: "db_error" };
+  }
 
   // Mirror the city onto the public profile so reputation/match
   // pages can use it without exposing PII.

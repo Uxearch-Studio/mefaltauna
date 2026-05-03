@@ -203,6 +203,8 @@
       "missing_fields": "Fill in every field.",
       "invalid_id": "ID not valid (between 6 and 12 digits).",
       "invalid_phone": "WhatsApp number not valid.",
+      "whatsapp_taken": "That WhatsApp is already linked to another account.",
+      "national_id_taken": "That national ID is already linked to another account.",
       "db_error": "Couldn't save. Try again."
     }
   },
@@ -268,6 +270,8 @@
       "unauthenticated": "Sign in",
       "missing_fields": "Fill in every required field",
       "invalid_phone": "Invalid WhatsApp number",
+      "whatsapp_taken": "That WhatsApp is already linked to another account.",
+      "national_id_taken": "That national ID is already linked to another account.",
       "db_error": "Couldn't save. Try again."
     }
   },

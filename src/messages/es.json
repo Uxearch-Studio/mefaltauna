@@ -203,6 +203,8 @@
       "missing_fields": "Completa todos los campos.",
       "invalid_id": "Cédula no válida (entre 6 y 12 dígitos).",
       "invalid_phone": "Número de WhatsApp no válido.",
+      "whatsapp_taken": "Ese WhatsApp ya está vinculado a otra cuenta.",
+      "national_id_taken": "Esa cédula ya está vinculada a otra cuenta.",
       "db_error": "No pudimos guardar. Intenta de nuevo."
     }
   },
@@ -268,6 +270,8 @@
       "unauthenticated": "Inicia sesión",
       "missing_fields": "Completa todos los campos obligatorios",
       "invalid_phone": "WhatsApp no válido",
+      "whatsapp_taken": "Ese WhatsApp ya está vinculado a otra cuenta.",
+      "national_id_taken": "Esa cédula ya está vinculada a otra cuenta.",
       "db_error": "No pudimos guardar. Intenta de nuevo."
     }
   },

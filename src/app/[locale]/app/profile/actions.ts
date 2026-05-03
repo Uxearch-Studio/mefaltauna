@@ -10,6 +10,8 @@ export type ProfileEditState = {
     | "unauthenticated"
     | "missing_fields"
     | "invalid_phone"
+    | "whatsapp_taken"
+    | "national_id_taken"
     | "db_error";
 };
 
@@ -48,12 +50,25 @@ export async function updateProfileAction(
       first_name: firstName,
       last_name: lastName,
       national_id: idDigits,
-      whatsapp,
+      whatsapp: phoneDigits,
       city,
     },
     { onConflict: "user_id" },
   );
-  if (contactRes.error) return { error: "db_error" };
+  if (contactRes.error) {
+    if ((contactRes.error as { code?: string }).code === "23505") {
+      const target = (
+        (contactRes.error as { details?: string }).details ??
+        contactRes.error.message ??
+        ""
+      ).toLowerCase();
+      if (target.includes("whatsapp")) return { error: "whatsapp_taken" };
+      if (target.includes("national_id")) {
+        return { error: "national_id_taken" };
+      }
+    }
+    return { error: "db_error" };
+  }
 
   const profileUpdate: Record<string, unknown> = {
     city,
