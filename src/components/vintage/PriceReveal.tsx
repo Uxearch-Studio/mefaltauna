@@ -3,186 +3,205 @@
 import { useRef, useState } from "react";
 
 /**
- * Interactive sticker pack — the user drags or taps to tear the
- * wrapper open and reveal the price as a Panini-style card.
- * On mobile: swipe right. On desktop: drag or click.
+ * Interactive sticker pack — same dimensions as the "Una historia"
+ * card (w-64 md:w-80, aspect-[3/4]). The user drags or holds the
+ * pull-tab to tear the wrapper open. Drag distance is mirrored on
+ * the wrapper so the user feels the "tearing" continuously, with
+ * sparkles popping at the tear seam and the price card behind
+ * progressively revealed.
  */
-export function PriceReveal({ className = "" }: { className?: string }) {
-  const [offset, setOffset] = useState(0);
+type Props = { className?: string };
+
+export function PriceReveal({ className = "" }: Props) {
+  const [pull, setPull] = useState(0);  // 0..1
   const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
   const startX = useRef(0);
-  const startOffset = useRef(0);
+  const startPull = useRef(0);
   const dragging = useRef(false);
   const movedDistance = useRef(0);
 
-  const MAX = 220;
-  const THRESHOLD = MAX * 0.4;
+  const THRESHOLD = 0.5;
+
+  function bounds() {
+    return containerRef.current?.getBoundingClientRect();
+  }
 
   function onPointerDown(e: React.PointerEvent) {
+    if (open) return;
     dragging.current = true;
     startX.current = e.clientX;
-    startOffset.current = offset;
+    startPull.current = pull;
     movedDistance.current = 0;
     (e.target as HTMLElement).setPointerCapture(e.pointerId);
   }
 
   function onPointerMove(e: React.PointerEvent) {
     if (!dragging.current) return;
+    const b = bounds();
+    if (!b) return;
     const dx = e.clientX - startX.current;
     movedDistance.current = Math.abs(dx);
-    const next = Math.max(0, Math.min(MAX, startOffset.current + dx));
-    setOffset(next);
-    if (next >= MAX * 0.95 && !open) setOpen(true);
+    const next = Math.max(0, Math.min(1, startPull.current + dx / (b.width * 0.7)));
+    setPull(next);
+    if (next >= 0.95 && !open) setOpen(true);
   }
 
   function onPointerUp() {
     if (!dragging.current) return;
     dragging.current = false;
-    // Tap (no significant drag) → snap fully open
     if (movedDistance.current < 8) {
       setOpen(true);
-      setOffset(MAX);
+      setPull(1);
       return;
     }
-    if (offset >= THRESHOLD) {
+    if (pull >= THRESHOLD) {
       setOpen(true);
-      setOffset(MAX);
+      setPull(1);
     } else {
-      setOffset(0);
+      setPull(0);
       setOpen(false);
     }
   }
 
   function reset() {
     setOpen(false);
-    setOffset(0);
+    setPull(0);
   }
 
-  const torn = offset / MAX;
-
   return (
-    <div className={`relative select-none ${className}`}>
-      {/* Touch surface — captures the gesture */}
+    <div
+      ref={containerRef}
+      className={`relative select-none rounded-2xl overflow-hidden border border-border bg-background shadow-2xl shadow-accent/30 ${className}`}
+    >
+      {/* Price card revealed behind — same aspect as wrapper */}
+      <PriceCard />
+
+      {/* Sparkles popping at the tear seam */}
+      {pull > 0.05 && pull < 0.95 && (
+        <div
+          aria-hidden
+          className="absolute inset-0 pointer-events-none"
+          style={{ opacity: Math.min(1, pull * 2) }}
+        >
+          <Spark className="left-[40%] top-[20%]" delay="0s" />
+          <Spark className="left-[55%] top-[50%]" delay="0.15s" />
+          <Spark className="left-[35%] top-[70%]" delay="0.3s" />
+          <Spark className="right-[30%] top-[30%]" delay="0.4s" />
+        </div>
+      )}
+
+      {/* Wrapper that tears as user drags */}
       <div
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
-        className="relative w-full h-full cursor-grab active:cursor-grabbing touch-pan-y"
+        className={`absolute inset-0 ${
+          open ? "pointer-events-none" : "cursor-grab active:cursor-grabbing"
+        }`}
+        style={{
+          transform: `translateX(${pull * 110}%) rotate(${pull * -18}deg)`,
+          opacity: open ? 0 : 1,
+          transition: dragging.current
+            ? "none"
+            : "transform 320ms cubic-bezier(0.4, 0, 0.2, 1), opacity 200ms",
+          transformOrigin: "0% 100%",
+        }}
       >
-        {/* Pack base (back of wrapper) */}
-        <svg
-          viewBox="0 0 240 320"
-          className="absolute inset-0 w-full h-full pointer-events-none"
-        >
-          <defs>
-            <linearGradient id="reveal-pack-gold" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%"   stopColor="#ffd97a" />
-              <stop offset="50%"  stopColor="#ffc72c" />
-              <stop offset="100%" stopColor="#a17a30" />
-            </linearGradient>
-            <linearGradient id="reveal-pack-shine" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%"   stopColor="rgba(255,255,255,0.55)" />
-              <stop offset="100%" stopColor="rgba(255,255,255,0)" />
-            </linearGradient>
-          </defs>
+        <PackWrapper torn={pull} />
 
-          <rect x="40" y="40" width="160" height="240" rx="10" fill="url(#reveal-pack-gold)" />
-          <rect x="40" y="40" width="160" height="100" fill="url(#reveal-pack-shine)" rx="10" />
-          <text
-            x="120" y="170"
-            textAnchor="middle"
-            fontFamily="var(--font-display)"
-            fontSize="20"
-            fill="#1a0b3d"
-            letterSpacing="2"
-          >
-            mefaltauna
-          </text>
-          <text
-            x="120" y="195"
-            textAnchor="middle"
-            fontFamily="var(--font-mono)"
-            fontSize="9"
-            fill="#1a0b3d"
-            opacity="0.7"
-            letterSpacing="3"
-          >
-            PASE ÚNICO
-          </text>
-          <text
-            x="120" y="265"
-            textAnchor="middle"
-            fontFamily="var(--font-mono)"
-            fontSize="10"
-            fill="#1a0b3d"
-            opacity="0.5"
-            letterSpacing="3"
-          >
-            MUNDIAL 26
-          </text>
-        </svg>
-
-        {/* Price card — revealed inside the pack */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div
-            className="transition-transform duration-300 ease-out"
-            style={{
-              transform: open
-                ? "translateY(-8%) scale(1)"
-                : "translateY(20%) scale(0.85)",
-              opacity: open ? 1 : torn,
-            }}
-          >
-            <PriceCard />
+        {/* Pull tab — explicit affordance */}
+        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 pointer-events-none">
+          <span className="font-display text-[10px] uppercase tracking-widest text-[#1a0b3d]/60 anim-marquee-hint">
+            tira
+          </span>
+          <div className="size-8 rounded-full bg-[#1a0b3d] text-[var(--stage-yellow)] flex items-center justify-center shadow-lg">
+            <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 6l6 6-6 6" />
+            </svg>
           </div>
         </div>
-
-        {/* Pack front (peels away as the user drags) */}
-        <svg
-          viewBox="0 0 240 320"
-          className="absolute inset-0 w-full h-full pointer-events-none"
-          style={{
-            transform: `translateX(${offset * 1.4}px) rotate(${torn * -15}deg)`,
-            transformOrigin: "0% 100%",
-            transition: dragging.current ? "none" : "transform 300ms cubic-bezier(0.4, 0, 0.2, 1)",
-            opacity: open ? 0 : 1,
-          }}
-        >
-          <path
-            d="M 40,40 L 200,40 Q 200,140 200,160 Q 180,140 160,150 Q 140,160 120,150 Q 100,140 80,150 Q 60,160 40,150 Z"
-            fill="url(#reveal-pack-gold)"
-            stroke="#a17a30"
-            strokeWidth="1.5"
-          />
-        </svg>
       </div>
 
-      {/* Hint or close affordance */}
-      {!open && torn === 0 && (
-        <div className="absolute -bottom-12 inset-x-0 flex items-center justify-center gap-2 text-xs text-muted-foreground pointer-events-none">
-          <span className="anim-marquee-hint">←  desliza para abrir  →</span>
-        </div>
-      )}
+      {/* Reset button after open */}
       {open && (
         <button
           type="button"
           onClick={reset}
-          className="absolute -bottom-12 inset-x-0 mx-auto w-fit text-xs text-muted-foreground hover:text-accent transition-colors"
+          className="absolute bottom-3 right-3 size-9 rounded-full bg-foreground/85 text-background flex items-center justify-center hover:bg-foreground transition-colors backdrop-blur"
+          aria-label="Cerrar el sobre"
         >
-          ↺ cerrar el sobre
+          <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5" />
+          </svg>
         </button>
       )}
     </div>
   );
 }
 
+function PackWrapper({ torn }: { torn: number }) {
+  // Build a torn-edge path that gets jaggier as torn increases.
+  const tear = torn * 30;
+  const path = `M 0,0 L 100,0 L 100,100 L ${85 - tear},100 L ${78 - tear * 0.8},${
+    96 - tear * 0.5
+  } L ${72 - tear},100 L ${64 - tear * 0.6},${94 - tear * 0.4} L ${58 - tear},100 L 0,100 Z`;
+
+  return (
+    <svg
+      viewBox="0 0 100 140"
+      preserveAspectRatio="none"
+      className="w-full h-full pointer-events-none"
+      aria-hidden
+    >
+      <defs>
+        <linearGradient id="wrapper-fill" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%"   stopColor="#ffd97a" />
+          <stop offset="50%"  stopColor="#ffc72c" />
+          <stop offset="100%" stopColor="#a17a30" />
+        </linearGradient>
+        <linearGradient id="wrapper-shine" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stopColor="rgba(255,255,255,0.6)" />
+          <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+        </linearGradient>
+      </defs>
+      {/* Pack body */}
+      <path d={path} fill="url(#wrapper-fill)" />
+      {/* Pack shine */}
+      <rect x="0" y="0" width="100" height="50" fill="url(#wrapper-shine)" />
+      {/* Brand text */}
+      <text
+        x="50" y="70"
+        textAnchor="middle"
+        fontFamily="var(--font-display)"
+        fontSize="13"
+        fill="#1a0b3d"
+        letterSpacing="2"
+      >
+        mefaltauna
+      </text>
+      <text
+        x="50" y="86"
+        textAnchor="middle"
+        fontFamily="var(--font-mono)"
+        fontSize="6"
+        fill="#1a0b3d"
+        opacity="0.7"
+        letterSpacing="3"
+      >
+        PASE ÚNICO
+      </text>
+    </svg>
+  );
+}
+
 function PriceCard() {
   return (
-    <article className="relative w-44 md:w-52 rounded-2xl overflow-hidden border border-border bg-background shadow-2xl shadow-accent/30">
+    <div className="absolute inset-0 flex flex-col">
       {/* Top — gradient with badges */}
       <div
-        className="aspect-[3/4] relative"
+        className="flex-1 relative"
         style={{
           background:
             "linear-gradient(135deg, var(--accent) 0%, var(--highlight) 100%)",
@@ -190,35 +209,24 @@ function PriceCard() {
       >
         <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-black/30" />
 
-        {/* COP badge */}
         <span
-          className="absolute top-2 left-2 px-2 h-7 rounded-md flex items-center justify-center text-[10px] font-bold tracking-widest"
-          style={{
-            background: "var(--accent)",
-            color: "var(--highlight)",
-          }}
+          className="absolute top-3 left-3 px-2.5 h-9 rounded-lg flex items-center justify-center text-xs font-bold tracking-widest"
+          style={{ background: "var(--accent)", color: "var(--highlight)" }}
         >
           COP
         </span>
-
-        {/* Star icon (premium) */}
         <span
-          className="absolute top-2 right-2 size-7 rounded-md flex items-center justify-center text-sm font-bold"
-          style={{
-            background: "var(--accent)",
-            color: "var(--highlight)",
-          }}
+          className="absolute top-3 right-3 size-9 rounded-lg flex items-center justify-center text-base font-bold"
+          style={{ background: "var(--accent)", color: "var(--highlight)" }}
         >
           ★
         </span>
 
-        {/* Big price centered */}
         <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
           <span
-            className="font-display tabular-nums"
+            className="font-display tabular-nums leading-none"
             style={{
-              fontSize: "2.25rem",
-              lineHeight: "1",
+              fontSize: "clamp(2.5rem, 11vw, 4.5rem)",
               textShadow: "2px 2px 0 rgba(0,0,0,0.25)",
             }}
           >
@@ -228,15 +236,28 @@ function PriceCard() {
       </div>
 
       {/* Bottom strip */}
-      <div className="border-t border-border p-3 flex flex-col gap-0.5 text-left bg-background">
+      <div className="border-t border-border p-3 md:p-4 flex flex-col gap-0.5 text-left bg-background">
         <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
           Pase único · COP
         </p>
-        <h3 className="text-sm font-semibold tracking-tight text-foreground">
+        <h3 className="text-base md:text-lg font-semibold tracking-tight">
           Acceso completo
         </h3>
-        <p className="text-[10px] text-muted-foreground">Sin restricciones</p>
+        <p className="text-xs text-muted-foreground">Sin restricciones</p>
       </div>
-    </article>
+    </div>
+  );
+}
+
+function Spark({ className, delay }: { className?: string; delay: string }) {
+  return (
+    <span
+      aria-hidden
+      className={`absolute size-2 rounded-full bg-[var(--highlight)] anim-spark ${className ?? ""}`}
+      style={{
+        animationDelay: delay,
+        boxShadow: "0 0 12px var(--highlight)",
+      }}
+    />
   );
 }

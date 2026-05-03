@@ -1,75 +1,69 @@
 import { useTranslations } from "next-intl";
 import { LogoMark } from "./Logo";
 
-const SOCIAL_LINKS = [
-  {
-    name: "Instagram",
-    href: "https://instagram.com/mefaltauna",
-    Icon: InstagramIcon,
-  },
-  {
-    name: "TikTok",
-    href: "https://tiktok.com/@mefaltauna",
-    Icon: TikTokIcon,
-  },
-  {
-    name: "X",
-    href: "https://x.com/mefaltauna",
-    Icon: XIcon,
-  },
+const SOCIALS = [
+  { name: "Instagram", href: "https://instagram.com/mefaltauna", Icon: InstagramIcon },
+  { name: "TikTok",    href: "https://tiktok.com/@mefaltauna",   Icon: TikTokIcon },
+  { name: "X",         href: "https://x.com/mefaltauna",         Icon: XIcon },
+];
+
+const MARQUEE_ITEMS = [
+  "MEFALTAUNA",
+  "MUNDIAL 2026",
+  "HECHO EN COLOMBIA",
+  "★",
 ];
 
 export function Footer() {
   const t = useTranslations("footer");
   const year = new Date().getFullYear();
+  const stream = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS];
 
   return (
-    <footer className="relative bg-[var(--stage-bg)] text-white overflow-hidden">
-      <div
-        aria-hidden
-        className="absolute -top-1/4 left-1/2 -translate-x-1/2 size-[60vmax] rounded-full opacity-30 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(circle, var(--stage-purple-1) 0%, transparent 60%)",
-          filter: "blur(80px)",
-        }}
-      />
+    <footer className="bg-[var(--stage-bg)] text-white">
+      {/* Top marquee — broadcast-style scrolling brand strip */}
+      <div className="border-y border-white/10 overflow-hidden bg-black/30">
+        <div className="flex items-center gap-10 py-3 whitespace-nowrap animate-marquee" style={{ width: "max-content" }}>
+          {stream.map((text, i) => (
+            <span
+              key={i}
+              className="font-display text-xl md:text-2xl tracking-tight uppercase text-[var(--stage-yellow)]"
+            >
+              {text}
+            </span>
+          ))}
+        </div>
+      </div>
 
-      <div className="relative mx-auto max-w-6xl px-6 py-16 md:py-24 flex flex-col items-center text-center gap-10">
-        <div className="flex flex-col items-center gap-4">
-          <LogoMark className="size-12 text-white" />
-          <span className="font-display text-3xl md:text-4xl tracking-tight lowercase">
+      {/* Main row — logo on the left, socials on the right */}
+      <div className="mx-auto max-w-6xl px-6 py-6 flex items-center justify-between gap-4">
+        <a href="/" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
+          <LogoMark className="size-8 text-white" />
+          <span className="font-display text-xl tracking-tight lowercase">
             mefaltauna
           </span>
-        </div>
+        </a>
 
-        <p
-          className="font-display whitespace-nowrap"
-          style={{ fontSize: "clamp(1.5rem, 5vw, 2.75rem)" }}
-        >
-          Mundial 2026 · Hecho en Colombia
-        </p>
-
-        <div className="flex items-center gap-3">
-          {SOCIAL_LINKS.map(({ name, href, Icon }) => (
+        <div className="flex items-center gap-2">
+          {SOCIALS.map(({ name, href, Icon }) => (
             <a
               key={name}
               href={href}
               target="_blank"
               rel="noopener noreferrer"
               aria-label={name}
-              className="size-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center hover:bg-[var(--stage-yellow)] hover:text-[var(--stage-bg)] hover:border-transparent transition-colors"
+              className="size-9 rounded-full bg-white/10 border border-white/15 flex items-center justify-center hover:bg-[var(--stage-yellow)] hover:text-[var(--stage-bg)] hover:border-transparent transition-colors"
             >
-              <Icon className="size-5" />
+              <Icon className="size-4" />
             </a>
           ))}
         </div>
+      </div>
 
-        <div className="w-full max-w-md flex flex-col items-center gap-2 mt-4 pt-8 border-t border-white/10">
-          <p className="text-xs text-white/50 leading-relaxed">
-            {t("tagline")}
-          </p>
-          <p className="text-xs text-white/40">
+      {/* Hairline + tiny credit */}
+      <div className="border-t border-white/10">
+        <div className="mx-auto max-w-6xl px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-1 text-[10px] text-white/40">
+          <p>
             {t("credit")}{" "}
             <a
               href="https://uxearch.com"
@@ -78,10 +72,11 @@ export function Footer() {
               className="text-white/60 hover:text-[var(--stage-yellow)] transition-colors"
             >
               uxearch.com
-            </a>{" "}
-            · Javier Mora
+            </a>
+            {" · "}
+            <span>Javier Mora</span>
           </p>
-          <p className="text-[10px] text-white/30 mt-2">© {year}</p>
+          <p>© {year} · todos los derechos reservados</p>
         </div>
       </div>
     </footer>
