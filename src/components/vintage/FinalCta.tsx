@@ -6,15 +6,15 @@ export function FinalCta() {
   const t = useTranslations("finalCta");
 
   return (
-    <section className="relative overflow-hidden stage-purple">
+    <section className="relative overflow-hidden stage-purple grain">
       <MeshGradient />
-      <div className="relative mx-auto max-w-6xl px-6 py-24 md:py-32 flex flex-col items-center text-center gap-6">
+      <div className="relative mx-auto max-w-3xl px-6 py-24 md:py-32 flex flex-col items-center text-center gap-6 z-10">
         <p className="text-xs font-semibold uppercase tracking-widest text-[var(--stage-yellow)]">
           {t("kicker")}
         </p>
         <h2
-          className="font-display whitespace-nowrap leading-none"
-          style={{ fontSize: "clamp(2.25rem, 9vw, 6rem)" }}
+          className="font-display leading-[0.95] text-balance"
+          style={{ fontSize: "clamp(2rem, 8vw, 5rem)" }}
         >
           {t("title")}
         </h2>

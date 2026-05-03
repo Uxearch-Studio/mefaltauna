@@ -7,7 +7,8 @@ export function Pricing() {
   return (
     <section id="pricing" className="border-b border-border">
       <div className="mx-auto max-w-6xl px-6 py-20 md:py-24 grid md:grid-cols-2 gap-12 items-center">
-        <div className="flex flex-col gap-5 md:order-1 order-2">
+        {/* Info first — both mobile and desktop */}
+        <div className="flex flex-col gap-5">
           <p className="text-xs font-semibold uppercase tracking-widest text-accent">
             {t("kicker")}
           </p>
@@ -38,8 +39,9 @@ export function Pricing() {
           <p className="text-xs text-muted-foreground">{t("disclaimer")}</p>
         </div>
 
-        <div className="flex justify-center md:justify-end md:order-2 order-1">
-          <PriceReveal className="w-60 h-80 md:w-72 md:h-96" />
+        {/* Pack — same dimensions as Luis Díaz card */}
+        <div className="flex justify-center md:justify-end">
+          <PriceReveal className="w-64 md:w-80 aspect-[3/4]" />
         </div>
       </div>
     </section>
