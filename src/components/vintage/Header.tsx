@@ -11,7 +11,7 @@ export async function Header() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
-      <div className="mx-auto max-w-6xl px-6 h-16 flex items-center justify-between gap-6">
+      <div className="mx-auto max-w-6xl px-4 md:px-6 h-16 flex items-center justify-between gap-3">
         <Link href="/" className="hover:opacity-70 transition-opacity">
           <Logo />
         </Link>
@@ -38,19 +38,21 @@ export async function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <LocaleSwitcher />
-          <ThemeSwitcher />
+          <div className="hidden sm:flex items-center gap-2">
+            <LocaleSwitcher />
+            <ThemeSwitcher />
+          </div>
           {user ? (
             <Link
               href="/app/feed"
-              className="hidden sm:inline-flex items-center h-9 px-4 text-sm font-medium rounded-full bg-foreground text-background hover:opacity-90 transition-opacity"
+              className="inline-flex items-center h-9 px-4 text-sm font-medium rounded-full bg-foreground text-background hover:opacity-90 transition-opacity whitespace-nowrap"
             >
               {t("openApp")} →
             </Link>
           ) : (
             <Link
               href="/sign-in"
-              className="hidden sm:inline-flex items-center h-9 px-4 text-sm font-medium rounded-full bg-foreground text-background hover:opacity-90 transition-opacity"
+              className="inline-flex items-center h-9 px-4 text-sm font-semibold rounded-full bg-foreground text-background hover:opacity-90 transition-opacity whitespace-nowrap"
             >
               {t("signIn")}
             </Link>

@@ -89,6 +89,7 @@
     "kicker": "Acceso",
     "title": "Un solo pase.",
     "subtitle": "Sin niveles, sin enredos. Pagas una vez y desbloqueas todo lo de mefaltauna.",
+    "openHint": "→ Desliza para abrir el sobre y ver qué incluye.",
     "singlePass": "Pase único",
     "planName": "Acceso completo",
     "planTagline": "Sin restricciones",
@@ -97,7 +98,7 @@
     "benefits": {
       "full": "Catálogo completo y feed en vivo",
       "chat": "Chat directo con cualquier coleccionista",
-      "unlimited": "Publica todas tus repetidas sin tope",
+      "unlimited": "Publica todas tus repetidas",
       "noCommission": "0% comisión en cambio o venta"
     }
   },

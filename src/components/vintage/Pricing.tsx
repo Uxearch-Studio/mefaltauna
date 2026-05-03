@@ -7,7 +7,7 @@ export function Pricing() {
   return (
     <section id="pricing" className="border-b border-border">
       <div className="mx-auto max-w-6xl px-6 py-20 md:py-24 grid md:grid-cols-2 gap-12 items-center">
-        {/* Info first — both mobile and desktop */}
+        {/* Info first — text + CTA only. Benefits live INSIDE the gold card. */}
         <div className="flex flex-col gap-5">
           <p className="text-xs font-semibold uppercase tracking-widest text-accent">
             {t("kicker")}
@@ -22,12 +22,9 @@ export function Pricing() {
             {t("subtitle")}
           </p>
 
-          <ul className="flex flex-col gap-3 text-sm mt-2">
-            <Feature>{t("benefits.full")}</Feature>
-            <Feature>{t("benefits.chat")}</Feature>
-            <Feature>{t("benefits.unlimited")}</Feature>
-            <Feature>{t("benefits.noCommission")}</Feature>
-          </ul>
+          <p className="text-sm text-muted-foreground italic mt-2">
+            {t("openHint")}
+          </p>
 
           <button
             type="button"
@@ -39,38 +36,11 @@ export function Pricing() {
           <p className="text-xs text-muted-foreground">{t("disclaimer")}</p>
         </div>
 
-        {/* Pack — same dimensions as Luis Díaz card */}
+        {/* Pack — same dimensions as the Luis Díaz card */}
         <div className="flex justify-center md:justify-end">
           <PriceReveal className="w-64 md:w-80 aspect-[3/4]" />
         </div>
       </div>
     </section>
-  );
-}
-
-function Feature({ children }: { children: React.ReactNode }) {
-  return (
-    <li className="flex items-start gap-2.5">
-      <span
-        className="mt-0.5 size-5 rounded-full flex items-center justify-center shrink-0"
-        style={{
-          background: "var(--highlight)",
-          color: "var(--highlight-foreground)",
-        }}
-      >
-        <svg
-          viewBox="0 0 16 16"
-          className="size-3"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="3"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M3 8 L7 12 L13 4" />
-        </svg>
-      </span>
-      <span>{children}</span>
-    </li>
   );
 }

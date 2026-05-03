@@ -89,6 +89,7 @@
     "kicker": "Access",
     "title": "One pass.",
     "subtitle": "No tiers, no fuss. Pay once and unlock all of mefaltauna.",
+    "openHint": "→ Slide to open the pack and see what's inside.",
     "singlePass": "Single pass",
     "planName": "Full access",
     "planTagline": "No caps",
@@ -97,7 +98,7 @@
     "benefits": {
       "full": "Full catalog and live feed",
       "chat": "Direct chat with any collector",
-      "unlimited": "Publish every duplicate, no caps",
+      "unlimited": "Publish every duplicate",
       "noCommission": "0% commission per trade or sale"
     }
   },

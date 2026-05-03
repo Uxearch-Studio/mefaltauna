@@ -5,7 +5,7 @@ import { StickerPreview } from "@/components/vintage/StickerPreview";
 import { FinalCta } from "@/components/vintage/FinalCta";
 import { Countdown } from "@/components/vintage/Countdown";
 import { MeshGradient } from "@/components/vintage/MeshGradient";
-import { FloatingDeck } from "@/components/vintage/FloatingDeck";
+import { HeroSpotlight } from "@/components/vintage/HeroSpotlight";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth";
 
@@ -23,19 +23,19 @@ export default async function HomePage({
 
   return (
     <main>
-      {/* HERO — purple stage with mesh gradient + grain + floating cards */}
+      {/* HERO — mesh gradient + grain + spotlight card */}
       <section className="relative overflow-hidden stage-purple grain min-h-[78vh] flex items-center">
         <MeshGradient />
-        <FloatingDeck />
+        <HeroSpotlight />
 
-        <div className="relative mx-auto max-w-6xl px-6 pt-20 pb-24 flex flex-col items-center text-center gap-6 w-full z-10">
+        <div className="relative mx-auto max-w-6xl px-6 pt-20 pb-24 flex flex-col md:items-start items-center md:text-left text-center gap-6 w-full z-10">
           <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur text-xs font-semibold uppercase tracking-widest">
             <span className="size-1.5 rounded-full bg-[var(--stage-yellow)]" />
             {t("kicker")}
           </span>
 
           <h1
-            className="font-display whitespace-nowrap leading-none"
+            className="font-display whitespace-nowrap leading-none max-w-xl"
             style={{
               fontSize: "clamp(2.25rem, 9vw, 6rem)",
               textShadow: "0 8px 32px rgba(0,0,0,0.4)",

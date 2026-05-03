@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { MeshGradient } from "./MeshGradient";
+import { FloatingDeck } from "./FloatingDeck";
 
 export function FinalCta() {
   const t = useTranslations("finalCta");
@@ -8,6 +9,8 @@ export function FinalCta() {
   return (
     <section className="relative overflow-hidden stage-purple grain">
       <MeshGradient />
+      <FloatingDeck layout="cta" />
+
       <div className="relative mx-auto max-w-3xl px-6 py-24 md:py-32 flex flex-col items-center text-center gap-6 z-10">
         <p className="text-xs font-semibold uppercase tracking-widest text-[var(--stage-yellow)]">
           {t("kicker")}
