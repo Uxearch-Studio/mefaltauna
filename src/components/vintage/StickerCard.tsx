@@ -74,27 +74,27 @@ export function StickerCard({
       >
         <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-transparent to-black/30" />
 
-        {/* Team badge — purple bg, yellow text */}
+        {/* Team badge — dark violet stage bg, yellow text */}
         <span
           className={`absolute ${
             size === "lg" ? "top-3 left-3" : "top-1.5 left-1.5"
           } ${badgeSize} rounded-lg flex items-center justify-center font-bold ${teamLabelSize}`}
           style={{
-            background: "var(--accent)",
-            color: "var(--highlight)",
+            background: "var(--stage-bg)",
+            color: "var(--stage-yellow)",
           }}
         >
           {team}
         </span>
 
-        {/* Number badge — purple bg, yellow text */}
+        {/* Number badge — dark violet stage bg, yellow text */}
         <span
           className={`absolute ${
             size === "lg" ? "top-3 right-3" : "top-1.5 right-1.5"
           } ${badgeSize} rounded-lg flex items-center justify-center font-bold tabular-nums ${numberSize}`}
           style={{
-            background: "var(--accent)",
-            color: "var(--highlight)",
+            background: "var(--stage-bg)",
+            color: "var(--stage-yellow)",
           }}
         >
           {number}

@@ -151,34 +151,81 @@ export function HeroCanvas() {
       return true;
     }
 
-    function drawBall(x: number, y: number) {
+    function drawBall(x: number, y: number, time: number) {
       // Trailing dots (drawn earlier, so we add now)
       for (const d of trail) {
         const k = 1 - d.t / 0.6;
         if (k <= 0) continue;
-        ctx!.fillStyle = `rgba(255, 199, 44, ${k * 0.6})`;
+        ctx!.fillStyle = `rgba(255, 215, 122, ${k * 0.45})`;
         ctx!.beginPath();
-        ctx!.arc(d.x, d.y, 3 * k, 0, Math.PI * 2);
+        ctx!.arc(d.x, d.y, 4 * k, 0, Math.PI * 2);
         ctx!.fill();
       }
 
-      // Ball glow
-      const g = ctx!.createRadialGradient(x, y, 0, x, y, 16);
-      g.addColorStop(0, "rgba(255, 199, 44, 0.7)");
-      g.addColorStop(1, "rgba(255, 199, 44, 0)");
+      // Outer warm glow
+      const g = ctx!.createRadialGradient(x, y, 0, x, y, 22);
+      g.addColorStop(0, "rgba(255, 215, 122, 0.55)");
+      g.addColorStop(1, "rgba(255, 215, 122, 0)");
       ctx!.fillStyle = g;
       ctx!.beginPath();
-      ctx!.arc(x, y, 16, 0, Math.PI * 2);
+      ctx!.arc(x, y, 22, 0, Math.PI * 2);
       ctx!.fill();
 
-      // Solid ball
-      ctx!.fillStyle = "#ffd97a";
+      // Soccer ball — white sphere with classic black pentagon pattern,
+      // stamped onto the canvas with a slow rotation that hints at spin.
+      const R = 8;
+      const rot = (time * 0.0015) % (Math.PI * 2);
+
+      ctx!.save();
+      ctx!.translate(x, y);
+      ctx!.rotate(rot);
+
+      // White ball body with subtle shading for depth
+      const body = ctx!.createRadialGradient(-R * 0.35, -R * 0.4, 0, 0, 0, R);
+      body.addColorStop(0, "#ffffff");
+      body.addColorStop(0.55, "#f4f4f4");
+      body.addColorStop(1, "#cfcfcf");
+      ctx!.fillStyle = body;
       ctx!.beginPath();
-      ctx!.arc(x, y, 4.5, 0, Math.PI * 2);
+      ctx!.arc(0, 0, R, 0, Math.PI * 2);
       ctx!.fill();
-      ctx!.fillStyle = "#1a0b3d";
+
+      // Black pentagon panels — 1 centered + 5 around it (classic look)
+      ctx!.fillStyle = "#0a0a0a";
+      drawPentagon(0, 0, R * 0.32, 0);
+      for (let i = 0; i < 5; i++) {
+        const a = (i / 5) * Math.PI * 2;
+        const px = Math.cos(a) * R * 0.62;
+        const py = Math.sin(a) * R * 0.62;
+        drawPentagon(px, py, R * 0.22, a + Math.PI / 5);
+      }
+
+      // Specular highlight
+      ctx!.fillStyle = "rgba(255, 255, 255, 0.45)";
       ctx!.beginPath();
-      ctx!.arc(x, y, 1.5, 0, Math.PI * 2);
+      ctx!.ellipse(-R * 0.4, -R * 0.45, R * 0.35, R * 0.18, -0.5, 0, Math.PI * 2);
+      ctx!.fill();
+
+      // Rim shadow
+      ctx!.strokeStyle = "rgba(0, 0, 0, 0.18)";
+      ctx!.lineWidth = 0.8;
+      ctx!.beginPath();
+      ctx!.arc(0, 0, R - 0.5, 0, Math.PI * 2);
+      ctx!.stroke();
+
+      ctx!.restore();
+    }
+
+    function drawPentagon(cx: number, cy: number, r: number, rotation: number) {
+      ctx!.beginPath();
+      for (let i = 0; i < 5; i++) {
+        const a = rotation + (i / 5) * Math.PI * 2 - Math.PI / 2;
+        const px = cx + Math.cos(a) * r;
+        const py = cy + Math.sin(a) * r;
+        if (i === 0) ctx!.moveTo(px, py);
+        else ctx!.lineTo(px, py);
+      }
+      ctx!.closePath();
       ctx!.fill();
     }
 
@@ -229,7 +276,7 @@ export function HeroCanvas() {
       trail.unshift({ x: bx, y: by, t: 0 });
       if (trail.length > 14) trail.pop();
 
-      drawBall(bx, by);
+      drawBall(bx, by, time);
 
       raf = requestAnimationFrame(frame);
     }

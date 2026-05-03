@@ -72,7 +72,6 @@ export function Footer() {
               >
                 uxearch
               </a>
-              {" — Javier Mora"}
             </p>
             <p className="text-white/60">
               Diseñamos Apps, Softwares o Websites{" "}

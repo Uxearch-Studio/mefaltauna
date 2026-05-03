@@ -153,7 +153,7 @@ function SliderTrack({
       ref={trackRef}
       className="relative h-12 rounded-full bg-[#1a0b3d]/70 backdrop-blur border border-white/20 overflow-hidden"
     >
-      <span className="absolute inset-0 flex items-center justify-center text-[11px] font-bold uppercase tracking-widest text-white/70 anim-marquee-hint pointer-events-none">
+      <span className="absolute inset-0 flex items-center justify-center text-[11px] font-bold uppercase tracking-widest text-[var(--stage-yellow)] anim-marquee-hint pointer-events-none">
         Desliza para abrir
       </span>
 
@@ -289,6 +289,18 @@ function PackWrapper({ torn }: { torn: number }) {
   );
 }
 
+/**
+ * FIFA Ultimate Team-inspired premium pass card.
+ * - Single panel (dark violet base) with a gold holographic frame
+ *   accent and corner caret marks (FUT Icon vibe).
+ * - Top-left rating block: price as the "rating", "PASE" as position,
+ *   Colombian flag as the nationality mark.
+ * - Top-right logo medallion as the player photo equivalent.
+ * - Wordmark + thin gold divider centered like a player name.
+ * - 2-column benefit grid styled as FIFA stat lines (✓ then short
+ *   abbreviation + full label).
+ * - Yellow "Entrar al club" CTA pinned to the bottom.
+ */
 function GoldCollectorCard({
   labels,
   ctaLabel,
@@ -303,100 +315,159 @@ function GoldCollectorCard({
   };
   ctaLabel: string;
 }) {
+  const benefits: Array<{ tag: string; label: string }> = [
+    { tag: "FED", label: labels.full },
+    { tag: "CHA", label: labels.chat },
+    { tag: "PUB", label: labels.unlimited },
+    { tag: "0%",  label: labels.noCommission },
+    { tag: "ALB", label: labels.albumProgress },
+    { tag: "BSC", label: labels.findMissing },
+  ];
+
   return (
-    <div className="absolute inset-0 flex flex-col">
-      <div className="relative px-3 pt-3 pb-2 foil-holo">
-        <div className="absolute inset-0 bg-gradient-to-br from-white/30 via-transparent to-black/30" />
-        <div className="relative flex items-center justify-between text-[#1a0b3d] pl-10">
-          <span className="px-2 py-0.5 rounded-md bg-[#1a0b3d] text-[var(--stage-yellow)] text-[10px] font-bold tracking-widest">
-            COP
-          </span>
-          <span className="px-2 py-0.5 rounded-md bg-[#1a0b3d] text-[var(--stage-yellow)] text-[10px] font-bold tracking-widest">
-            ★ EDICIÓN
-          </span>
-        </div>
-      </div>
+    <div className="absolute inset-0 flex flex-col bg-[#0e0524] text-white overflow-hidden">
+      {/* Holographic gold sheen behind everything */}
+      <div
+        aria-hidden
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(140% 90% at 50% -10%, rgba(255,215,122,0.35) 0%, rgba(255,199,44,0.18) 25%, transparent 55%), linear-gradient(160deg, rgba(255,199,44,0.05) 0%, transparent 40%, rgba(255,199,44,0.10) 90%)",
+        }}
+      />
+      {/* Animated foil sweep across the whole card */}
+      <div
+        aria-hidden
+        className="absolute inset-0 pointer-events-none shine-sweep"
+        style={{ mixBlendMode: "screen", opacity: 0.5 }}
+      />
 
-      <div className="flex-1 flex flex-col gap-2.5 px-4 py-3 relative bg-[#1a0b3d] text-white">
-        <div
+      {/* Gold foil frame */}
+      <div
+        aria-hidden
+        className="absolute inset-2 rounded-[18px] pointer-events-none"
+        style={{
+          border: "1px solid rgba(255,215,122,0.55)",
+          boxShadow:
+            "inset 0 0 0 2px rgba(255,199,44,0.10), 0 0 24px rgba(255,199,44,0.15)",
+        }}
+      />
+
+      {/* Corner carets — FUT Icon style */}
+      {(["tl", "tr", "bl", "br"] as const).map((c) => (
+        <span
+          key={c}
           aria-hidden
-          className="absolute inset-2 rounded-xl pointer-events-none"
-          style={{
-            background:
-              "linear-gradient(135deg, #ffd97a 0%, transparent 30%, transparent 70%, #ffd97a 100%)",
-            opacity: 0.2,
-          }}
+          className={`absolute size-3 border-[var(--stage-yellow)] pointer-events-none ${
+            c === "tl"
+              ? "top-3 left-3 border-t-2 border-l-2"
+              : c === "tr"
+                ? "top-3 right-3 border-t-2 border-r-2"
+                : c === "bl"
+                  ? "bottom-3 left-3 border-b-2 border-l-2"
+                  : "bottom-3 right-3 border-b-2 border-r-2"
+          }`}
         />
+      ))}
 
-        {/* Header: brand + price */}
-        <div className="relative flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2 min-w-0">
-            <svg
-              viewBox="0 0 32 32"
-              className="size-7 text-[var(--stage-yellow)] shrink-0"
-              aria-hidden
-            >
-              <g fill="currentColor">
-                <rect x="3" y="6" width="7" height="9" rx="1.4" />
-                <rect x="12.5" y="6" width="7" height="9" rx="1.4" />
-                <rect x="22" y="6" width="7" height="9" rx="1.4" />
-                <rect x="3" y="17" width="7" height="9" rx="1.4" />
-                <rect x="22" y="17" width="7" height="9" rx="1.4" />
-              </g>
-              <rect
-                x="12.5" y="17" width="7" height="9" rx="1.4"
-                fill="none" stroke="currentColor" strokeWidth="1.4"
-                strokeDasharray="2 1.6"
-              />
-            </svg>
-            <div className="flex flex-col min-w-0">
-              <span className="font-display text-sm md:text-base lowercase leading-none truncate text-white">
-                mefaltauna
-              </span>
-              <span className="text-[9px] uppercase tracking-widest text-[var(--stage-yellow)] mt-0.5">
-                Pase único
-              </span>
-            </div>
-          </div>
-          <p
-            className="font-display tabular-nums leading-none shrink-0"
+      {/* Top section: rating block + logo medallion */}
+      <div className="relative pt-7 px-6 flex items-start justify-between gap-3">
+        <div className="flex flex-col items-start">
+          <span
+            className="font-display tabular-nums leading-none text-[var(--stage-yellow)]"
             style={{
-              fontSize: "clamp(1.5rem, 6vw, 2.25rem)",
-              textShadow: "2px 2px 0 rgba(0,0,0,0.4)",
-              color: "var(--stage-yellow)",
+              fontSize: "clamp(1.6rem, 7vw, 2.4rem)",
+              textShadow: "2px 2px 0 rgba(0,0,0,0.5)",
             }}
           >
             $9.900
-          </p>
+          </span>
+          <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/85 mt-1.5">
+            Pase
+          </span>
+          <span className="text-lg leading-none mt-1.5">🇨🇴</span>
         </div>
 
-        <ul className="relative grid grid-cols-1 gap-1.5 text-[11px] md:text-xs w-full">
-          {[
-            labels.full,
-            labels.chat,
-            labels.unlimited,
-            labels.noCommission,
-            labels.albumProgress,
-            labels.findMissing,
-          ].map((label, i) => (
-            <li key={i} className="flex items-start gap-2">
-              <span className="mt-0.5 size-3.5 rounded-full bg-emerald-400 text-[#0a2a18] flex items-center justify-center shrink-0">
-                <svg viewBox="0 0 16 16" className="size-2.5" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M3 8 L7 12 L13 4" />
-                </svg>
-              </span>
-              <span className="leading-tight text-white/90">{label}</span>
-            </li>
-          ))}
-        </ul>
-
-        <a
-          href="/sign-in"
-          className="relative mt-auto h-10 rounded-full bg-[var(--stage-yellow)] text-[#1a0b3d] text-xs font-bold uppercase tracking-widest flex items-center justify-center hover:opacity-90 transition-opacity shadow-lg shadow-black/30"
+        <div
+          className="size-16 md:size-20 rounded-2xl flex items-center justify-center shrink-0 shadow-[0_8px_24px_rgba(0,0,0,0.4)]"
+          style={{
+            background:
+              "linear-gradient(135deg, #ffd97a 0%, #ffc72c 50%, #b67e0f 100%)",
+          }}
         >
-          {ctaLabel}
-        </a>
+          <svg viewBox="0 0 32 32" className="size-10 md:size-12 text-[#1a0b3d]" aria-hidden>
+            <g fill="currentColor">
+              <rect x="3" y="6" width="7" height="9" rx="1.4" />
+              <rect x="12.5" y="6" width="7" height="9" rx="1.4" />
+              <rect x="22" y="6" width="7" height="9" rx="1.4" />
+              <rect x="3" y="17" width="7" height="9" rx="1.4" />
+              <rect x="22" y="17" width="7" height="9" rx="1.4" />
+            </g>
+            <rect
+              x="12.5" y="17" width="7" height="9" rx="1.4"
+              fill="none" stroke="currentColor" strokeWidth="1.4"
+              strokeDasharray="2 1.6"
+            />
+          </svg>
+        </div>
       </div>
+
+      {/* Wordmark + divider — the "player name" zone */}
+      <div className="relative px-6 mt-4 text-center">
+        <h3
+          className="font-display lowercase leading-none text-[var(--stage-yellow)]"
+          style={{
+            fontSize: "clamp(1.6rem, 6.5vw, 2.25rem)",
+            textShadow: "2px 2px 0 rgba(0,0,0,0.45)",
+          }}
+        >
+          mefaltauna
+        </h3>
+        <span className="block text-[10px] font-bold uppercase tracking-[0.3em] text-white/70 mt-2">
+          Edición · Mundial 2026
+        </span>
+        <div
+          aria-hidden
+          className="mx-auto mt-3 h-[1.5px] w-20"
+          style={{
+            background:
+              "linear-gradient(90deg, transparent 0%, var(--stage-yellow) 50%, transparent 100%)",
+          }}
+        />
+      </div>
+
+      {/* FIFA-style stats grid — 2 columns × 3 rows */}
+      <ul className="relative px-5 mt-4 grid grid-cols-2 gap-x-3 gap-y-2 text-[10px] md:text-[11px] w-full">
+        {benefits.map((b, i) => (
+          <li key={i} className="flex items-center gap-1.5 min-w-0">
+            <span
+              aria-hidden
+              className="size-3.5 rounded-full bg-emerald-400 text-[#0a2a18] flex items-center justify-center shrink-0 shadow-[0_0_8px_rgba(52,211,153,0.5)]"
+            >
+              <svg viewBox="0 0 16 16" className="size-2.5" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 8 L7 12 L13 4" />
+              </svg>
+            </span>
+            <span className="font-bold uppercase tracking-wider text-[var(--stage-yellow)] tabular-nums shrink-0">
+              {b.tag}
+            </span>
+            <span className="leading-tight text-white/80 truncate">
+              {b.label}
+            </span>
+          </li>
+        ))}
+      </ul>
+
+      {/* CTA pinned to the bottom edge */}
+      <a
+        href="/sign-in"
+        className="relative mt-auto mb-5 mx-5 h-10 rounded-full bg-[var(--stage-yellow)] text-[#1a0b3d] text-xs font-bold uppercase tracking-[0.2em] flex items-center justify-center gap-2 hover:opacity-90 transition-opacity shadow-[0_8px_20px_rgba(255,199,44,0.35)]"
+      >
+        {ctaLabel}
+        <svg viewBox="0 0 16 16" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <path d="M3 8h10M9 4l4 4-4 4" />
+        </svg>
+      </a>
     </div>
   );
 }

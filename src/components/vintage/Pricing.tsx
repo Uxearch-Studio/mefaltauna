@@ -22,16 +22,9 @@ export function Pricing() {
             {t("subtitle")}
           </p>
 
-          <p className="text-sm text-muted-foreground italic mt-2">
+          <p className="text-sm font-semibold mt-2 text-[var(--stage-yellow)]">
             {t("openHint")}
           </p>
-
-          <button
-            type="button"
-            className="self-start mt-4 h-12 px-6 rounded-full bg-accent text-accent-foreground text-sm font-bold hover:opacity-90 transition-opacity shadow-lg shadow-accent/20"
-          >
-            {t("cta")}
-          </button>
 
           <p className="text-xs text-muted-foreground">{t("disclaimer")}</p>
         </div>
