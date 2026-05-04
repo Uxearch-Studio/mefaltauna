@@ -213,7 +213,9 @@
       "unauthenticated": "Inicia sesión.",
       "missing_fields": "Completa todos los campos.",
       "invalid_id": "Cédula no válida (entre 6 y 12 dígitos).",
-      "invalid_phone": "Número de WhatsApp no válido.",
+      "invalid_phone": "Número no válido. Debe ser un móvil colombiano de 10 dígitos.",
+      "not_mobile_phone": "Solo aceptamos números móviles, no fijos.",
+      "fake_phone": "Ese número no parece real.",
       "whatsapp_taken": "Ese WhatsApp ya está vinculado a otra cuenta.",
       "national_id_taken": "Esa cédula ya está vinculada a otra cuenta.",
       "db_error": "No pudimos guardar. Intenta de nuevo."
@@ -334,7 +336,9 @@
       "not_configured": "Servicio no disponible",
       "unauthenticated": "Inicia sesión",
       "missing_fields": "Completa todos los campos obligatorios",
-      "invalid_phone": "WhatsApp no válido",
+      "invalid_phone": "Número no válido. Debe ser un móvil colombiano de 10 dígitos.",
+      "not_mobile_phone": "Solo aceptamos móviles, no fijos.",
+      "fake_phone": "Ese número no parece real.",
       "whatsapp_taken": "Ese WhatsApp ya está vinculado a otra cuenta.",
       "national_id_taken": "Esa cédula ya está vinculada a otra cuenta.",
       "db_error": "No pudimos guardar. Intenta de nuevo."
@@ -405,7 +409,9 @@
     "forgotPin": "¿Olvidaste tu PIN?",
     "disclaimer": "Al continuar aceptas los términos. Tus datos quedan privados.",
     "errors": {
-      "invalid_phone": "Número de WhatsApp no válido. Debe ser de 10 dígitos.",
+      "invalid_phone": "Número no válido. Debe ser un móvil colombiano de 10 dígitos (ej. 300 123 4567).",
+      "not_mobile_phone": "Solo aceptamos números móviles. Los fijos no funcionan con WhatsApp.",
+      "fake_phone": "Ese número no parece real. Verifica los dígitos e intenta de nuevo.",
       "invalid_pin": "El PIN debe ser de 6 números.",
       "pins_mismatch": "Los PIN no coinciden. Vuelve a escribirlos.",
       "wrong_pin": "El PIN no coincide con el que tienes guardado para este número.",
@@ -429,7 +435,9 @@
     "errors": {
       "not_configured": "Servicio no disponible.",
       "service_unavailable": "La recuperación automática aún no está habilitada en este entorno. Escríbenos a hello@mefaltauna.com.",
-      "invalid_phone": "Número de WhatsApp no válido.",
+      "invalid_phone": "Número no válido. Debe ser un móvil colombiano de 10 dígitos.",
+      "not_mobile_phone": "Solo aceptamos números móviles.",
+      "fake_phone": "Ese número no parece real.",
       "invalid_id": "Cédula no válida (entre 6 y 12 dígitos).",
       "invalid_pin": "El PIN debe ser de 6 números.",
       "pins_mismatch": "Los PIN no coinciden.",

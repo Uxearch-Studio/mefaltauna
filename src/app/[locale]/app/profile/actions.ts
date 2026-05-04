@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { validateColombianMobile } from "@/lib/phone";
 
 export type ProfileEditState = {
   ok?: boolean;
@@ -10,6 +11,8 @@ export type ProfileEditState = {
     | "unauthenticated"
     | "missing_fields"
     | "invalid_phone"
+    | "not_mobile_phone"
+    | "fake_phone"
     | "whatsapp_taken"
     | "national_id_taken"
     | "db_error";
@@ -41,8 +44,18 @@ export async function updateProfileAction(
   }
 
   const idDigits = nationalId.replace(/\D/g, "");
-  const phoneDigits = whatsapp.replace(/\D/g, "");
-  if (phoneDigits.length < 7) return { error: "invalid_phone" };
+  const phoneCheck = validateColombianMobile(whatsapp);
+  if (!phoneCheck.ok) {
+    return {
+      error:
+        phoneCheck.reason === "not_mobile"
+          ? "not_mobile_phone"
+          : phoneCheck.reason === "fake"
+            ? "fake_phone"
+            : "invalid_phone",
+    };
+  }
+  const phoneDigits = phoneCheck.digits;
 
   const contactRes = await supabase.from("profile_contact").upsert(
     {

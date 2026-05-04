@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { validateColombianMobile } from "@/lib/phone";
 
 export type PublishState = {
   error?:
@@ -23,6 +24,8 @@ export type ContactState = {
     | "missing_fields"
     | "invalid_id"
     | "invalid_phone"
+    | "not_mobile_phone"
+    | "fake_phone"
     | "whatsapp_taken"
     | "national_id_taken"
     | "db_error";
@@ -57,10 +60,18 @@ export async function saveContactAction(
     return { error: "invalid_id" };
   }
 
-  const phoneDigits = whatsapp.replace(/\D/g, "");
-  if (phoneDigits.length < 7) {
-    return { error: "invalid_phone" };
+  const phoneCheck = validateColombianMobile(whatsapp);
+  if (!phoneCheck.ok) {
+    return {
+      error:
+        phoneCheck.reason === "not_mobile"
+          ? "not_mobile_phone"
+          : phoneCheck.reason === "fake"
+            ? "fake_phone"
+            : "invalid_phone",
+    };
   }
+  const phoneDigits = phoneCheck.digits;
 
   const { error } = await supabase.from("profile_contact").upsert(
     {

@@ -213,7 +213,9 @@
       "unauthenticated": "Sign in.",
       "missing_fields": "Fill in every field.",
       "invalid_id": "ID not valid (between 6 and 12 digits).",
-      "invalid_phone": "WhatsApp number not valid.",
+      "invalid_phone": "Invalid number. Must be a 10-digit Colombian mobile.",
+      "not_mobile_phone": "Only mobile numbers work, not landlines.",
+      "fake_phone": "That number doesn't look real.",
       "whatsapp_taken": "That WhatsApp is already linked to another account.",
       "national_id_taken": "That national ID is already linked to another account.",
       "db_error": "Couldn't save. Try again."
@@ -334,7 +336,9 @@
       "not_configured": "Service unavailable",
       "unauthenticated": "Sign in",
       "missing_fields": "Fill in every required field",
-      "invalid_phone": "Invalid WhatsApp number",
+      "invalid_phone": "Invalid number. Must be a 10-digit Colombian mobile.",
+      "not_mobile_phone": "Only mobile numbers work, not landlines.",
+      "fake_phone": "That number doesn't look real.",
       "whatsapp_taken": "That WhatsApp is already linked to another account.",
       "national_id_taken": "That national ID is already linked to another account.",
       "db_error": "Couldn't save. Try again."
@@ -405,7 +409,9 @@
     "forgotPin": "Forgot your PIN?",
     "disclaimer": "By continuing you accept the terms. Your data stays private.",
     "errors": {
-      "invalid_phone": "Invalid WhatsApp number. Should be 10 digits.",
+      "invalid_phone": "Invalid number. Must be a 10-digit Colombian mobile (e.g. 300 123 4567).",
+      "not_mobile_phone": "Only mobile numbers work — landlines don't have WhatsApp.",
+      "fake_phone": "That number doesn't look real. Double-check the digits.",
       "invalid_pin": "PIN must be 6 digits.",
       "pins_mismatch": "PINs don't match. Type them again.",
       "wrong_pin": "PIN doesn't match the one saved for this number.",
@@ -429,7 +435,9 @@
     "errors": {
       "not_configured": "Service unavailable.",
       "service_unavailable": "Automated recovery isn't enabled in this environment yet. Reach us at hello@mefaltauna.com.",
-      "invalid_phone": "Invalid WhatsApp number.",
+      "invalid_phone": "Invalid number. Must be a 10-digit Colombian mobile.",
+      "not_mobile_phone": "Only mobile numbers work — landlines don't.",
+      "fake_phone": "That number doesn't look real.",
       "invalid_id": "Invalid national ID (between 6 and 12 digits).",
       "invalid_pin": "PIN must be 6 digits.",
       "pins_mismatch": "PINs don't match.",

@@ -7,6 +7,7 @@ import {
   normalizePhone,
   phoneToEmail,
 } from "@/lib/auth";
+import { validateColombianMobile } from "@/lib/phone";
 
 export type AuthState = {
   /** Form re-renders with this filled when the server bounces back. */
@@ -15,6 +16,8 @@ export type AuthState = {
   needsConfirm?: boolean;
   error?:
     | "invalid_phone"
+    | "not_mobile_phone"
+    | "fake_phone"
     | "invalid_pin"
     | "pins_mismatch"
     | "wrong_pin"
@@ -43,12 +46,20 @@ export async function phonePinAction(
     formKeys: [...formData.keys()],
   });
 
-  // Minimal phone gate — accept anything with at least 7 digits.
-  // Detailed validation moved to UI hints. The bottleneck is the
-  // signin/signup attempt below.
-  const phoneDigitsOnly = phoneInput.replace(/\D/g, "");
-  if (phoneDigitsOnly.length < 7) {
-    return { phone: phoneInput, error: "invalid_phone" };
+  // Strict Colombian mobile validation. Rejects malformed numbers,
+  // landlines (+57 1/4/5/6/7/8 ranges), and obviously fake numbers
+  // (3000000000, 3001234567) before they hit Supabase.
+  const phoneCheck = validateColombianMobile(phoneInput);
+  if (!phoneCheck.ok) {
+    return {
+      phone: phoneInput,
+      error:
+        phoneCheck.reason === "not_mobile"
+          ? "not_mobile_phone"
+          : phoneCheck.reason === "fake"
+            ? "fake_phone"
+            : "invalid_phone",
+    };
   }
   if (!isValidPin(pin)) {
     return { phone: phoneInput, error: "invalid_pin" };

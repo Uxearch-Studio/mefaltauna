@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { isValidPin, normalizePhone, phoneToEmail } from "@/lib/auth";
+import { validateColombianMobile } from "@/lib/phone";
 
 export type RecoverState = {
   phone?: string;
@@ -12,6 +13,8 @@ export type RecoverState = {
     | "not_configured"
     | "service_unavailable"
     | "invalid_phone"
+    | "not_mobile_phone"
+    | "fake_phone"
     | "invalid_id"
     | "invalid_pin"
     | "pins_mismatch"
@@ -38,9 +41,17 @@ export async function recoverPinAction(
   const pinConfirm = String(formData.get("pin_confirm") ?? "");
   const locale = String(formData.get("locale") ?? "es");
 
-  const phoneDigits = phoneInput.replace(/\D/g, "");
-  if (phoneDigits.length < 7) {
-    return { phone: phoneInput, error: "invalid_phone" };
+  const phoneCheck = validateColombianMobile(phoneInput);
+  if (!phoneCheck.ok) {
+    return {
+      phone: phoneInput,
+      error:
+        phoneCheck.reason === "not_mobile"
+          ? "not_mobile_phone"
+          : phoneCheck.reason === "fake"
+            ? "fake_phone"
+            : "invalid_phone",
+    };
   }
 
   const idDigits = nationalIdInput.replace(/\D/g, "");
