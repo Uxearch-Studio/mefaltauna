@@ -448,7 +448,7 @@ function GoldCollectorCard({
           </span>
         </div>
         <a
-          href="/sign-in"
+          href="/app/membership"
           className="h-12 rounded-full bg-[var(--stage-yellow)] text-[#1a0b3d] text-sm font-bold uppercase tracking-[0.2em] flex items-center justify-center gap-2 hover:opacity-90 transition-opacity shadow-[0_8px_20px_rgba(255,199,44,0.35)]"
         >
           {ctaLabel}

@@ -234,8 +234,46 @@
       "upload_failed": "Couldn't upload the photo. Try again."
     }
   },
+  "membership": {
+    "title": "Club pass",
+    "kicker": "Full access · World Cup 2026 Edition",
+    "subtitle": "Activate your pass to chat with any collector, publish every duplicate, and unlock the live feed.",
+    "benefitChat": "Direct chat with any collector",
+    "benefitPublish": "Publish every duplicate you have",
+    "benefitNoCommission": "0% commission per trade or sale",
+    "benefitFeed": "Live feed of the full catalog",
+    "benefitProgress": "Live album progress",
+    "benefitFind": "Find what's missing from your phone",
+    "oneTimePay": "COP · One-time pay",
+    "payCta": "Pay with Wompi",
+    "redirecting": "Redirecting to Wompi…",
+    "disclaimer": "Secure checkout via Wompi. Cards, PSE, Nequi, Bancolombia and more.",
+    "errors": {
+      "not_configured": "Service unavailable.",
+      "wompi_not_configured": "Payments not enabled yet. Check back soon.",
+      "unauthenticated": "Sign in to continue.",
+      "already_member": "You already have the pass.",
+      "db_error": "Couldn't prepare the payment. Try again."
+    },
+    "return": {
+      "title": "Payment",
+      "approvedTitle": "Welcome to the club!",
+      "approvedBody": "Your pass is active. You can chat with any collector and publish every sticker.",
+      "openFeed": "Open feed",
+      "declinedTitle": "Payment declined",
+      "declinedBody": "Wompi didn't approve the transaction. Try again with another card or method.",
+      "retry": "Try again",
+      "pendingTitle": "Verifying payment…",
+      "pendingBody": "Waiting for Wompi to confirm. If you paid, your pass will activate in seconds. Refresh to check.",
+      "refresh": "Refresh",
+      "transactionLabel": "Transaction"
+    }
+  },
   "inbox": {
     "title": "Messages",
+    "paywallTitle": "Activate your pass to chat",
+    "paywallBody": "Direct chat with collectors requires the club pass. One-time payment of $9,900 COP.",
+    "paywallCta": "Join the club",
     "emptyTitle": "No messages yet",
     "emptyBody": "When someone writes you about a sticker, or you reach out to someone in the feed, your conversations show up here.",
     "unknownUser": "User",
@@ -250,6 +288,7 @@
       "too_long": "Message too long",
       "not_participant": "You can't send to this conversation",
       "not_configured": "Service unavailable",
+      "membership_required": "Activate the club pass to chat.",
       "db_error": "Couldn't send. Try again."
     },
     "archive": "Delete",

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { detectPii, type PiiHit } from "@/lib/pii";
+import { fetchIsMember } from "@/lib/membership";
 
 /**
  * Open or create a conversation between the current user and the
@@ -36,6 +37,13 @@ export async function openConversationAction(
   if (listing.user_id === user.id) {
     // Don't allow self-chat. Bounce back.
     redirect(`/${locale}/app/feed`);
+  }
+
+  // Membership gate — only paid members can start a chat. Non-members
+  // get redirected to the paywall, which sends them right back here
+  // after payment via the `next` query.
+  if (!(await fetchIsMember(supabase, user.id))) {
+    redirect(`/${locale}/app/membership`);
   }
 
   const [a, b] = [user.id, listing.user_id as string].sort();
@@ -112,7 +120,8 @@ export type SendMessageState = {
     | "db_error"
     | "pii_phone"
     | "pii_email"
-    | "blocked";
+    | "blocked"
+    | "membership_required";
   /** When the message was rejected for PII, how many strikes the user
    * has accumulated and whether the account is now blocked. */
   strikes?: number;
@@ -152,7 +161,7 @@ export async function sendMessageAction(
   // it can't send anything else until support manually clears it.
   const { data: meProfile } = await supabase
     .from("profiles")
-    .select("is_blocked, strikes")
+    .select("is_blocked, strikes, is_member")
     .eq("id", user.id)
     .maybeSingle();
   if (meProfile?.is_blocked) {
@@ -161,6 +170,12 @@ export async function sendMessageAction(
       blocked: true,
       strikes: meProfile.strikes ?? 3,
     };
+  }
+  // Belt-and-suspenders membership gate — UI already hides the
+  // composer for non-members, but if someone POSTs straight to the
+  // action we still refuse.
+  if (!meProfile?.is_member) {
+    return { error: "membership_required" };
   }
 
   const trimmed = body.trim();

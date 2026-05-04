@@ -234,8 +234,46 @@
       "upload_failed": "No pudimos subir la foto. Intenta de nuevo."
     }
   },
+  "membership": {
+    "title": "Pase del club",
+    "kicker": "Acceso completo · Edición Mundial 2026",
+    "subtitle": "Activa tu pase para chatear con cualquier coleccionista, publicar todas tus repetidas y desbloquear el feed sin límites.",
+    "benefitChat": "Chat directo con cualquier coleccionista",
+    "benefitPublish": "Publica todas las láminas que tengas repetidas",
+    "benefitNoCommission": "0% de comisión en cada cambio o venta",
+    "benefitFeed": "Feed en vivo del catálogo completo",
+    "benefitProgress": "Progreso de tu álbum en tiempo real",
+    "benefitFind": "Encuentra la que te falta desde tu móvil",
+    "oneTimePay": "COP · Pago único",
+    "payCta": "Pagar con Wompi",
+    "redirecting": "Redirigiendo a Wompi…",
+    "disclaimer": "Pago seguro vía Wompi. Tarjetas, PSE, Nequi, Bancolombia y más.",
+    "errors": {
+      "not_configured": "Servicio no disponible.",
+      "wompi_not_configured": "Pagos en preparación. Vuelve pronto.",
+      "unauthenticated": "Inicia sesión para continuar.",
+      "already_member": "Ya tienes el pase activo.",
+      "db_error": "No pudimos preparar el pago. Intenta de nuevo."
+    },
+    "return": {
+      "title": "Pago",
+      "approvedTitle": "¡Bienvenido al club!",
+      "approvedBody": "Tu pase quedó activo. Ya puedes chatear con cualquier coleccionista y publicar todas tus láminas.",
+      "openFeed": "Ir al feed",
+      "declinedTitle": "Pago rechazado",
+      "declinedBody": "Wompi no aprobó la transacción. Intenta otra vez con otra tarjeta o método de pago.",
+      "retry": "Volver a intentar",
+      "pendingTitle": "Verificando pago…",
+      "pendingBody": "Estamos esperando la confirmación de Wompi. Si pagaste, en segundos verás tu pase activo. Refresca para revisar.",
+      "refresh": "Refrescar",
+      "transactionLabel": "Transacción"
+    }
+  },
   "inbox": {
     "title": "Mensajes",
+    "paywallTitle": "Activa tu pase para chatear",
+    "paywallBody": "El chat directo con coleccionistas requiere el pase del club. Único pago de $9.900 COP.",
+    "paywallCta": "Unirme al club",
     "emptyTitle": "Aún no tienes mensajes",
     "emptyBody": "Cuando alguien te escriba sobre una lámina del feed o cuando tú escribas a alguien, las conversaciones aparecerán acá.",
     "unknownUser": "Usuario",
@@ -250,6 +288,7 @@
       "too_long": "Mensaje muy largo",
       "not_participant": "No puedes enviar a esta conversación",
       "not_configured": "Servicio no disponible",
+      "membership_required": "Necesitas el pase del club para chatear.",
       "db_error": "No pudimos enviar. Intenta de nuevo."
     },
     "archive": "Eliminar",
