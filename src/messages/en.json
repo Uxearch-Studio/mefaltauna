@@ -252,6 +252,8 @@
       "not_configured": "Service unavailable",
       "db_error": "Couldn't send. Try again."
     },
+    "archive": "Delete",
+    "archiveConfirm": "Tap again to confirm",
     "disclaimerTitle": "Keep contact on mefaltauna",
     "disclaimerBody": "All chat must stay on the platform or your account can be blocked. Do not share emails or WhatsApp numbers.",
     "piiKindPhone": "phone number",

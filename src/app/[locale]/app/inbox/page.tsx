@@ -4,7 +4,7 @@ import { InboxIcon } from "@/components/vintage/Icons";
 import { requireUser } from "@/lib/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { fetchUserConversations } from "@/lib/db";
-import { Link } from "@/i18n/navigation";
+import { InboxRow } from "./InboxRow";
 
 const TIME = new Intl.RelativeTimeFormat("es", { numeric: "auto" });
 function relTime(iso: string) {
@@ -54,63 +54,19 @@ export default async function InboxPage({
                 c.other_display_name ??
                 c.other_username ??
                 t("unknownUser");
-              const initial = label.charAt(0).toUpperCase();
-              const unread = c.unread_count > 0;
               return (
-                <li key={c.id}>
-                  <Link
-                    href={`/app/inbox/${c.id}`}
-                    className={`flex items-center gap-3 surface-card p-4 hover:bg-muted/40 transition-colors ${
-                      unread ? "ring-2 ring-accent/40" : ""
-                    }`}
-                  >
-                    {c.other_avatar_url ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={c.other_avatar_url}
-                        alt=""
-                        className="size-12 rounded-full object-cover shrink-0"
-                      />
-                    ) : (
-                      <div className="size-12 rounded-full bg-foreground text-background flex items-center justify-center text-base font-semibold shrink-0">
-                        {initial}
-                      </div>
-                    )}
-                    <div className="flex-1 min-w-0 flex flex-col">
-                      <div className="flex items-baseline justify-between gap-2">
-                        <p
-                          className={`truncate ${
-                            unread ? "font-semibold" : "font-medium"
-                          }`}
-                        >
-                          {label}
-                        </p>
-                        <span className="text-xs text-muted-foreground tabular-nums shrink-0">
-                          {relTime(c.last_message_at)}
-                        </span>
-                      </div>
-                      <p
-                        className={`text-sm truncate ${
-                          unread
-                            ? "text-foreground font-medium"
-                            : "text-muted-foreground"
-                        }`}
-                      >
-                        {c.last_message_body ?? t("noMessagesYet")}
-                      </p>
-                      {c.listing_sticker_code && (
-                        <p className="text-[10px] uppercase tracking-wide text-accent mt-0.5">
-                          {t("aboutSticker", { code: c.listing_sticker_code })}
-                        </p>
-                      )}
-                    </div>
-                    {unread && (
-                      <span className="size-6 shrink-0 rounded-full bg-accent text-accent-foreground text-xs font-bold flex items-center justify-center tabular-nums">
-                        {c.unread_count}
-                      </span>
-                    )}
-                  </Link>
-                </li>
+                <InboxRow
+                  key={c.id}
+                  id={c.id}
+                  label={label}
+                  initial={label.charAt(0).toUpperCase()}
+                  avatarUrl={c.other_avatar_url}
+                  lastMessageBody={c.last_message_body}
+                  lastMessageAt={c.last_message_at}
+                  stickerCode={c.listing_sticker_code}
+                  unreadCount={c.unread_count}
+                  relativeTime={relTime(c.last_message_at)}
+                />
               );
             })}
           </ul>

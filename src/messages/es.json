@@ -252,6 +252,8 @@
       "not_configured": "Servicio no disponible",
       "db_error": "No pudimos enviar. Intenta de nuevo."
     },
+    "archive": "Eliminar",
+    "archiveConfirm": "Toca otra vez para confirmar",
     "disclaimerTitle": "Mantén el contacto en mefaltauna",
     "disclaimerBody": "Toda la comunicación debe hacerse por la plataforma o tu cuenta podrá ser bloqueada. No compartas correos ni números de WhatsApp.",
     "piiKindPhone": "número de teléfono",

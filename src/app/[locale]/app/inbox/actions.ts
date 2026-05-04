@@ -40,17 +40,32 @@ export async function openConversationAction(
 
   const [a, b] = [user.id, listing.user_id as string].sort();
 
+  // One conversation per pair, regardless of which listing started it.
+  // Look up by pair only — the listing_id is just contextual metadata
+  // pointing at the most recent listing the chat is about.
   const { data: existing } = await supabase
     .from("conversations")
-    .select("id")
+    .select("id, listing_id, archived_at_a, archived_at_b")
     .eq("user_a", a)
     .eq("user_b", b)
-    .eq("listing_id", listingId)
     .maybeSingle();
 
   let conversationId: string;
   if (existing) {
     conversationId = existing.id as string;
+    // Refresh the listing context if the user is opening a chat from
+    // a different sticker, and unarchive on the current user's side
+    // so the thread reappears in their inbox.
+    const updates: Record<string, unknown> = {};
+    if (existing.listing_id !== listingId) updates.listing_id = listingId;
+    if (a === user.id && existing.archived_at_a) updates.archived_at_a = null;
+    if (b === user.id && existing.archived_at_b) updates.archived_at_b = null;
+    if (Object.keys(updates).length > 0) {
+      await supabase
+        .from("conversations")
+        .update(updates)
+        .eq("id", conversationId);
+    }
   } else {
     const { data: created, error } = await supabase
       .from("conversations")
@@ -64,6 +79,28 @@ export async function openConversationAction(
   }
 
   redirect(`/${locale}/app/inbox/${conversationId}`);
+}
+
+/**
+ * Soft-deletes the conversation from the current user's inbox. The
+ * other party's view is unaffected — if they reply, the thread re-
+ * appears for the user when openConversationAction reactivates it.
+ */
+export async function archiveConversationAction(
+  conversationId: string,
+): Promise<{ ok?: true; error?: "not_configured" | "not_participant" }> {
+  const supabase = await createSupabaseServerClient();
+  if (!supabase) return { error: "not_configured" };
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "not_participant" };
+
+  await supabase.rpc("archive_conversation", { conv_id: conversationId });
+  revalidatePath("/[locale]/app/inbox", "page");
+  revalidatePath("/[locale]/app", "layout");
+  return { ok: true };
 }
 
 export type SendMessageState = {

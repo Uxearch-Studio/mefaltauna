@@ -1,6 +1,7 @@
 import { Link } from "@/i18n/navigation";
 import { Logo } from "./Logo";
 import { InstallShortcut } from "./InstallShortcut";
+import { ThemeSwitcher } from "./ThemeSwitcher";
 
 type Props = {
   title?: string;
@@ -10,7 +11,8 @@ type Props = {
 /**
  * App-shell top bar. Left: full mefaltauna logo (mark + wordmark)
  * which always links back to the feed. Right: install-to-homescreen
- * shortcut + optional caller-supplied trailing nodes.
+ * shortcut, theme switcher, and optional caller-supplied trailing
+ * nodes.
  *
  * The optional `title` is rendered as a subtle subtitle next to the
  * wordmark so the top bar always reads as the brand first, then the
@@ -34,6 +36,7 @@ export function AppTopBar({ title, trailing }: Props) {
 
         <div className="flex items-center gap-2">
           <InstallShortcut />
+          <ThemeSwitcher />
           {trailing}
         </div>
       </div>

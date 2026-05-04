@@ -93,22 +93,31 @@ export async function fetchUserConversations(
   const { data: convs, error } = await supabase
     .from("conversations")
     .select(
-      "id, user_a, user_b, listing_id, last_message_at, last_read_at_a, last_read_at_b",
+      "id, user_a, user_b, listing_id, last_message_at, last_read_at_a, last_read_at_b, archived_at_a, archived_at_b",
     )
     .or(`user_a.eq.${userId},user_b.eq.${userId}`)
     .order("last_message_at", { ascending: false })
     .limit(60);
   if (error || !convs) return [];
 
+  // Hide threads the current user has archived. The other side keeps
+  // theirs untouched.
+  const visible = convs.filter((c) => {
+    const archived =
+      c.user_a === userId ? c.archived_at_a : c.archived_at_b;
+    return archived == null;
+  });
+  if (visible.length === 0) return [];
+
   const otherIds = [
     ...new Set(
-      convs.map((c) => (c.user_a === userId ? c.user_b : c.user_a) as string),
+      visible.map((c) => (c.user_a === userId ? c.user_b : c.user_a) as string),
     ),
   ];
   const listingIds = [
-    ...new Set(convs.map((c) => c.listing_id).filter(Boolean) as string[]),
+    ...new Set(visible.map((c) => c.listing_id).filter(Boolean) as string[]),
   ];
-  const conversationIds = convs.map((c) => c.id);
+  const conversationIds = visible.map((c) => c.id);
 
   const [profilesRes, listingsRes, lastMessagesRes] = await Promise.all([
     otherIds.length
@@ -185,7 +194,7 @@ export async function fetchUserConversations(
   const unreadByConv = new Map<string, number>();
   if (conversationIds.length) {
     const lastReadByConv = new Map<string, string | null>();
-    for (const c of convs) {
+    for (const c of visible) {
       const isA = c.user_a === userId;
       const lr = (isA ? c.last_read_at_a : c.last_read_at_b) as
         | string
@@ -216,7 +225,7 @@ export async function fetchUserConversations(
     }
   }
 
-  return convs.map((c) => {
+  return visible.map((c) => {
     const other = c.user_a === userId ? c.user_b : c.user_a;
     const p = profileMap.get(other);
     return {

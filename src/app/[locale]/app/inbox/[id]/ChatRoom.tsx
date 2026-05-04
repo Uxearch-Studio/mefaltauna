@@ -93,6 +93,15 @@ export function ChatRoom({
             }
             return [...prev, incoming];
           });
+
+          // The user is actively viewing this thread — re-mark as read
+          // the moment a message from the other party lands so the
+          // unread chip / bottom-nav badge don't tick back up to 1.
+          if (incoming.sender_id !== currentUserId) {
+            markConversationReadAction(conversationId)
+              .then(() => router.refresh())
+              .catch(() => {});
+          }
         },
       )
       .subscribe();
@@ -100,7 +109,7 @@ export function ChatRoom({
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [conversationId]);
+  }, [conversationId, currentUserId, router]);
 
   function handleSend(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
