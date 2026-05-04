@@ -109,13 +109,19 @@ export async function saveContactAction(
     .update({ city, display_name: displayName })
     .eq("id", user.id);
 
-  // Mirror display_name into auth.users.user_metadata so the Supabase
-  // Auth admin panel shows it. Doesn't require service role.
+  // Mirror the publish-gate data into auth.users.user_metadata so the
+  // Supabase Auth admin panel surfaces every PII field we collect
+  // (display_name shows in the column, the rest are visible in the
+  // user detail drawer). Doesn't require service role — auth.updateUser
+  // writes to the current session user's metadata.
   await supabase.auth.updateUser({
     data: {
       display_name: displayName,
       first_name: firstName,
       last_name: lastName,
+      national_id: idDigits,
+      city,
+      whatsapp: phoneDigits,
     },
   });
 
