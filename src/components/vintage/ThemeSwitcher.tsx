@@ -40,12 +40,19 @@ const ICONS: Record<Theme, React.ReactNode> = {
 
 export function ThemeSwitcher() {
   const t = useTranslations("theme");
-  const [theme, setTheme] = useState<Theme>("auto");
+  // Default UI state matches the boot script: visitors who haven't
+  // picked a theme see the dark icon since dark is what they're
+  // actually looking at.
+  const [theme, setTheme] = useState<Theme>("dark");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const stored = (localStorage.getItem("theme") as Theme | null) ?? "auto";
-    setTheme(stored);
+    const stored = localStorage.getItem("theme") as Theme | null;
+    if (stored === "light" || stored === "dark" || stored === "auto") {
+      setTheme(stored);
+    } else {
+      setTheme("dark");
+    }
     setMounted(true);
   }, []);
 
@@ -77,16 +84,24 @@ export const themeBootScript = `
   function apply() {
     try {
       var t = localStorage.getItem('theme');
-      if (t === 'light' || t === 'dark') {
-        document.documentElement.setAttribute('data-theme', t);
-      } else {
+      // mefaltauna defaults to dark — when the visitor hasn't chosen a
+      // theme yet we present the brand violet stage, not the OS pref.
+      if (t === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+      } else if (t === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else if (t === 'auto') {
         document.documentElement.removeAttribute('data-theme');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
       }
-    } catch (e) {}
+    } catch (e) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
   }
   apply();
   // Re-apply on bfcache restore (e.g. browser back button) so the
-  // theme doesn't snap to the default light.
+  // theme doesn't snap when navigating back.
   window.addEventListener('pageshow', function(e) {
     if (e.persisted) apply();
   });

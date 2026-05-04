@@ -359,6 +359,8 @@
     "contact": "Message",
     "opening": "Opening…",
     "yourListing": "Yours",
+    "delete": "Delete",
+    "deleteConfirm": "Tap again to confirm",
     "expandPhoto": "Expand photo",
     "countShown": "{count} of {total}",
     "scope": {

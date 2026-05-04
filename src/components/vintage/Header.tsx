@@ -38,10 +38,8 @@ export async function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <div className="hidden sm:flex items-center gap-2">
-            <LocaleSwitcher />
-            <ThemeSwitcher />
-          </div>
+          <LocaleSwitcher />
+          <ThemeSwitcher />
           {user ? (
             <Link
               href="/app/feed"

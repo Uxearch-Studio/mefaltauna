@@ -359,6 +359,8 @@
     "contact": "Escribir",
     "opening": "Abriendo…",
     "yourListing": "Tuya",
+    "delete": "Eliminar",
+    "deleteConfirm": "Toca otra vez para confirmar",
     "expandPhoto": "Ampliar foto",
     "countShown": "{count} de {total}",
     "scope": {

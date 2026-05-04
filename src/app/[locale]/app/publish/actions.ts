@@ -209,3 +209,36 @@ export async function publishListingAction(
   revalidatePath(`/${locale}/app/album`);
   redirect(`/${locale}/app/feed`);
 }
+
+/**
+ * Hard-delete a listing the current user owns. RLS already restricts
+ * deletes to the owner, but we also re-check here so we can surface a
+ * precise error code instead of a silent no-op when the wrong user
+ * tries to delete someone else's listing.
+ */
+export async function deleteListingAction(
+  listingId: string,
+): Promise<{ ok?: true; error?: "not_configured" | "unauthenticated" | "not_owner" | "db_error" }> {
+  const supabase = await createSupabaseServerClient();
+  if (!supabase) return { error: "not_configured" };
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "unauthenticated" };
+
+  const { data: listing } = await supabase
+    .from("listings")
+    .select("id, user_id")
+    .eq("id", listingId)
+    .maybeSingle();
+  if (!listing || listing.user_id !== user.id) {
+    return { error: "not_owner" };
+  }
+
+  const { error } = await supabase.from("listings").delete().eq("id", listingId);
+  if (error) return { error: "db_error" };
+
+  revalidatePath(`/[locale]/app/feed`, "page");
+  return { ok: true };
+}

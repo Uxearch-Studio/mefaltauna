@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { openConversationAction } from "@/app/[locale]/app/inbox/actions";
+import { deleteListingAction } from "@/app/[locale]/app/publish/actions";
 import { cn } from "@/lib/cn";
 import type { FeedItem, Sticker } from "@/lib/db";
 
@@ -272,6 +273,9 @@ export function LiveFeed({ initial, catalog, locale, currentUserId }: Props) {
               onPhotoClick={() =>
                 item.photo_url && setLightbox(item.photo_url)
               }
+              onDeleted={(id) =>
+                setItems((prev) => prev.filter((i) => i.id !== id))
+              }
             />
           ))}
         </ul>
@@ -328,20 +332,36 @@ function FeedCard({
   locale,
   currentUserId,
   onPhotoClick,
+  onDeleted,
 }: {
   item: FeedItem;
   locale: string;
   currentUserId: string;
   onPhotoClick: () => void;
+  onDeleted: (id: string) => void;
 }) {
   const t = useTranslations("feed");
   const [pending, startTransition] = useTransition();
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
   const isOwn = item.user_id === currentUserId;
 
   function contact() {
     if (isOwn) return;
     startTransition(async () => {
       await openConversationAction(item.id, locale);
+    });
+  }
+
+  function deleteListing() {
+    if (!isOwn) return;
+    if (!confirmingDelete) {
+      setConfirmingDelete(true);
+      setTimeout(() => setConfirmingDelete(false), 4000);
+      return;
+    }
+    startTransition(async () => {
+      const res = await deleteListingAction(item.id);
+      if (res.ok) onDeleted(item.id);
     });
   }
 
@@ -414,7 +434,7 @@ function FeedCard({
           </div>
         </div>
 
-        {/* Right column — icon-only contact */}
+        {/* Right column — chat icon for everyone else, delete for own */}
         {!isOwn ? (
           <button
             type="button"
@@ -438,9 +458,29 @@ function FeedCard({
             </svg>
           </button>
         ) : (
-          <span className="text-[9px] uppercase tracking-wide text-muted-foreground shrink-0 text-right">
-            {t("yourListing")}
-          </span>
+          <button
+            type="button"
+            onClick={deleteListing}
+            disabled={pending}
+            aria-label={confirmingDelete ? t("deleteConfirm") : t("delete")}
+            title={confirmingDelete ? t("deleteConfirm") : t("delete")}
+            className={cn(
+              "size-10 shrink-0 rounded-full flex items-center justify-center transition-all disabled:opacity-40",
+              confirmingDelete
+                ? "bg-red-600 text-white scale-110"
+                : "bg-muted text-muted-foreground hover:bg-foreground hover:text-background",
+            )}
+          >
+            {confirmingDelete ? (
+              <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M5 12l5 5L20 7" />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M3 6h18M8 6v-2a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6" />
+              </svg>
+            )}
+          </button>
         )}
       </div>
     </li>
