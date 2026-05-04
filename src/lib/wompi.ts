@@ -98,6 +98,14 @@ export function buildIntegritySignature(args: {
  * Builds the full Web Checkout URL with all required params. The
  * caller redirects the user there. After payment Wompi redirects
  * back to `redirectUrl`.
+ *
+ * We assemble the query string by hand instead of going through
+ * URLSearchParams. Wompi's parameter names contain a literal colon
+ * (`signature:integrity`, `customer-data:email`) that is part of
+ * their public contract — but URLSearchParams URL-encodes the colon
+ * to `%3A`, and Wompi rejects the resulting URL with "firma
+ * inválida" because it can't find the signature parameter under the
+ * encoded name.
  */
 export function buildCheckoutUrl(args: {
   config: WompiConfig;
@@ -115,19 +123,25 @@ export function buildCheckoutUrl(args: {
     integritySecret: args.config.integritySecret,
   });
 
-  const params = new URLSearchParams({
-    "public-key": args.config.publicKey,
-    currency,
-    "amount-in-cents": String(args.amountInCents),
-    reference: args.reference,
-    "signature:integrity": signature,
-    "redirect-url": args.redirectUrl,
-  });
+  const parts: Array<[string, string]> = [
+    ["public-key", args.config.publicKey],
+    ["currency", currency],
+    ["amount-in-cents", String(args.amountInCents)],
+    ["reference", args.reference],
+    ["signature:integrity", signature],
+    ["redirect-url", args.redirectUrl],
+  ];
   if (args.customerEmail) {
-    params.set("customer-data:email", args.customerEmail);
+    parts.push(["customer-data:email", args.customerEmail]);
   }
 
-  return `${args.config.checkoutBase}?${params.toString()}`;
+  // Encode values (which can contain spaces, "+", etc.) but leave the
+  // parameter NAMES alone so Wompi sees them verbatim.
+  const query = parts
+    .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
+    .join("&");
+
+  return `${args.config.checkoutBase}?${query}`;
 }
 
 /**
