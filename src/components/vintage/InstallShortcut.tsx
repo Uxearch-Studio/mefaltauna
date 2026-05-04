@@ -39,7 +39,43 @@ export function InstallShortcut({ className = "" }: { className?: string }) {
       window.matchMedia("(display-mode: standalone)").matches ||
       (window.navigator as Navigator & { standalone?: boolean }).standalone ===
         true;
-    if (standalone) setInstalled(true);
+    if (standalone) {
+      setInstalled(true);
+      try {
+        localStorage.setItem("mfu:installed", "1");
+      } catch {}
+    }
+
+    // Persisted hint from a previous accept on this browser. Lets us
+    // hide the button when the user opens the site in a regular tab
+    // after they've already installed the PWA — the standalone media
+    // query only matches inside the installed window, not in browser.
+    try {
+      if (localStorage.getItem("mfu:installed") === "1") {
+        setInstalled(true);
+      }
+    } catch {}
+
+    // Chrome's getInstalledRelatedApps lets us check whether *this*
+    // PWA is already installed without being inside it. Best-effort —
+    // browsers without the API just fall through.
+    type NavigatorWithRelated = Navigator & {
+      getInstalledRelatedApps?: () => Promise<Array<{ id?: string; url?: string }>>;
+    };
+    const navWithRelated = window.navigator as NavigatorWithRelated;
+    if (typeof navWithRelated.getInstalledRelatedApps === "function") {
+      navWithRelated
+        .getInstalledRelatedApps()
+        .then((apps) => {
+          if (apps && apps.length > 0) {
+            setInstalled(true);
+            try {
+              localStorage.setItem("mfu:installed", "1");
+            } catch {}
+          }
+        })
+        .catch(() => {});
+    }
 
     function onPrompt(e: Event) {
       e.preventDefault();
@@ -50,6 +86,9 @@ export function InstallShortcut({ className = "" }: { className?: string }) {
     function onInstalled() {
       setInstalled(true);
       setDeferred(null);
+      try {
+        localStorage.setItem("mfu:installed", "1");
+      } catch {}
     }
     window.addEventListener("appinstalled", onInstalled);
 

@@ -28,13 +28,15 @@ export function ServiceWorkerRegistrar() {
         });
     };
 
-    if ("requestIdleCallback" in window) {
-      (window as Window &
-        typeof globalThis & {
-          requestIdleCallback: (cb: () => void) => number;
-        }).requestIdleCallback(register);
+    type IdleWindow = Window &
+      typeof globalThis & {
+        requestIdleCallback?: (cb: () => void) => number;
+      };
+    const w = window as IdleWindow;
+    if (typeof w.requestIdleCallback === "function") {
+      w.requestIdleCallback(register);
     } else {
-      window.setTimeout(register, 1000);
+      w.setTimeout(register, 1000);
     }
   }, []);
 

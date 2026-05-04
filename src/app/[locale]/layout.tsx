@@ -11,6 +11,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { themeBootScript } from "@/components/vintage/ThemeSwitcher";
 import { ServiceWorkerRegistrar } from "@/components/vintage/ServiceWorkerRegistrar";
+import { ThemeColorMeta } from "@/components/vintage/ThemeColorMeta";
 import "../globals.css";
 
 const inter = Inter({
@@ -60,7 +61,14 @@ export async function generateMetadata({
       statusBarStyle: "black-translucent",
       title: "mefaltauna",
     },
-    themeColor: "#1a0b3d",
+    // Two static fallbacks for the OS chrome color so a fresh install
+    // matches the expected theme even before our boot script runs.
+    // The ThemeColorMeta client component refines this at runtime to
+    // reflect whatever the user actually chose.
+    themeColor: [
+      { media: "(prefers-color-scheme: light)", color: "#fafaf7" },
+      { media: "(prefers-color-scheme: dark)", color: "#0d0521" },
+    ],
   };
 }
 
@@ -86,6 +94,7 @@ export default async function LocaleLayout({
       </head>
       <body className="min-h-full bg-background text-foreground font-sans">
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <ThemeColorMeta />
         <ServiceWorkerRegistrar />
       </body>
     </html>
