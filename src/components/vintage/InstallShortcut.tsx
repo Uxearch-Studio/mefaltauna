@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
 
 /**
@@ -96,54 +97,91 @@ export function InstallShortcut({ className = "" }: { className?: string }) {
         {t("install")}
       </button>
 
-      {showHint && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="fixed inset-0 z-50 bg-black/70 flex items-end sm:items-center justify-center p-4"
-          onClick={() => setShowHint(false)}
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="bg-background rounded-3xl p-6 max-w-md w-full flex flex-col gap-4 shadow-2xl"
-          >
-            <div className="flex items-start justify-between gap-2">
-              <h2 className="text-base font-semibold tracking-tight">
-                {t("iosTitle")}
-              </h2>
-              <button
-                type="button"
-                onClick={() => setShowHint(false)}
-                aria-label={t("close")}
-                className="size-8 -mt-1 -mr-1 rounded-full hover:bg-muted flex items-center justify-center"
-              >
-                ✕
-              </button>
-            </div>
-            <ol className="flex flex-col gap-3 text-sm text-muted-foreground">
-              <li className="flex items-start gap-3">
-                <span className="font-bold text-foreground">1.</span>
-                <span>{t("iosStep1")}</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="font-bold text-foreground">2.</span>
-                <span>{t("iosStep2")}</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="font-bold text-foreground">3.</span>
-                <span>{t("iosStep3")}</span>
-              </li>
-            </ol>
-            <button
-              type="button"
-              onClick={() => setShowHint(false)}
-              className="self-stretch h-11 rounded-full bg-foreground text-background text-sm font-medium hover:opacity-90 transition-opacity"
-            >
-              {t("gotIt")}
-            </button>
-          </div>
-        </div>
-      )}
+      {showHint && <InstallHintModal onClose={() => setShowHint(false)} />}
     </>
+  );
+}
+
+/**
+ * Rendered via createPortal directly into document.body so the modal
+ * escapes any ancestor containing block. The header that triggers it
+ * uses `backdrop-blur`, which creates a containing block for fixed
+ * descendants — without the portal, the dialog ends up positioned
+ * relative to the header instead of the viewport (visible above the
+ * nav, sized like the header, untappable).
+ */
+function InstallHintModal({ onClose }: { onClose: () => void }) {
+  const t = useTranslations("install");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+
+    // Lock body scroll while the modal is up so iOS Safari doesn't
+    // bounce the page underneath when the user pans on the backdrop.
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+    }
+    window.addEventListener("keydown", onKey);
+
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [onClose]);
+
+  if (!mounted) return null;
+
+  return createPortal(
+    <div
+      role="dialog"
+      aria-modal="true"
+      className="fixed inset-0 z-[100] bg-black/70 flex items-end sm:items-center justify-center p-4 animate-fade-in"
+      onClick={onClose}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="bg-background text-foreground rounded-3xl p-6 max-w-md w-full flex flex-col gap-4 shadow-2xl border border-border"
+      >
+        <div className="flex items-start justify-between gap-2">
+          <h2 className="text-base font-semibold tracking-tight">
+            {t("iosTitle")}
+          </h2>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label={t("close")}
+            className="size-8 -mt-1 -mr-1 rounded-full hover:bg-muted flex items-center justify-center"
+          >
+            ✕
+          </button>
+        </div>
+        <ol className="flex flex-col gap-3 text-sm text-muted-foreground">
+          <li className="flex items-start gap-3">
+            <span className="font-bold text-foreground">1.</span>
+            <span>{t("iosStep1")}</span>
+          </li>
+          <li className="flex items-start gap-3">
+            <span className="font-bold text-foreground">2.</span>
+            <span>{t("iosStep2")}</span>
+          </li>
+          <li className="flex items-start gap-3">
+            <span className="font-bold text-foreground">3.</span>
+            <span>{t("iosStep3")}</span>
+          </li>
+        </ol>
+        <button
+          type="button"
+          onClick={onClose}
+          className="self-stretch h-11 rounded-full bg-foreground text-background text-sm font-medium hover:opacity-90 transition-opacity"
+        >
+          {t("gotIt")}
+        </button>
+      </div>
+    </div>,
+    document.body,
   );
 }
