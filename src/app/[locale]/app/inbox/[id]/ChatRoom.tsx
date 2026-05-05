@@ -235,7 +235,9 @@ export function ChatRoom({
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-3.5rem-7rem)]">
+    // 100dvh (not vh) so iOS Safari with toolbar visible doesn't
+    // overshoot and let the composer cover the BottomNav.
+    <div className="flex flex-col h-[calc(100dvh-3.5rem-7rem)]">
       {/* Online indicator — slides in just under the page header so
           the user knows whether the other party is in the chat right
           now. Quiet design: a small dot + label. */}
