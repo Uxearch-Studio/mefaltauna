@@ -199,12 +199,15 @@ export function LiveFeed({ initial, catalog, locale, currentUserId }: Props) {
         />
       </div>
 
-      {/* Filters — single horizontal row, scrolls on narrow viewports */}
+      {/* Filters — single horizontal row, scrolls on narrow viewports.
+          Inputs/selects are sized at 16px (text-base) on purpose: any
+          smaller and iOS Safari auto-zooms the viewport on focus,
+          which breaks the rest of the layout. */}
       <div className="flex items-center gap-2 overflow-x-auto -mx-4 px-4 pb-1">
         <select
           value={filterType}
           onChange={(e) => setFilterType(e.target.value as FilterType)}
-          className="h-10 px-3 text-xs rounded-full border border-border bg-background focus:outline-none focus:border-accent shrink-0"
+          className="h-10 px-3 text-base rounded-full border border-border bg-background focus:outline-none focus:border-accent shrink-0"
         >
           {(["all", "trade", "sale"] as const).map((opt) => (
             <option key={opt} value={opt}>
@@ -216,7 +219,7 @@ export function LiveFeed({ initial, catalog, locale, currentUserId }: Props) {
         <select
           value={filterTeam}
           onChange={(e) => setFilterTeam(e.target.value)}
-          className="h-10 px-3 text-xs rounded-full border border-border bg-background focus:outline-none focus:border-accent shrink-0"
+          className="h-10 px-3 text-base rounded-full border border-border bg-background focus:outline-none focus:border-accent shrink-0"
         >
           <option value="all">{t("filterAllTeams")}</option>
           {teamCodes.map((tc) => (
@@ -234,7 +237,7 @@ export function LiveFeed({ initial, catalog, locale, currentUserId }: Props) {
           onChange={(e) =>
             setFilterNumber(e.target.value.replace(/\D/g, "").slice(0, 3))
           }
-          className="h-10 w-20 px-3 text-xs rounded-full border border-border bg-background focus:outline-none focus:border-accent shrink-0"
+          className="h-10 w-24 px-3 text-base rounded-full border border-border bg-background focus:outline-none focus:border-accent shrink-0"
         />
 
         <input
@@ -245,7 +248,7 @@ export function LiveFeed({ initial, catalog, locale, currentUserId }: Props) {
           onChange={(e) =>
             setFilterMaxPrice(e.target.value.replace(/\D/g, ""))
           }
-          className="h-10 w-28 px-3 text-xs rounded-full border border-border bg-background focus:outline-none focus:border-accent shrink-0"
+          className="h-10 w-32 px-3 text-base rounded-full border border-border bg-background focus:outline-none focus:border-accent shrink-0"
         />
 
         {hasFilters && (

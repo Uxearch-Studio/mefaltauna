@@ -49,6 +49,17 @@ export async function startTradeAction(
 
   if (error) {
     const msg = error.message ?? "";
+    // Log the full PG error to the server logs — the chat just shows
+    // "no pudimos procesar" which is useless for diagnosing why the
+    // RPC failed (RLS, constraint, function definition, etc.).
+    console.error("[startTradeAction] rpc start_trade failed", {
+      conversationId,
+      listingId,
+      code: (error as { code?: string }).code,
+      message: msg,
+      details: (error as { details?: string }).details,
+      hint: (error as { hint?: string }).hint,
+    });
     if (msg.includes("not_participant")) return { error: "not_participant" };
     if (msg.includes("caller_not_seller")) return { error: "caller_not_seller" };
     if (msg.includes("listing_not_found")) return { error: "listing_not_found" };
