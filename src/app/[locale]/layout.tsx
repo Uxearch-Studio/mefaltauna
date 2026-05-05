@@ -10,7 +10,10 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { themeBootScript } from "@/components/vintage/ThemeSwitcher";
-import { ServiceWorkerRegistrar } from "@/components/vintage/ServiceWorkerRegistrar";
+// ServiceWorkerRegistrar removed — the previous SW shipped with a
+// fetch-intercepting passthrough that left some clients wedged after
+// chunk-rotating deploys. /sw.js now self-unregisters and we don't
+// re-register it from the client until that decision is revisited.
 import { ThemeColorMeta } from "@/components/vintage/ThemeColorMeta";
 import { BootSplash } from "@/components/vintage/BootSplash";
 import { ChunkLoadErrorBoundary } from "@/components/vintage/ChunkLoadErrorBoundary";
@@ -105,7 +108,6 @@ export default async function LocaleLayout({
         <BootSplash />
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
         <ThemeColorMeta />
-        <ServiceWorkerRegistrar />
         <ChunkLoadErrorBoundary />
       </body>
     </html>
