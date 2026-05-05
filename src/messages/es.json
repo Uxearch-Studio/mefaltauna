@@ -291,6 +291,8 @@
   "trade": {
     "title": "Compra acordada",
     "startCta": "Activar compra",
+    "starting": "Activando…",
+    "buyerHint": "El vendedor activó la compra. Cuando se vean en persona, escanea su QR para cerrar el trato.",
     "showQr": "Ver QR",
     "scanCta": "Escanear QR",
     "closed": "Trato cerrado",

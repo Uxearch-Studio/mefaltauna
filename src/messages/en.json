@@ -291,6 +291,8 @@
   "trade": {
     "title": "Agreed deal",
     "startCta": "Activate deal",
+    "starting": "Activating…",
+    "buyerHint": "The seller activated the deal. When you meet in person, scan their QR to close it.",
     "showQr": "Show QR",
     "scanCta": "Scan QR",
     "closed": "Deal closed",

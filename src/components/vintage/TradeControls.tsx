@@ -32,20 +32,17 @@ type Props = {
 };
 
 /**
- * Trade flow control bar inserted at the top of the chat. Shows
- * different affordances depending on:
- *   - Are we the seller or the buyer?
- *   - Is there an active trade (pending or completed-but-unrated)?
+ * Trade flow controls inserted at the top of the chat.
  *
  * State machine:
- *   no trade + seller → "Compra acordada" button to start one
- *   no trade + buyer  → "Escanear QR" button (in case seller already
- *                       generated a QR but RSC hadn't refreshed)
- *   pending + seller  → QR display panel (the seller shows it to the
- *                       buyer in person)
- *   pending + buyer   → "Escanear el QR" CTA → camera overlay
- *   completed + !rated → rating modal opens (5 stars + comment)
- *   completed + rated  → quiet "Trato cerrado" badge
+ *   no trade + seller → "Activar compra" button → creates the trade
+ *   pending + seller  → QR shown INLINE in the chat (no modal — modals
+ *                       were getting hidden under iOS portal/z-index
+ *                       quirks; an inline card is always visible)
+ *   pending + buyer   → "Escanear QR" button → camera overlay (modal,
+ *                       because it needs fullscreen for the camera)
+ *   completed + !rated → rating modal opens
+ *   completed + rated  → "Trato cerrado" badge
  */
 export function TradeControls({
   conversationId,
@@ -61,11 +58,8 @@ export function TradeControls({
       ? "seller"
       : sellerId
         ? "buyer"
-        : null; // No listing context — trade flow is hidden.
+        : null;
   const [trade, setTrade] = useState(initialTrade);
-  const [showQrPanel, setShowQrPanel] = useState(
-    initialTrade?.status === "pending" && role === "seller",
-  );
   const [showScanner, setShowScanner] = useState(false);
   const [showRating, setShowRating] = useState(
     initialTrade?.status === "completed" && !initialTrade.ratedByMe,
@@ -77,8 +71,14 @@ export function TradeControls({
 
   function startTrade() {
     setError(null);
+    console.log("[TradeControls] startTrade clicked", {
+      conversationId,
+      listingId,
+      role,
+    });
     startTransition(async () => {
       const res = await startTradeAction(conversationId, listingId);
+      console.log("[TradeControls] startTradeAction result", res);
       if (res.ok && res.trade) {
         setTrade({
           id: res.trade.id,
@@ -86,7 +86,6 @@ export function TradeControls({
           qrToken: res.trade.qrToken,
           ratedByMe: false,
         });
-        setShowQrPanel(true);
       } else if (res.error) {
         setError(t(`errors.${res.error}`));
       }
@@ -106,9 +105,6 @@ export function TradeControls({
           ratedByMe: false,
         });
         setShowRating(true);
-        // Server-side revalidation already runs in the action; refresh
-        // so the seller's tab also moves to the rating step on next
-        // realtime tick.
         router.refresh();
       } else if (res.error) {
         setError(t(`errors.${res.error}`));
@@ -118,9 +114,12 @@ export function TradeControls({
 
   function onRated() {
     setShowRating(false);
-    setTrade((t) => (t ? { ...t, ratedByMe: true } : t));
+    setTrade((tr) => (tr ? { ...tr, ratedByMe: true } : tr));
     router.refresh();
   }
+
+  const showInlineQr =
+    trade?.status === "pending" && role === "seller" && trade.qrToken;
 
   return (
     <>
@@ -130,7 +129,6 @@ export function TradeControls({
         </span>
 
         <div className="flex items-center gap-1.5">
-          {/* No trade yet */}
           {!trade && role === "seller" && (
             <button
               type="button"
@@ -144,20 +142,10 @@ export function TradeControls({
                 <rect x="2" y="9" width="5" height="5" rx="1" />
                 <path d="M9 9h2v2H9zM13 9v2M9 13v1h5v-3" />
               </svg>
-              {t("startCta")}
+              {pending ? t("starting") : t("startCta")}
             </button>
           )}
 
-          {/* Trade pending — seller has the QR, buyer scans */}
-          {trade?.status === "pending" && role === "seller" && (
-            <button
-              type="button"
-              onClick={() => setShowQrPanel(true)}
-              className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full bg-[var(--stage-yellow)] text-[#1a0b3d] text-xs font-bold uppercase tracking-wider hover:opacity-90 transition-opacity"
-            >
-              {t("showQr")}
-            </button>
-          )}
           {trade?.status === "pending" && role === "buyer" && (
             <button
               type="button"
@@ -173,7 +161,6 @@ export function TradeControls({
             </button>
           )}
 
-          {/* Trade completed, rated by me */}
           {trade?.status === "completed" && trade.ratedByMe && (
             <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/15 text-emerald-600 text-[10px] font-bold uppercase tracking-wider">
               ✓ {t("closed")}
@@ -191,8 +178,14 @@ export function TradeControls({
         </p>
       )}
 
-      {showQrPanel && trade?.status === "pending" && trade.qrToken && (
-        <QrPanel token={trade.qrToken} onClose={() => setShowQrPanel(false)} />
+      {showInlineQr && trade.qrToken && (
+        <InlineQrCard token={trade.qrToken} />
+      )}
+
+      {trade?.status === "pending" && role === "buyer" && (
+        <div className="mx-3 mt-2 px-3 py-2 text-xs font-medium leading-snug bg-amber-500/10 text-amber-700 border border-amber-500/30 rounded-xl">
+          {t("buyerHint")}
+        </div>
       )}
 
       {showScanner && (
@@ -214,91 +207,58 @@ export function TradeControls({
 }
 
 // ────────────────────────────────────────────────────────────
-// QR display panel (seller view)
+// Inline QR card (seller view) — sits in the chat itself, no modal.
 // ────────────────────────────────────────────────────────────
-function QrPanel({
-  token,
-  onClose,
-}: {
-  token: string;
-  onClose: () => void;
-}) {
+function InlineQrCard({ token }: { token: string }) {
   const t = useTranslations("trade");
   const [dataUrl, setDataUrl] = useState<string | null>(null);
-  const [mounted, setMounted] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
-    setMounted(true);
-    // Lock body scroll while the panel is up so iOS Safari doesn't
-    // bounce the underlying chat.
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
     QRCode.toDataURL(token, {
       errorCorrectionLevel: "M",
       margin: 1,
       width: 360,
       color: { dark: "#1a0b3d", light: "#ffffff" },
     })
-      .then(setDataUrl)
-      .catch(() => setDataUrl(null));
-    return () => {
-      document.body.style.overflow = prev;
-    };
+      .then((url) => {
+        setDataUrl(url);
+        setErr(null);
+      })
+      .catch((e) => {
+        console.error("[InlineQrCard] QR generation failed", e);
+        setErr(String(e?.message ?? e ?? "qr_failed"));
+      });
   }, [token]);
 
-  if (!mounted) return null;
-
-  return createPortal(
-    <div
-      role="dialog"
-      aria-modal="true"
-      onClick={onClose}
-      className="fixed inset-0 z-[100] bg-black/85 flex items-center justify-center p-4 animate-fade-in"
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        className="bg-background text-foreground rounded-3xl p-6 max-w-md w-full flex flex-col gap-4 items-center text-center shadow-2xl"
-      >
-        <div className="flex items-center justify-between w-full">
-          <h2 className="text-base font-semibold tracking-tight">
-            {t("qrTitle")}
-          </h2>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label={t("close")}
-            className="size-8 rounded-full hover:bg-muted flex items-center justify-center"
-          >
-            ✕
-          </button>
-        </div>
-
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          {t("qrBody")}
-        </p>
-
-        <div className="rounded-2xl border border-border p-3 bg-white">
-          {dataUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={dataUrl} alt="" className="size-64" />
-          ) : (
-            <div className="size-64 flex items-center justify-center text-muted-foreground text-sm">
-              …
-            </div>
-          )}
-        </div>
-
-        <p className="text-[11px] text-muted-foreground">
-          {t("qrFooter")}
-        </p>
+  return (
+    <div className="mx-3 mt-3 mb-1 p-4 rounded-2xl border border-[var(--stage-yellow)]/50 bg-gradient-to-br from-[var(--stage-yellow)]/15 to-transparent flex flex-col items-center gap-3 text-center">
+      <h3 className="text-sm font-semibold tracking-tight">
+        {t("qrTitle")}
+      </h3>
+      <p className="text-xs text-muted-foreground leading-relaxed max-w-sm">
+        {t("qrBody")}
+      </p>
+      <div className="rounded-2xl border border-border p-2 bg-white">
+        {dataUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={dataUrl} alt="" className="size-56" />
+        ) : (
+          <div className="size-56 flex items-center justify-center text-muted-foreground text-xs">
+            {err ? `error: ${err}` : "…"}
+          </div>
+        )}
       </div>
-    </div>,
-    document.body,
+      <p className="text-[11px] text-muted-foreground">
+        {t("qrFooter")}
+      </p>
+    </div>
   );
 }
 
 // ────────────────────────────────────────────────────────────
-// Camera scanner (buyer view)
+// Camera scanner (buyer view) — modal because the camera needs
+// fullscreen. Portal target is the document body.
 // ────────────────────────────────────────────────────────────
 function ScannerOverlay({
   onClose,
@@ -351,10 +311,7 @@ function ScannerOverlay({
             handledRef.current = true;
             onScanned(value);
           }}
-          onError={() => {
-            // Error reporting handled by the parent action — keep
-            // the camera UI quiet so users aren't bombarded.
-          }}
+          onError={() => {}}
           constraints={{ facingMode: "environment" }}
           allowMultiple={false}
           components={{ finder: true }}
@@ -425,8 +382,6 @@ function RatingModal({
       className="fixed inset-0 z-[110] bg-black/80 flex items-end sm:items-center justify-center p-4"
     >
       <div className="bg-background text-foreground rounded-3xl p-6 max-w-md w-full flex flex-col gap-5 shadow-2xl border border-border">
-        {/* Football celebration: trophy with confetti behind. Pure
-            CSS — confetti dots scale + drift via a keyframe. */}
         <div className="relative h-24 flex items-center justify-center mb-1">
           <span aria-hidden className="absolute inset-0 pointer-events-none">
             {[...Array(14)].map((_, i) => (
