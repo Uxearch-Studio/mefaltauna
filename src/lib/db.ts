@@ -8,6 +8,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 export type StickerType =
   | "player"
   | "badge"
+  | "team_photo"
   | "group"
   | "stadium"
   | "legend"

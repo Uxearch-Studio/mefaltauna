@@ -155,6 +155,33 @@ function groupByPage(catalog: Sticker[]): PageGroup[] {
     }
     map.get(key)!.stickers.push(s);
   }
+
+  // Within each page, sort by type so the visual order is always
+  // badge → team_photo → players (by jersey number) → other. The
+  // SQL query orders by `album_page, number nulls first`, which
+  // groups the two unnumbered slots first but leaves their relative
+  // order non-deterministic; this sort fixes that.
+  const TYPE_RANK: Record<string, number> = {
+    badge: 0,
+    team_photo: 1,
+    player: 2,
+    group: 3,
+    stadium: 4,
+    legend: 5,
+    special: 6,
+  };
+  for (const page of map.values()) {
+    page.stickers.sort((a, b) => {
+      const ra = TYPE_RANK[a.type] ?? 99;
+      const rb = TYPE_RANK[b.type] ?? 99;
+      if (ra !== rb) return ra - rb;
+      const na = a.number ?? Number.POSITIVE_INFINITY;
+      const nb = b.number ?? Number.POSITIVE_INFINITY;
+      if (na !== nb) return na - nb;
+      return a.code.localeCompare(b.code);
+    });
+  }
+
   // Sort: groups → stadiums → teams (alphabetical by code) → other.
   return [...map.values()].sort((a, b) => {
     const oa = order(a.key);
@@ -202,9 +229,9 @@ function pageTitle(key: string, sample: Sticker) {
 
 function pageSubtitle(key: string) {
   if (key === "GROUPS") return "12 grupos";
-  if (key === "STADIUMS") return "12 sedes";
+  if (key === "STADIUMS") return "16 sedes";
   if (key === "OTHER") return "";
-  return "1 escudo · 12 láminas";
+  return "Escudo · Foto · 18 jugadores";
 }
 
 function PageBlock({
@@ -380,6 +407,7 @@ function glyphTeam(s: Sticker): string {
 function glyphNumber(s: Sticker): string {
   if (s.type === "group") return s.code.split("-").pop() ?? "G";
   if (s.type === "badge") return "★";
+  if (s.type === "team_photo") return "◉";
   if (s.type === "stadium") return "▲";
   if (s.type === "legend") return "♛";
   if (s.type === "special") return "✦";
