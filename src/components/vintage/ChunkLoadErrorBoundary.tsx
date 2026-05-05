@@ -28,7 +28,12 @@ export function ChunkLoadErrorBoundary() {
 
     function isChunkError(err: unknown): boolean {
       const msg = err instanceof Error ? err.message : String(err ?? "");
-      return /Loading chunk|ChunkLoadError|Failed to fetch dynamically imported module|Importing a module script failed/i.test(
+      // Last category — "Load failed" — is iOS Safari's generic
+      // network error string. It surfaces when an in-flight fetch
+      // (including Next.js's RSC payload fetch) fails or is aborted,
+      // which is the most common shape of the navigation crash users
+      // hit on the wedged-cache wave we've been chasing.
+      return /Loading chunk|ChunkLoadError|Failed to fetch|Importing a module script failed|Load failed|NetworkError|TypeError: cancelled/i.test(
         msg,
       );
     }
