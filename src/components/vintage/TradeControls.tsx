@@ -160,11 +160,20 @@ export function TradeControls({
   const showInlineQr =
     trade?.status === "pending" && role === "seller" && trade.qrToken;
 
+  // Bar label tracks the trade state so it doesn't lie about reality.
+  // "Compra acordada" before anything was actually agreed was misleading.
+  const titleKey =
+    trade?.status === "completed"
+      ? "titleCompleted"
+      : trade?.status === "pending"
+        ? "titleAgreed"
+        : "titlePending";
+
   return (
     <>
       <div className="border-b border-border px-3 py-2 flex items-center justify-between gap-2 bg-muted/30">
         <span className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
-          {t("title")}
+          {t(titleKey)}
         </span>
 
         <div className="flex items-center gap-1.5">

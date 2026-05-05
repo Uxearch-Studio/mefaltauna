@@ -290,6 +290,9 @@
   },
   "trade": {
     "title": "Agreed deal",
+    "titlePending": "Pending",
+    "titleAgreed": "Agreed deal",
+    "titleCompleted": "Deal closed",
     "startCta": "Activate deal",
     "hidePicker": "Hide",
     "starting": "Activating…",

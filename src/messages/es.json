@@ -290,6 +290,9 @@
   },
   "trade": {
     "title": "Compra acordada",
+    "titlePending": "Pendiente",
+    "titleAgreed": "Compra acordada",
+    "titleCompleted": "Trato cerrado",
     "startCta": "Activar compra",
     "hidePicker": "Ocultar",
     "starting": "Activando…",
