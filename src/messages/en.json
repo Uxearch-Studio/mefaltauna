@@ -231,6 +231,12 @@
       "db_error": "Couldn't save. Try again."
     }
   },
+  "cedula": {
+    "label": "Photo of your national ID",
+    "hint": "Take or upload a clear photo of your ID. Whole front visible, no glare. We use it only to verify the collector is real.",
+    "uploaded": "Uploaded",
+    "privacyNote": "Your ID lives in private storage. Nobody but you sees it, except when support reviews a dispute."
+  },
   "photo": {
     "takePhoto": "Camera",
     "gallery": "Gallery",

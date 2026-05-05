@@ -1,7 +1,8 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { useTranslations } from "next-intl";
+import { CedulaUpload } from "@/components/vintage/CedulaUpload";
 import { saveContactAction, type ContactState } from "./actions";
 
 type Props = {
@@ -12,7 +13,9 @@ const INITIAL: ContactState = {};
 
 export function ProfileCompletionForm({ locale }: Props) {
   const t = useTranslations("contact");
+  const tCedula = useTranslations("cedula");
   const [state, action, pending] = useActionState(saveContactAction, INITIAL);
+  const [cedulaPath, setCedulaPath] = useState<string | null>(null);
 
   return (
     <div className="surface-card p-6 flex flex-col gap-5">
@@ -59,6 +62,20 @@ export function ProfileCompletionForm({ locale }: Props) {
             className="h-11 px-3 rounded-xl bg-background border border-border text-base focus:outline-none focus:border-accent"
           />
         </Field>
+
+        <div className="flex flex-col gap-1.5">
+          <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            {tCedula("label")}
+          </span>
+          {/* The path is held in component state; this hidden input
+              keeps it in the FormData so the action receives it. */}
+          <input
+            type="hidden"
+            name="national_id_photo_path"
+            value={cedulaPath ?? ""}
+          />
+          <CedulaUpload initialPath={null} onChange={setCedulaPath} />
+        </div>
 
         <div className="grid grid-cols-2 gap-3">
           <Field label={t("city")}>

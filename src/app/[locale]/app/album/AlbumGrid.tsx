@@ -144,7 +144,13 @@ function groupByPage(catalog: Sticker[]): PageGroup[] {
   for (const s of catalog) {
     const key =
       s.team_code ??
-      (s.type === "group" ? "GROUPS" : s.type === "stadium" ? "STADIUMS" : "OTHER");
+      (s.type === "group"
+        ? "GROUPS"
+        : s.type === "stadium"
+          ? "STADIUMS"
+          : s.type === "special" || s.type === "legend"
+            ? "SPECIALS"
+            : "OTHER");
     if (!map.has(key)) {
       map.set(key, {
         key,
@@ -192,6 +198,9 @@ function groupByPage(catalog: Sticker[]): PageGroup[] {
 }
 
 function order(key: string) {
+  // Specials open the album like the title page of a Panini set —
+  // trophy, mascots, host emblems all live there.
+  if (key === "SPECIALS") return -1;
   if (key === "GROUPS") return 0;
   if (key === "STADIUMS") return 1;
   if (key === "OTHER") return 1001;
@@ -219,6 +228,7 @@ const TEAM_FLAGS: Record<string, string> = {
 };
 
 function pageTitle(key: string, sample: Sticker) {
+  if (key === "SPECIALS") return "✨ Especiales";
   if (key === "GROUPS") return "🏆 Grupos";
   if (key === "STADIUMS") return "🏟️ Estadios";
   if (key === "OTHER") return "Otros";
@@ -228,6 +238,7 @@ function pageTitle(key: string, sample: Sticker) {
 }
 
 function pageSubtitle(key: string) {
+  if (key === "SPECIALS") return "Trofeo, mascotas y sedes";
   if (key === "GROUPS") return "12 grupos";
   if (key === "STADIUMS") return "16 sedes";
   if (key === "OTHER") return "";
@@ -401,6 +412,13 @@ function StickerTile({
 function glyphTeam(s: Sticker): string {
   if (s.type === "group") return "GR";
   if (s.type === "stadium") return "ST";
+  if (s.type === "special") {
+    // Special codes look like "SP-TROPHY", "SP-LOGO", … — show the
+    // shape they represent so the tile reads even before the user
+    // taps it. Falls back to the first segment if we don't know it.
+    const part = s.code.split("-").slice(1).join("-");
+    return SPECIAL_TILE_GLYPH[part] ?? "SP";
+  }
   return s.code.split("-")[0];
 }
 
@@ -410,6 +428,21 @@ function glyphNumber(s: Sticker): string {
   if (s.type === "team_photo") return "◉";
   if (s.type === "stadium") return "▲";
   if (s.type === "legend") return "♛";
-  if (s.type === "special") return "✦";
+  if (s.type === "special") return "✨";
   return "·";
 }
+
+/** Per-special small label — shown in place of the team code on
+ *  the tile. Keeps the visual vocabulary aligned with the FUT-style
+ *  three-letter chips on every other sticker. */
+const SPECIAL_TILE_GLYPH: Record<string, string> = {
+  TROPHY: "🏆",
+  LOGO:   "26",
+  BALL:   "⚽",
+  MAPLE:  "🍁",
+  ZAYU:   "🐆",
+  CLUTCH: "🦅",
+  "HOST-US": "🇺🇸",
+  "HOST-MX": "🇲🇽",
+  "HOST-CA": "🇨🇦",
+};

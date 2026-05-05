@@ -49,6 +49,9 @@ export async function saveContactAction(
   const city = String(formData.get("city") ?? "").trim();
   const neighborhood = String(formData.get("neighborhood") ?? "").trim();
   const whatsapp = String(formData.get("whatsapp") ?? "").trim();
+  const cedulaPhotoPath = String(
+    formData.get("national_id_photo_path") ?? "",
+  ).trim();
   const locale = String(formData.get("locale") ?? "es");
 
   if (
@@ -57,7 +60,8 @@ export async function saveContactAction(
     !nationalId ||
     !city ||
     !neighborhood ||
-    !whatsapp
+    !whatsapp ||
+    !cedulaPhotoPath
   ) {
     return { error: "missing_fields" };
   }
@@ -90,6 +94,7 @@ export async function saveContactAction(
       whatsapp: phoneDigits,
       city,
       neighborhood,
+      national_id_photo_path: cedulaPhotoPath,
     },
     { onConflict: "user_id" },
   );
