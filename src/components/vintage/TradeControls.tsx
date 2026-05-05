@@ -58,7 +58,6 @@ export function TradeControls({
         ? "buyer"
         : null;
   const [trade, setTrade] = useState(initialTrade);
-  const [showPicker, setShowPicker] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
   const [showRating, setShowRating] = useState(
     initialTrade?.status === "completed" && !initialTrade.ratedByMe,
@@ -66,8 +65,10 @@ export function TradeControls({
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
-  // Initial selection: the conv's current listing if it's still active,
-  // otherwise nothing — the seller will tick what they want manually.
+  // Pre-select the conv's listing if it's still active. Otherwise fall
+  // back to the seller's first active listing so the "Activar compra"
+  // button is always one-click for the common case (single sticker
+  // exchange). Multi-listing sellers use the picker toggle to add more.
   const initialSelected = (() => {
     const set = new Set<string>();
     if (
@@ -75,10 +76,17 @@ export function TradeControls({
       sellerActiveListings.some((l) => l.id === listingId)
     ) {
       set.add(listingId);
+    } else if (sellerActiveListings.length > 0) {
+      set.add(sellerActiveListings[0].id);
     }
     return set;
   })();
   const [selected, setSelected] = useState<Set<string>>(initialSelected);
+  // Auto-open the picker when there's nothing pre-selected (typically
+  // because the conv's listing got sold or the seller has 0 active
+  // listings) so the user lands on something they can interact with
+  // instead of a disabled button with no explanation.
+  const [showPicker, setShowPicker] = useState(initialSelected.size === 0);
 
   if (!role) return null;
 
@@ -160,11 +168,22 @@ export function TradeControls({
         </span>
 
         <div className="flex items-center gap-1.5">
-          {!trade && role === "seller" && (
+          {!trade && role === "seller" && sellerActiveListings.length > 1 && (
             <button
               type="button"
               onClick={() => setShowPicker((v) => !v)}
               disabled={pending}
+              aria-label={t("hidePicker")}
+              className="inline-flex items-center gap-1 h-8 px-2.5 rounded-full border border-border bg-background text-[10px] font-bold tracking-wider text-muted-foreground hover:text-foreground hover:border-foreground transition-colors tabular-nums disabled:opacity-50"
+            >
+              {selected.size}/{sellerActiveListings.length}
+            </button>
+          )}
+          {!trade && role === "seller" && (
+            <button
+              type="button"
+              onClick={startTrade}
+              disabled={pending || selected.size === 0}
               className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full bg-foreground text-background text-xs font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
             >
               <svg viewBox="0 0 16 16" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -173,7 +192,7 @@ export function TradeControls({
                 <rect x="2" y="9" width="5" height="5" rx="1" />
                 <path d="M9 9h2v2H9zM13 9v2M9 13v1h5v-3" />
               </svg>
-              {showPicker ? t("hidePicker") : t("startCta")}
+              {pending ? t("starting") : t("startCta")}
             </button>
           )}
 
@@ -214,8 +233,6 @@ export function TradeControls({
           listings={sellerActiveListings}
           selected={selected}
           onToggle={toggle}
-          onActivate={startTrade}
-          pending={pending}
         />
       )}
 
@@ -246,20 +263,18 @@ export function TradeControls({
 }
 
 // ────────────────────────────────────────────────────────────
-// Listing picker (seller view) — multi-select before activating
+// Listing picker (seller view) — multi-select panel. Doesn't carry
+// its own activate button; the seller activates from the main bar
+// using whatever is currently checked.
 // ────────────────────────────────────────────────────────────
 function ListingPicker({
   listings,
   selected,
   onToggle,
-  onActivate,
-  pending,
 }: {
   listings: TradeListingItem[];
   selected: Set<string>;
   onToggle: (id: string) => void;
-  onActivate: () => void;
-  pending: boolean;
 }) {
   const t = useTranslations("trade");
 
@@ -328,16 +343,9 @@ function ListingPicker({
           );
         })}
       </ul>
-      <button
-        type="button"
-        onClick={onActivate}
-        disabled={pending || selected.size === 0}
-        className="h-10 rounded-full bg-[var(--stage-yellow)] text-[#1a0b3d] text-xs font-bold uppercase tracking-wider hover:opacity-90 transition-opacity disabled:opacity-40"
-      >
-        {pending
-          ? t("starting")
-          : t("activateWithCount", { count: selected.size })}
-      </button>
+      <p className="text-[10px] text-muted-foreground text-center">
+        {t("pickerFooter")}
+      </p>
     </div>
   );
 }
