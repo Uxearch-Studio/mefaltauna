@@ -90,6 +90,22 @@ export function ProfileIcon({ className }: IconProps) {
   );
 }
 
+/**
+ * Calendar → day grid + small kickoff dot. Reads as "schedule" without
+ * looking generic; the dot anchors it to the football theme.
+ */
+export function CalendarIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" className={base(className)} fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="5" width="18" height="16" rx="2" />
+      <line x1="3" y1="10" x2="21" y2="10" />
+      <line x1="8" y1="3" x2="8" y2="7" />
+      <line x1="16" y1="3" x2="16" y2="7" />
+      <circle cx="12" cy="15" r="1.6" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
 // ─────────────────────────────────────────────
 // In-page step icons (replacing the pixel-art set)
 // ─────────────────────────────────────────────

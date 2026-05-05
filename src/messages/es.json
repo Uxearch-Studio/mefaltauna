@@ -14,6 +14,7 @@
   "appNav": {
     "feed": "En vivo",
     "album": "Álbum",
+    "calendar": "Calendario",
     "publish": "Publicar",
     "inbox": "Mensajes",
     "profile": "Perfil"
@@ -425,14 +426,16 @@
   "matches": {
     "kicker": "Calendario · Mundial 2026",
     "title": "Cada partido. Cada equipo.",
-    "subtitle": "Filtra por equipo o por grupo. Hora local de Colombia (UTC-5).",
-    "noticeTitle": "Preview",
-    "notice": "Calendario en integración con la fuente oficial de FIFA. Lo que ves abajo es una muestra estructural — los datos definitivos llegan antes del lanzamiento.",
+    "subtitle": "Fase de grupos completa. Las horas se muestran en la zona horaria de tu dispositivo.",
+    "appTitle": "Calendario",
     "filterTeam": "Equipo",
     "filterGroup": "Grupo",
+    "filterMatchday": "Jornada",
     "allTeams": "Todos los equipos",
     "allGroups": "Todos los grupos",
+    "allMatchdays": "Todas las jornadas",
     "group": "Grupo",
+    "matchdayN": "Jornada {n}",
     "clear": "Limpiar",
     "count": "{count, plural, =0 {0 partidos} =1 {1 partido} other {# partidos}}",
     "empty": "No hay partidos con ese filtro. Prueba con otro equipo o grupo."

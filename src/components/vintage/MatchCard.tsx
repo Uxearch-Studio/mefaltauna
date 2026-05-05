@@ -1,49 +1,70 @@
+"use client";
+
 import { type Match, teamByCode } from "@/lib/matches";
 
 type Props = {
   match: Match;
   locale: string;
+  /** Compact rendering for in-app calendar — drops the venue footer
+   *  and tightens the layout for narrow screens. */
+  compact?: boolean;
 };
 
-export function MatchCard({ match, locale }: Props) {
+export function MatchCard({ match, locale, compact = false }: Props) {
   const home = teamByCode(match.homeCode);
   const away = teamByCode(match.awayCode);
   const date = new Date(match.kickoff);
 
-  const dateLabel = date.toLocaleDateString(locale, {
-    weekday: "short",
-    day: "2-digit",
-    month: "short",
-  });
+  // Render in the visitor's local timezone — always honest about
+  // what time the match actually is for THEM, not for some baked-in
+  // city. Falls back gracefully on Node SSR (no Intl tz crashes).
   const timeLabel = date.toLocaleTimeString(locale, {
     hour: "2-digit",
     minute: "2-digit",
-    timeZone: "America/Bogota",
   });
 
   return (
-    <article className="surface-card p-4 flex flex-col gap-4">
+    <article className={`surface-card flex flex-col gap-3 ${compact ? "p-3" : "p-4"}`}>
       <header className="flex items-center justify-between text-xs">
         <span className="font-semibold uppercase tracking-wide text-accent">
-          {match.stage === "group" ? `Grupo ${match.group}` : match.stage}
+          {match.stage === "group"
+            ? `Grupo ${match.group}`
+            : stageLabel(match.stage)}
+          {match.matchday ? ` · J${match.matchday}` : ""}
         </span>
         <span className="text-muted-foreground tabular-nums">
-          {dateLabel} · {timeLabel}
+          {timeLabel}
         </span>
       </header>
 
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
         <TeamSide team={home} align="end" />
-        <span className="text-xs font-semibold uppercase text-muted-foreground">VS</span>
+        <span className="text-[10px] font-semibold uppercase text-muted-foreground">
+          vs
+        </span>
         <TeamSide team={away} align="start" />
       </div>
 
-      <footer className="border-t border-border pt-3 flex items-center justify-between text-xs text-muted-foreground">
-        <span className="truncate">{match.venue}</span>
-        <span className="shrink-0">{match.city}</span>
-      </footer>
+      {!compact && (
+        <footer className="border-t border-border pt-3 flex items-center justify-between text-xs text-muted-foreground">
+          <span className="truncate">{match.venue}</span>
+          <span className="shrink-0">{match.city}</span>
+        </footer>
+      )}
     </article>
   );
+}
+
+function stageLabel(stage: Match["stage"]): string {
+  switch (stage) {
+    case "round_of_32":   return "16avos";
+    case "round_of_16":   return "Octavos";
+    case "quarter_final": return "Cuartos";
+    case "semi_final":    return "Semi";
+    case "third_place":   return "3.er puesto";
+    case "final":         return "Final";
+    default:              return stage;
+  }
 }
 
 function TeamSide({

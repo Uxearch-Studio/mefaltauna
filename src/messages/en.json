@@ -14,6 +14,7 @@
   "appNav": {
     "feed": "Live",
     "album": "Album",
+    "calendar": "Calendar",
     "publish": "Publish",
     "inbox": "Messages",
     "profile": "Profile"
@@ -425,14 +426,16 @@
   "matches": {
     "kicker": "Schedule · World Cup 2026",
     "title": "Every match. Every team.",
-    "subtitle": "Filter by team or by group. Local time in Colombia (UTC-5).",
-    "noticeTitle": "Preview",
-    "notice": "Schedule being integrated with the official FIFA source. What you see below is a structural sample — final data lands before launch.",
+    "subtitle": "Full group stage. Times render in your device's local timezone.",
+    "appTitle": "Calendar",
     "filterTeam": "Team",
     "filterGroup": "Group",
+    "filterMatchday": "Matchday",
     "allTeams": "All teams",
     "allGroups": "All groups",
+    "allMatchdays": "All matchdays",
     "group": "Group",
+    "matchdayN": "Matchday {n}",
     "clear": "Clear",
     "count": "{count, plural, =0 {0 matches} =1 {1 match} other {# matches}}",
     "empty": "No matches with that filter. Try another team or group."

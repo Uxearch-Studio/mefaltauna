@@ -28,15 +28,6 @@ export default async function MatchesPage({
       </section>
 
       <div className="mx-auto max-w-6xl px-6 py-12">
-        <div className="mb-8 surface-card p-4 flex items-start gap-3 border border-accent/40 bg-accent/5">
-          <span className="text-xs font-semibold uppercase tracking-wide text-accent shrink-0 mt-0.5">
-            {t("noticeTitle")}
-          </span>
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            {t("notice")}
-          </p>
-        </div>
-
         <MatchFilters matches={MATCHES} locale={locale} />
       </div>
     </main>
