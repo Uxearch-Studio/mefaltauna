@@ -5,6 +5,7 @@ import { StickerPreview } from "@/components/vintage/StickerPreview";
 import { FinalCta } from "@/components/vintage/FinalCta";
 import { Countdown } from "@/components/vintage/Countdown";
 import { HeroCanvas } from "@/components/vintage/HeroCanvas";
+import { UpcomingMatches } from "@/components/vintage/UpcomingMatches";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth";
 
@@ -88,6 +89,7 @@ export default async function HomePage({
         </div>
       </section>
 
+      <UpcomingMatches locale={locale} />
       <StickerPreview />
       <Pricing />
       <FinalCta />

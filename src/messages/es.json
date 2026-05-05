@@ -423,6 +423,12 @@
       "both": "Cambio o venta"
     }
   },
+  "upcomingMatches": {
+    "kicker": "Próximamente · 11 jun → 27 jun",
+    "title": "Estos son los partidos del Mundial.",
+    "subtitle": "Fase de grupos completa, las horas en tu zona horaria. Toca para ver el calendario entero.",
+    "seeAll": "Ver calendario completo"
+  },
   "matches": {
     "kicker": "Calendario · Mundial 2026",
     "title": "Cada partido. Cada equipo.",

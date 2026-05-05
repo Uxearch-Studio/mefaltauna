@@ -423,6 +423,12 @@
       "both": "Trade or sale"
     }
   },
+  "upcomingMatches": {
+    "kicker": "Coming up · Jun 11 → Jun 27",
+    "title": "These are the matches of the World Cup.",
+    "subtitle": "Full group stage, times in your timezone. Tap to see the whole schedule.",
+    "seeAll": "See full calendar"
+  },
   "matches": {
     "kicker": "Schedule · World Cup 2026",
     "title": "Every match. Every team.",
