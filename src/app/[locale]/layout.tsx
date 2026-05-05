@@ -12,6 +12,7 @@ import { routing } from "@/i18n/routing";
 import { themeBootScript } from "@/components/vintage/ThemeSwitcher";
 import { ServiceWorkerRegistrar } from "@/components/vintage/ServiceWorkerRegistrar";
 import { ThemeColorMeta } from "@/components/vintage/ThemeColorMeta";
+import { BootSplash } from "@/components/vintage/BootSplash";
 import "../globals.css";
 
 const inter = Inter({
@@ -92,7 +93,15 @@ export default async function LocaleLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
       </head>
-      <body className="min-h-full bg-background text-foreground font-sans">
+      {/* Inline `style` on body locks the brand violet as the very
+          first paint surface, so we never flash white between the OS
+          PWA splash and our CSS loading. globals.css overrides this
+          for the actual theme tokens once it's parsed. */}
+      <body
+        className="min-h-full bg-background text-foreground font-sans"
+        style={{ backgroundColor: "#1a0b3d" }}
+      >
+        <BootSplash />
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
         <ThemeColorMeta />
         <ServiceWorkerRegistrar />
