@@ -381,12 +381,15 @@ function FeedCard({
     });
   }
 
-  // Public name: prefer display_name (set from contact first_name on
-  // first publish), fall back to username, then to a generic label.
-  const senderLabel = item.display_name
-    ? item.display_name.split(/[\s_·]/)[0]
-    : item.username
-      ? item.username.split(/[\s_·]/)[0]
+  // Public name: the username field on the profile editor is the
+  // canonical "what the user wants others to see" string. Falls back
+  // to display_name (auto-generated from first_name + last initial)
+  // only when the user hasn't picked a username yet, then to a
+  // generic label.
+  const senderLabel = item.username
+    ? item.username
+    : item.display_name
+      ? item.display_name.split(/[\s_·]/)[0]
       : t("someone");
 
   return (

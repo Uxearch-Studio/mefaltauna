@@ -22,12 +22,13 @@ export default async function ConversationPage({
   const conv = await fetchConversation(supabase, id, user.id);
   if (!conv) notFound();
 
-  // Prefer display_name (set from contact first_name on first publish)
-  // over the optional username. Falls back to a generic label only if
-  // the other party hasn't filled the publish gate yet.
+  // Username (the "Nombre público" input) is the canonical public
+  // name. display_name (auto-generated from first_name + last
+  // initial) is just a fallback for users who haven't picked a
+  // username yet.
   const otherLabel =
-    conv.otherUser?.display_name ??
     conv.otherUser?.username ??
+    conv.otherUser?.display_name ??
     t("unknownUser");
   const initial = otherLabel.charAt(0).toUpperCase();
 
@@ -80,10 +81,12 @@ export default async function ConversationPage({
       <ChatRoom
         conversationId={conv.conversation.id}
         currentUserId={user.id}
+        otherUserId={conv.otherUser?.id ?? null}
         otherUsername={otherLabel}
         initialMessages={conv.messages}
         sellerId={conv.sellerId}
         listingId={conv.conversation.listing_id}
+        listingPreview={conv.listingPreview}
         initialTrade={
           conv.activeTrade
             ? {
@@ -94,6 +97,7 @@ export default async function ConversationPage({
               }
             : null
         }
+        initialLastReadAtOther={conv.lastReadAtOther}
       />
     </>
   );

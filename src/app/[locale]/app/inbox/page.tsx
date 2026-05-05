@@ -64,9 +64,12 @@ export default async function InboxPage({
         ) : (
           <ul className="flex flex-col gap-2">
             {conversations.map((c) => {
+              // Username (the "Nombre público" input) wins over the
+              // auto-generated display_name. Everything else on the
+              // profile is private — we don't surface it here.
               const label =
-                c.other_display_name ??
                 c.other_username ??
+                c.other_display_name ??
                 t("unknownUser");
               return (
                 <InboxRow

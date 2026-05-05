@@ -6,31 +6,39 @@ import { useTranslations } from "next-intl";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { sendMessageAction, markConversationReadAction } from "../actions";
 import { TradeControls } from "@/components/vintage/TradeControls";
-import type { Message } from "@/lib/db";
+import type { ConversationListingPreview, Message } from "@/lib/db";
+
+const COP = new Intl.NumberFormat("es-CO");
 
 type Props = {
   conversationId: string;
   currentUserId: string;
+  otherUserId: string | null;
   otherUsername: string | null;
   initialMessages: Message[];
   sellerId: string | null;
   listingId: string | null;
+  listingPreview: ConversationListingPreview | null;
   initialTrade: {
     id: string;
     status: "pending" | "completed";
     qrToken: string | null;
     ratedByMe: boolean;
   } | null;
+  initialLastReadAtOther: string | null;
 };
 
 export function ChatRoom({
   conversationId,
   currentUserId,
+  otherUserId,
   otherUsername,
   initialMessages,
   sellerId,
   listingId,
+  listingPreview,
   initialTrade,
+  initialLastReadAtOther,
 }: Props) {
   const t = useTranslations("inbox");
   const router = useRouter();
@@ -39,6 +47,10 @@ export function ChatRoom({
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [blocked, setBlocked] = useState(false);
+  const [lastReadAtOther, setLastReadAtOther] = useState<string | null>(
+    initialLastReadAtOther,
+  );
+  const [otherOnline, setOtherOnline] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -118,10 +130,58 @@ export function ChatRoom({
       )
       .subscribe();
 
+    // Listen for UPDATE on the conversation row so we can react when
+    // the other party marks our messages as read (their last_read_at
+    // bumps). This is what powers the ✓✓ "leído" indicator on the
+    // sender's side without needing to poll.
+    const metaChannel = supabase
+      .channel(`conv-meta:${conversationId}`)
+      .on(
+        "postgres_changes" as never,
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "conversations",
+          filter: `id=eq.${conversationId}`,
+        },
+        (payload: { new: Record<string, unknown> }) => {
+          const row = payload.new;
+          const isA = row.user_a === currentUserId;
+          const newLastRead = (
+            isA ? row.last_read_at_b : row.last_read_at_a
+          ) as string | null;
+          if (newLastRead) setLastReadAtOther(newLastRead);
+        },
+      )
+      .subscribe();
+
+    // Presence channel — each side tracks itself, both watch sync
+    // events to know whether the other party is currently in the
+    // chat. Powers the "En línea" / "Ausente" indicator below the
+    // chat header.
+    let presenceChannel: ReturnType<typeof supabase.channel> | null = null;
+    if (otherUserId) {
+      presenceChannel = supabase.channel(`presence:conv:${conversationId}`, {
+        config: { presence: { key: currentUserId } },
+      });
+      presenceChannel
+        .on("presence", { event: "sync" }, () => {
+          const state = presenceChannel!.presenceState();
+          setOtherOnline(Object.keys(state).includes(otherUserId));
+        })
+        .subscribe(async (status: string) => {
+          if (status === "SUBSCRIBED") {
+            await presenceChannel!.track({ user_id: currentUserId });
+          }
+        });
+    }
+
     return () => {
       supabase.removeChannel(channel);
+      supabase.removeChannel(metaChannel);
+      if (presenceChannel) supabase.removeChannel(presenceChannel);
     };
-  }, [conversationId, currentUserId, router]);
+  }, [conversationId, currentUserId, otherUserId, router]);
 
   function handleSend(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -176,6 +236,30 @@ export function ChatRoom({
 
   return (
     <div className="flex flex-col h-[calc(100vh-3.5rem-7rem)]">
+      {/* Online indicator — slides in just under the page header so
+          the user knows whether the other party is in the chat right
+          now. Quiet design: a small dot + label. */}
+      {otherUserId && (
+        <div className="px-4 py-1.5 text-[11px] flex items-center gap-1.5 border-b border-border bg-background/85">
+          <span
+            className={`size-1.5 rounded-full ${
+              otherOnline ? "bg-emerald-500 animate-live-pulse" : "bg-muted-foreground/40"
+            }`}
+            aria-hidden
+          />
+          <span className="text-muted-foreground">
+            {otherOnline ? t("online") : t("offline")}
+          </span>
+        </div>
+      )}
+
+      {/* Listing card — shows the sticker the chat is about, when
+          the conversation was started from a listing. Always visible
+          so both sides remember the deal in motion. */}
+      {listingPreview && (
+        <ListingCardHeader preview={listingPreview} />
+      )}
+
       <TradeControls
         conversationId={conversationId}
         sellerId={sellerId}
@@ -211,6 +295,20 @@ export function ChatRoom({
               prev && prev.sender_id === m.sender_id &&
               Date.parse(m.created_at) - Date.parse(prev.created_at) < 60_000;
             const showSenderLabel = !mine && !sameAuthorBlock;
+            // Read receipt: my message is "read" when the other
+            // party's last_read_at on the conversation is later
+            // than the message's created_at.
+            const isRead =
+              mine &&
+              !m.id.startsWith("temp-") &&
+              lastReadAtOther !== null &&
+              Date.parse(lastReadAtOther) >= Date.parse(m.created_at);
+            // Last *of mine* in the list — only the most recent
+            // outgoing message renders the receipt, mirroring the
+            // WhatsApp/iMessage convention of a single mark per
+            // batch instead of a sea of checkmarks.
+            const isLastMine =
+              mine && messages.slice(i + 1).every((nm) => nm.sender_id !== currentUserId);
 
             return (
               <div
@@ -233,6 +331,12 @@ export function ChatRoom({
                 >
                   {m.body}
                 </div>
+                {mine && isLastMine && (
+                  <ReadReceipt
+                    pending={m.id.startsWith("temp-")}
+                    read={isRead}
+                  />
+                )}
               </div>
             );
           })
@@ -282,5 +386,75 @@ export function ChatRoom({
         </button>
       </form>
     </div>
+  );
+}
+
+function ReadReceipt({ pending, read }: { pending: boolean; read: boolean }) {
+  // Three states: clock (still in flight) → single ✓ (delivered) →
+  // double ✓ in accent (read by the other party).
+  if (pending) {
+    return (
+      <span
+        className="text-[10px] text-muted-foreground/70 mr-2 mt-0.5 inline-flex items-center gap-0.5"
+        aria-label="enviando"
+      >
+        <svg viewBox="0 0 16 16" className="size-3" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="8" cy="8" r="6" />
+          <path d="M8 4v4l2.5 1.5" />
+        </svg>
+      </span>
+    );
+  }
+  return (
+    <span
+      className={`mr-2 mt-0.5 inline-flex items-center ${
+        read ? "text-emerald-500" : "text-muted-foreground/70"
+      }`}
+      aria-label={read ? "leído" : "enviado"}
+    >
+      <svg viewBox="0 0 18 12" className="h-3 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M2 6.5l3 3 6-7" />
+        {read && <path d="M7 6.5l3 3 6-7" />}
+      </svg>
+    </span>
+  );
+}
+
+function ListingCardHeader({
+  preview,
+}: {
+  preview: ConversationListingPreview;
+}) {
+  return (
+    <article className="border-b border-border bg-muted/30 px-3 py-2.5 flex items-center gap-3">
+      {preview.photo_url ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={preview.photo_url}
+          alt=""
+          className="size-12 rounded-lg object-cover bg-muted shrink-0"
+        />
+      ) : (
+        <div className="size-12 rounded-lg bg-accent/15 text-accent flex flex-col items-center justify-center shrink-0">
+          <span className="text-[9px] font-semibold uppercase tracking-wider">
+            {preview.team_code ?? preview.code.slice(0, 3)}
+          </span>
+          <span className="text-base font-bold tabular-nums leading-none mt-0.5">
+            {preview.number ?? "★"}
+          </span>
+        </div>
+      )}
+      <div className="flex-1 min-w-0">
+        <p className="text-[10px] font-bold uppercase tracking-wider text-accent">
+          {preview.team_code ?? "Lámina"} #{preview.number ?? "—"}
+        </p>
+        <p className="text-sm font-medium truncate">{preview.name}</p>
+      </div>
+      {preview.price_cop !== null && (
+        <span className="text-sm font-bold tabular-nums shrink-0">
+          ${COP.format(preview.price_cop)}
+        </span>
+      )}
+    </article>
   );
 }

@@ -359,6 +359,8 @@
     "archive": "Eliminar",
     "archiveConfirm": "Toca otra vez para confirmar",
     "archiveFailed": "No se pudo eliminar. Intenta de nuevo.",
+    "online": "En línea",
+    "offline": "Ausente",
     "disclaimerTitle": "Mantén el contacto en mefaltauna",
     "disclaimerBody": "Toda la comunicación debe hacerse por la plataforma o tu cuenta podrá ser bloqueada. No compartas correos ni números de WhatsApp.",
     "piiKindPhone": "número de teléfono",

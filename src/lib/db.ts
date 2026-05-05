@@ -273,6 +273,18 @@ export type ActiveTrade = {
   rated_by_me: boolean;
 };
 
+export type ConversationListingPreview = {
+  code: string;
+  name: string;
+  team_code: string | null;
+  type: StickerType;
+  number: number | null;
+  /** Optional photo URL the seller attached when publishing. */
+  photo_url: string | null;
+  /** Sale price in COP, when the listing has one. */
+  price_cop: number | null;
+};
+
 export async function fetchConversation(
   supabase: SupabaseClient,
   conversationId: string,
@@ -291,17 +303,33 @@ export async function fetchConversation(
    *  the seller vs the buyer. */
   sellerId: string | null;
   listingStickerCode: string | null;
+  /** Full sticker preview for the listing this chat is about, when
+   *  there is one — used to render the trade card at the top of the
+   *  chat. */
+  listingPreview: ConversationListingPreview | null;
   /** Most recent pending or just-completed-and-not-fully-rated trade
    *  for this conversation, if any. */
   activeTrade: ActiveTrade | null;
+  /** The OTHER party's last_read_at on this conversation. Used by
+   *  ChatRoom to render read receipts (✓✓) on the user's outgoing
+   *  messages whose created_at is older than this timestamp. */
+  lastReadAtOther: string | null;
 } | null> {
   const { data: conv } = await supabase
     .from("conversations")
-    .select("id, user_a, user_b, listing_id, last_message_at, created_at")
+    .select(
+      "id, user_a, user_b, listing_id, last_message_at, created_at, last_read_at_a, last_read_at_b",
+    )
     .eq("id", conversationId)
     .maybeSingle();
   if (!conv) return null;
   if (conv.user_a !== userId && conv.user_b !== userId) return null;
+  // Other party's last_read_at — used by the UI to render ✓✓ on
+  // outgoing messages whose created_at predates it.
+  const lastReadAtOther =
+    (conv.user_a === userId
+      ? (conv.last_read_at_b as string | null)
+      : (conv.last_read_at_a as string | null)) ?? null;
 
   const otherId = conv.user_a === userId ? conv.user_b : conv.user_a;
 
@@ -322,7 +350,7 @@ export async function fetchConversation(
         ? supabase
             .from("listings")
             .select(
-              "id, user_id, sticker:sticker_catalog!listings_sticker_id_fkey(code)",
+              "id, user_id, photo_url, price_cop, sticker:sticker_catalog!listings_sticker_id_fkey(code, name, team_code, type, number)",
             )
             .eq("id", conv.listing_id)
             .maybeSingle()
@@ -331,7 +359,9 @@ export async function fetchConversation(
               | {
                   id: string;
                   user_id: string;
-                  sticker: { code: string } | null;
+                  photo_url: string | null;
+                  price_cop: number | null;
+                  sticker: ConversationListingPreview | null;
                 }
               | null,
           }),
@@ -350,7 +380,9 @@ export async function fetchConversation(
     | {
         id: string;
         user_id: string;
-        sticker: { code: string } | null;
+        photo_url: string | null;
+        price_cop: number | null;
+        sticker: ConversationListingPreview | null;
       }
     | null;
 
@@ -405,7 +437,15 @@ export async function fetchConversation(
       : null,
     sellerId: listing?.user_id ?? null,
     listingStickerCode: listing?.sticker?.code ?? null,
+    listingPreview: listing?.sticker
+      ? {
+          ...listing.sticker,
+          photo_url: listing.photo_url,
+          price_cop: listing.price_cop,
+        }
+      : null,
     activeTrade,
+    lastReadAtOther,
   };
 }
 

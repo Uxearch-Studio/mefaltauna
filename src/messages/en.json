@@ -359,6 +359,8 @@
     "archive": "Delete",
     "archiveConfirm": "Tap again to confirm",
     "archiveFailed": "Couldn't delete. Try again.",
+    "online": "Online",
+    "offline": "Away",
     "disclaimerTitle": "Keep contact on mefaltauna",
     "disclaimerBody": "All chat must stay on the platform or your account can be blocked. Do not share emails or WhatsApp numbers.",
     "piiKindPhone": "phone number",
