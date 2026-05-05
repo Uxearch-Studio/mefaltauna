@@ -148,6 +148,20 @@ body {
   animation: pop-up 700ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
+/* Album paywall — three sticker cards bob in a loop to suggest
+   "your collection, alive". The cards have an inline `transform`
+   for translateX + rotate (set on each card individually). The
+   keyframe animates the standalone `translate` property which
+   composes with `transform` rather than overwriting it, so the bob
+   reads cleanly on top of the per-card placement. */
+@keyframes paywall-bob {
+  0%, 100% { translate: 0 0; }
+  50%      { translate: 0 -10px; }
+}
+.anim-paywall-float {
+  animation: paywall-bob 3.4s ease-in-out infinite;
+}
+
 /* Install hint — pulsing halo behind the iOS Safari share button so
    users can spot it in the toolbar mock. */
 @keyframes share-pulse {

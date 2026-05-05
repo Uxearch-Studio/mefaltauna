@@ -342,6 +342,7 @@ export type FeedItem = Listing & {
   sticker: Pick<Sticker, "code" | "name" | "team_code" | "type" | "number">;
   username: string | null;
   display_name: string | null;
+  reputation: number;
 };
 
 // ────────────────────────────────────────────────────────────
@@ -421,22 +422,28 @@ export async function fetchActiveListings(
   const userIds = [...new Set(rows.map((r) => r.user_id))];
   const profileMap = new Map<
     string,
-    { username: string | null; display_name: string | null }
+    {
+      username: string | null;
+      display_name: string | null;
+      reputation: number;
+    }
   >();
 
   if (userIds.length > 0) {
     const { data: profiles } = await supabase
       .from("profiles")
-      .select("id, username, display_name")
+      .select("id, username, display_name, reputation")
       .in("id", userIds);
     for (const p of (profiles ?? []) as Array<{
       id: string;
       username: string | null;
       display_name: string | null;
+      reputation: number | null;
     }>) {
       profileMap.set(p.id, {
         username: p.username,
         display_name: p.display_name,
+        reputation: p.reputation ?? 0,
       });
     }
   }
@@ -455,6 +462,7 @@ export async function fetchActiveListings(
       sticker: row.sticker,
       username: p?.username ?? null,
       display_name: p?.display_name ?? null,
+      reputation: p?.reputation ?? 0,
     };
   });
 }

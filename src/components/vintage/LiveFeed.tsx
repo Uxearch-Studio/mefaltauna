@@ -103,6 +103,7 @@ export function LiveFeed({ initial, catalog, locale, currentUserId }: Props) {
             },
             username: null,
             display_name: null,
+            reputation: 0,
           };
           setItems((prev) => [item, ...prev].slice(0, 50));
         },
@@ -420,7 +421,10 @@ function FeedCard({
         {/* Middle column — sender + sticker + price */}
         <div className="flex flex-col gap-0.5 min-w-0">
           <div className="flex items-baseline justify-between gap-2">
-            <p className="text-sm font-semibold truncate">{senderLabel}</p>
+            <div className="flex items-center gap-1.5 min-w-0">
+              <p className="text-sm font-semibold truncate">{senderLabel}</p>
+              <ReputationBadge reputation={item.reputation} />
+            </div>
             <span className="text-[10px] text-muted-foreground tabular-nums shrink-0">
               {relTime(item.created_at, locale)}
             </span>
@@ -499,6 +503,46 @@ function FeedCard({
         )}
       </div>
     </li>
+  );
+}
+
+/**
+ * Tiny reputation chip rendered next to the seller's name on each
+ * feed card. Three tiers — Rookie / Verified / Top — based on how
+ * many trades they've closed. Mirrors the FUT-style ladder we use on
+ * the profile card so the visual vocabulary stays consistent.
+ */
+function ReputationBadge({ reputation }: { reputation: number }) {
+  const tier =
+    reputation >= 10 ? "top" : reputation >= 3 ? "verified" : "rookie";
+
+  if (tier === "rookie") {
+    // Rookies don't get a badge — empty state keeps the row clean and
+    // lets verified/top sellers stand out by contrast.
+    return null;
+  }
+
+  const isTop = tier === "top";
+  return (
+    <span
+      className={cn(
+        "shrink-0 inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider tabular-nums",
+        isTop
+          ? "bg-highlight/20 text-highlight"
+          : "bg-emerald-500/15 text-emerald-600",
+      )}
+      title={isTop ? "Top seller" : "Verificado"}
+    >
+      <svg
+        viewBox="0 0 12 12"
+        className="size-2.5"
+        fill="currentColor"
+        aria-hidden
+      >
+        <path d="M6 1l1.5 3 3.5.5-2.5 2.5.5 3.5L6 9l-3 1.5.5-3.5L1 4.5l3.5-.5z" />
+      </svg>
+      {reputation}
+    </span>
   );
 }
 

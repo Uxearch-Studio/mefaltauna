@@ -138,6 +138,15 @@
     "progress": {
       "nextMilestone": "{count} to hit {pct}%",
       "complete": "★ Album complete · World Cup MVP"
+    },
+    "paywall": {
+      "kicker": "Your digital album",
+      "title": "Skip the paper and the spreadsheet.",
+      "subtitle": "Your World Cup 2026 album lives here. Pocket-sized, updated with a tap, and you never lose track of a duplicate.",
+      "benefitNoPaper": "Goodbye paper album, goodbye improvised Excel to keep score.",
+      "benefitProgress": "Live progress — what you own, what's missing, what repeats.",
+      "benefitPublish": "Publish your duplicates straight from the sticker, no extra photos.",
+      "cta": "Buy the pass"
     }
   },
   "publish": {
