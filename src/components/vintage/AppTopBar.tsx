@@ -1,5 +1,7 @@
+import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { Logo } from "./Logo";
+import { CalendarIcon } from "./Icons";
 import { InstallShortcut } from "./InstallShortcut";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 
@@ -10,15 +12,18 @@ type Props = {
 
 /**
  * App-shell top bar. Left: full mefaltauna logo (mark + wordmark)
- * which always links back to the feed. Right: install-to-homescreen
- * shortcut, theme switcher, and optional caller-supplied trailing
- * nodes.
+ * which always links back to the feed. Right (in order): calendar
+ * shortcut, install-to-homescreen shortcut, theme switcher, and any
+ * extras the caller passes via `trailing`.
  *
  * The optional `title` is rendered as a subtle subtitle next to the
  * wordmark so the top bar always reads as the brand first, then the
  * page label.
  */
-export function AppTopBar({ title, trailing }: Props) {
+export async function AppTopBar({ title, trailing }: Props) {
+  const t = await getTranslations("appNav");
+  const matchesT = await getTranslations("matches");
+
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur">
       <div className="mx-auto max-w-3xl px-4 h-14 flex items-center justify-between gap-3">
@@ -35,6 +40,14 @@ export function AppTopBar({ title, trailing }: Props) {
         </Link>
 
         <div className="flex items-center gap-2">
+          <Link
+            href="/app/calendar"
+            aria-label={matchesT("appTitle")}
+            title={t("calendar")}
+            className="size-9 rounded-full border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors flex items-center justify-center"
+          >
+            <CalendarIcon className="size-4" />
+          </Link>
           <InstallShortcut />
           <ThemeSwitcher />
           {trailing}

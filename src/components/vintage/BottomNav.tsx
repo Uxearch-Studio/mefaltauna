@@ -6,7 +6,6 @@ import { cn } from "@/lib/cn";
 import {
   FeedIcon,
   AlbumIcon,
-  CalendarIcon,
   PublishIcon,
   InboxIcon,
   ProfileIcon,
@@ -16,25 +15,19 @@ type Tab = {
   href:
     | "/app/feed"
     | "/app/album"
-    | "/app/calendar"
     | "/app/publish"
     | "/app/inbox"
     | "/app/profile";
-  key: "feed" | "album" | "calendar" | "publish" | "inbox" | "profile";
+  key: "feed" | "album" | "publish" | "inbox" | "profile";
   Icon: React.ComponentType<{ className?: string }>;
 };
 
-// Order: feed (browse) → album (collection) → calendar (schedule) →
-// publish (action, kept centered as the highlight) → inbox (chat) →
-// profile (account). 6 tabs fit the 64×4 grid comfortably; on narrow
-// screens we tighten the gap further with surface-glass below.
 const TABS: Tab[] = [
-  { href: "/app/feed",     key: "feed",     Icon: FeedIcon },
-  { href: "/app/album",    key: "album",    Icon: AlbumIcon },
-  { href: "/app/calendar", key: "calendar", Icon: CalendarIcon },
-  { href: "/app/publish",  key: "publish",  Icon: PublishIcon },
-  { href: "/app/inbox",    key: "inbox",    Icon: InboxIcon },
-  { href: "/app/profile",  key: "profile",  Icon: ProfileIcon },
+  { href: "/app/feed",    key: "feed",    Icon: FeedIcon },
+  { href: "/app/album",   key: "album",   Icon: AlbumIcon },
+  { href: "/app/publish", key: "publish", Icon: PublishIcon },
+  { href: "/app/inbox",   key: "inbox",   Icon: InboxIcon },
+  { href: "/app/profile", key: "profile", Icon: ProfileIcon },
 ];
 
 type Props = {
