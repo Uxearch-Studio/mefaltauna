@@ -71,7 +71,9 @@ export function BootSplash() {
           mounted in the DOM before this fires. We wait for first
           paint via requestAnimationFrame and then a small extra delay
           so the user actually sees the splash for ~250ms — anything
-          faster makes it feel like a flash. */}
+          faster makes it feel like a flash. The splash is also
+          tappable: if anything ever stalls and the auto-dismiss
+          doesn't fire, the user can tap once to escape. */}
       <script
         dangerouslySetInnerHTML={{
           __html: `
@@ -80,21 +82,26 @@ export function BootSplash() {
     var el = document.getElementById('app-splash');
     if (!el) return;
     el.style.opacity = '0';
-    setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 360);
+    setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 320);
   }
   function arm() {
     if (document.readyState === 'complete' || document.readyState === 'interactive') {
-      requestAnimationFrame(function () { setTimeout(dismiss, 200); });
+      requestAnimationFrame(function () { setTimeout(dismiss, 180); });
     } else {
       window.addEventListener('DOMContentLoaded', function () {
-        requestAnimationFrame(function () { setTimeout(dismiss, 200); });
+        requestAnimationFrame(function () { setTimeout(dismiss, 180); });
       }, { once: true });
     }
   }
   arm();
-  // Belt-and-suspenders: if anything stalls, force-remove after 4s
-  // so we never leave a stuck splash on top of a working page.
-  setTimeout(dismiss, 4000);
+  // Hard cap — if the page ever stalls, the splash clears after
+  // 1.6s so the user isn't trapped staring at a logo.
+  setTimeout(dismiss, 1600);
+  // Tap-to-escape: pointer-events is none in the inline style so
+  // taps fall through to the underlying app, but we capture any
+  // pointer event on the document during the splash window and
+  // dismiss immediately if the user is impatient.
+  document.addEventListener('pointerdown', dismiss, { once: true, capture: true });
 })();
 `,
         }}

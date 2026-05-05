@@ -96,6 +96,33 @@ export default async function LocaleLayout({
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
+        {/* Emergency cleanup — runs on every page load until removed.
+            Unregisters every service worker and wipes every cache so
+            clients that got wedged on a previous deploy's intercepting
+            SW recover within one navigation. Safe to leave in: doesn't
+            block render (fire-and-forget promises) and is no-op once
+            no SW / no caches exist. Will be removed in a follow-up
+            once the wedge wave has cleared. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+(function(){
+  try {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(rs){
+        rs.forEach(function(r){ r.unregister(); });
+      }).catch(function(){});
+    }
+    if (typeof caches !== 'undefined') {
+      caches.keys().then(function(keys){
+        keys.forEach(function(k){ caches.delete(k); });
+      }).catch(function(){});
+    }
+  } catch (e) {}
+})();
+`,
+          }}
+        />
       </head>
       {/* Inline `style` on body locks the brand violet as the very
           first paint surface, so we never flash white between the OS
