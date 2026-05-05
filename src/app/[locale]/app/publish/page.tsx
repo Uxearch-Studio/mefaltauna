@@ -1,6 +1,6 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { AppTopBar } from "@/components/vintage/AppTopBar";
-import { requireUser } from "@/lib/auth";
+import { emailToPhone, requireUser } from "@/lib/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { fetchCatalog, fetchInventory, fetchOwnContact } from "@/lib/db";
 import { PublishFlow } from "./PublishFlow";
@@ -23,11 +23,15 @@ export default async function PublishPage({
 
   // Block publishing until the user has completed their contact info.
   if (!contact) {
+    // The phone the user signed up with is the source of truth — it's
+    // already unique on auth.users.email. We pass it to the form so the
+    // WhatsApp field is locked and can't drift to a different number.
+    const signupPhone = emailToPhone(user.email);
     return (
       <>
         <AppTopBar title={t("title")} />
         <div className="mx-auto max-w-md px-4 py-6 flex flex-col gap-4">
-          <ProfileCompletionForm locale={locale} />
+          <ProfileCompletionForm locale={locale} signupPhone={signupPhone} />
         </div>
       </>
     );

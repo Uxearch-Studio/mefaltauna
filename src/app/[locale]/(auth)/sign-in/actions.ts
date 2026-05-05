@@ -21,6 +21,7 @@ export type AuthState = {
     | "invalid_pin"
     | "pins_mismatch"
     | "wrong_pin"
+    | "phone_already_registered"
     | "signup_failed"
     | "auth_error"
     | "blocked"
@@ -100,7 +101,10 @@ export async function phonePinAction(
   // We can't tell from the error alone, so:
   // - Without pin_confirm → ask the user to confirm their PIN once. If they
   //   actually have an account with a different PIN, the signup attempt
-  //   below will fail with "user_already_exists" and we surface "wrong_pin".
+  //   below will fail with "user_already_exists" and we surface
+  //   "phone_already_registered" — phones are unique on auth.users.email,
+  //   so a duplicate here means the user is trying to register a number
+  //   that's already in use (with a different PIN they've forgotten).
   if (!pinConfirm) {
     return { phone: phoneInput, needsConfirm: true };
   }
@@ -122,7 +126,7 @@ export async function phonePinAction(
     const code = (signUpError as { code?: string }).code;
     const msg = signUpError.message?.toLowerCase() ?? "";
     if (code === "user_already_exists" || msg.includes("already")) {
-      return { phone: phoneInput, error: "wrong_pin" };
+      return { phone: phoneInput, error: "phone_already_registered" };
     }
     return { phone: phoneInput, error: "signup_failed" };
   }

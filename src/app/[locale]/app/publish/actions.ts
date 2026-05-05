@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { emailToPhone } from "@/lib/auth";
 import { validateColombianMobile } from "@/lib/phone";
 
 export type PublishState = {
@@ -48,7 +49,11 @@ export async function saveContactAction(
   const nationalId = String(formData.get("national_id") ?? "").trim();
   const city = String(formData.get("city") ?? "").trim();
   const neighborhood = String(formData.get("neighborhood") ?? "").trim();
-  const whatsapp = String(formData.get("whatsapp") ?? "").trim();
+  // Phone comes from the signup identity (auth.users.email is the
+  // source of truth and is already enforced unique). We never read
+  // whatsapp from the form — the field is rendered read-only — so a
+  // user can't drift it away from the number they registered with.
+  const whatsapp = emailToPhone(user.email ?? null) ?? "";
   const cedulaPhotoPath = String(
     formData.get("national_id_photo_path") ?? "",
   ).trim();

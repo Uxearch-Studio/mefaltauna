@@ -3,15 +3,21 @@
 import { useActionState, useState } from "react";
 import { useTranslations } from "next-intl";
 import { CedulaUpload } from "@/components/vintage/CedulaUpload";
+import { formatPhoneDisplay } from "@/lib/auth";
 import { saveContactAction, type ContactState } from "./actions";
 
 type Props = {
   locale: string;
+  /** Phone the user signed up with (digits only, no +57). The
+   *  WhatsApp field is locked to this so the publish-gate number
+   *  stays consistent with auth.users.email — which already enforces
+   *  uniqueness for the registration phone. */
+  signupPhone: string | null;
 };
 
 const INITIAL: ContactState = {};
 
-export function ProfileCompletionForm({ locale }: Props) {
+export function ProfileCompletionForm({ locale, signupPhone }: Props) {
   const t = useTranslations("contact");
   const tCedula = useTranslations("cedula");
   const [state, action, pending] = useActionState(saveContactAction, INITIAL);
@@ -100,16 +106,10 @@ export function ProfileCompletionForm({ locale }: Props) {
           </Field>
         </div>
 
-        <Field label={t("whatsapp")}>
-          <input
-            type="tel"
-            name="whatsapp"
-            required
-            autoComplete="tel"
-            inputMode="tel"
-            placeholder="+57 300 000 0000"
-            className="h-11 px-3 rounded-xl bg-background border border-border text-base focus:outline-none focus:border-accent"
-          />
+        <Field label={t("whatsapp")} hint={t("whatsappLockedHint")}>
+          <div className="h-11 px-3 rounded-xl bg-muted/40 border border-border text-base flex items-center text-muted-foreground">
+            {signupPhone ? `+57 ${formatPhoneDisplay(signupPhone)}` : "—"}
+          </div>
         </Field>
 
         {state.error && (
