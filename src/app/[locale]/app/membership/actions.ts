@@ -3,7 +3,6 @@
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
-import { getSiteUrl } from "@/lib/supabase/env";
 import {
   buildCheckoutUrl,
   buildWompiReference,
@@ -52,7 +51,9 @@ export async function startCheckoutAction(
   }
 
   const reference = buildWompiReference(user.id);
-  const locale = String(formData.get("locale") ?? "es");
+  // `locale` no longer needed since we don't construct a redirect-url
+  // here — kept the form field on the client for forward compat.
+  void formData.get("locale");
 
   // We use the admin client so the insert isn't gated by RLS — RLS on
   // payments only allows SELECT for the row owner; writes go through
@@ -75,13 +76,17 @@ export async function startCheckoutAction(
       undefined
     : (user.email ?? undefined);
 
-  const redirectUrl = `${getSiteUrl()}/${locale}/app/membership/return`;
-
+  // redirect-url is intentionally omitted until we register
+  // mefaltauna.com in the Wompi merchant dashboard's whitelist.
+  // Without that registration Wompi rejects the checkout with
+  // "URL Inválida". The webhook still updates is_member server-side
+  // when the payment lands, so the user just navigates back to the
+  // app manually after paying. Once the dashboard is configured we
+  // pass the redirectUrl back in.
   const url = buildCheckoutUrl({
     config,
     reference,
     amountInCents: PASS_PRICE_COP_CENTS,
-    redirectUrl,
     customerEmail,
   });
 

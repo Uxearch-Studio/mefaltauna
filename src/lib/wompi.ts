@@ -97,22 +97,25 @@ export function buildIntegritySignature(args: {
 /**
  * Builds the full Web Checkout URL with all required params. The
  * caller redirects the user there. After payment Wompi redirects
- * back to `redirectUrl`.
+ * back to `redirectUrl` IF a redirect-url is supplied AND the URL is
+ * whitelisted in the merchant's Wompi dashboard. When `redirectUrl`
+ * is omitted the user stays on Wompi's confirmation page; the
+ * webhook still fires and updates membership server-side, so the
+ * user just needs to navigate back to the app manually.
  *
  * We assemble the query string by hand instead of going through
  * URLSearchParams. Wompi's parameter names contain a literal colon
  * (`signature:integrity`, `customer-data:email`) that is part of
  * their public contract — but URLSearchParams URL-encodes the colon
- * to `%3A`, and Wompi rejects the resulting URL with "firma
- * inválida" because it can't find the signature parameter under the
- * encoded name.
+ * to `%3A`, and Wompi rejects the resulting URL because it can't
+ * find the signature parameter under the encoded name.
  */
 export function buildCheckoutUrl(args: {
   config: WompiConfig;
   reference: string;
   amountInCents: number;
   currency?: string;
-  redirectUrl: string;
+  redirectUrl?: string;
   customerEmail?: string;
 }): string {
   const currency = args.currency ?? "COP";
@@ -129,8 +132,10 @@ export function buildCheckoutUrl(args: {
     ["amount-in-cents", String(args.amountInCents)],
     ["reference", args.reference],
     ["signature:integrity", signature],
-    ["redirect-url", args.redirectUrl],
   ];
+  if (args.redirectUrl) {
+    parts.push(["redirect-url", args.redirectUrl]);
+  }
   if (args.customerEmail) {
     parts.push(["customer-data:email", args.customerEmail]);
   }
