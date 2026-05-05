@@ -69,11 +69,22 @@ export async function openConversationAction(
     if (a === user.id && existing.archived_at_a) updates.archived_at_a = null;
     if (b === user.id && existing.archived_at_b) updates.archived_at_b = null;
     if (Object.keys(updates).length > 0) {
-      await supabase
+      const { error: upErr } = await supabase
         .from("conversations")
         .update(updates)
         .eq("id", conversationId);
+      if (upErr) {
+        console.error("[openConversationAction] update existing failed", {
+          conversationId,
+          updates,
+          message: upErr.message,
+        });
+      }
     }
+    console.log("[openConversationAction] reusing existing", {
+      conversationId,
+      reset: Object.keys(updates),
+    });
   } else {
     const { data: created, error } = await supabase
       .from("conversations")
@@ -81,10 +92,19 @@ export async function openConversationAction(
       .select("id")
       .single();
     if (error || !created) {
+      console.error("[openConversationAction] insert new failed", {
+        message: error?.message,
+      });
       redirect(`/${locale}/app/feed`);
     }
     conversationId = created.id as string;
+    console.log("[openConversationAction] created new", { conversationId });
   }
+
+  // Revalidate the inbox so the resurfaced/created conversation lands
+  // in the list immediately for the caller. Without this the unarchive
+  // update is invisible until the client realtime tick arrives.
+  revalidatePath(`/${locale}/app/inbox`, "page");
 
   redirect(`/${locale}/app/inbox/${conversationId}`);
 }
