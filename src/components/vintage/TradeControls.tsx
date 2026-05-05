@@ -58,10 +58,47 @@ export function TradeControls({
         ? "buyer"
         : null;
   const [trade, setTrade] = useState(initialTrade);
+
+  // Keep local trade state in sync with the server-prop. ChatRoom
+  // calls router.refresh() whenever a trades row INSERTs or UPDATEs
+  // for this conversation (realtime), and the page re-fetches with
+  // the fresh activeTrade. Without this sync, optimistic local
+  // updates would still work but cross-device updates wouldn't —
+  // e.g. the seller would never see status flip to "completed" when
+  // the buyer scanned because their TradeControls would keep its
+  // own snapshot.
+  useEffect(() => {
+    setTrade(initialTrade);
+  }, [
+    initialTrade?.id,
+    initialTrade?.status,
+    initialTrade?.qrToken,
+    initialTrade?.ratedByMe,
+  ]);
   const [showScanner, setShowScanner] = useState(false);
-  const [showRating, setShowRating] = useState(
-    initialTrade?.status === "completed" && !initialTrade.ratedByMe,
+  const [showRating, setShowRating] = useState(false);
+  // Auto-open the rating modal whenever the trade flips to completed
+  // and the current user hasn't rated yet. Triggers for both sides:
+  //   - the buyer who just scanned (local setTrade fires)
+  //   - the seller whose realtime tick brought the new completed
+  //     status from the buyer's confirmation
+  // We track the last-acted-on trade id so we don't spam-open the
+  // modal across re-renders if the user has already dismissed it.
+  const lastAutoOpenedRef = useRef<string | null>(
+    initialTrade?.status === "completed" && !initialTrade.ratedByMe
+      ? null
+      : (initialTrade?.id ?? null),
   );
+  useEffect(() => {
+    if (
+      trade?.status === "completed" &&
+      !trade.ratedByMe &&
+      trade.id !== lastAutoOpenedRef.current
+    ) {
+      setShowRating(true);
+      lastAutoOpenedRef.current = trade.id;
+    }
+  }, [trade?.id, trade?.status, trade?.ratedByMe]);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [debug, setDebug] = useState<string | null>(null);
@@ -194,7 +231,7 @@ export function TradeControls({
               type="button"
               onClick={startTrade}
               disabled={pending || selected.size === 0}
-              className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full bg-foreground text-background text-xs font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full bg-[var(--accent)] text-[var(--accent-foreground)] text-xs font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
             >
               <svg viewBox="0 0 16 16" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                 <rect x="2" y="2" width="5" height="5" rx="1" />
@@ -211,7 +248,7 @@ export function TradeControls({
               type="button"
               onClick={() => setShowScanner(true)}
               disabled={pending}
-              className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full bg-foreground text-background text-xs font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full bg-[var(--stage-yellow)] text-[#1a0b3d] text-xs font-bold uppercase tracking-wider hover:opacity-90 transition-opacity disabled:opacity-50"
             >
               <svg viewBox="0 0 16 16" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                 <path d="M3 2H2v2M14 2h-1v0M3 14H2v-2M14 14h-1v0M2 6v4" />
@@ -285,7 +322,12 @@ export function TradeControls({
         />
       )}
 
-      {showRating && trade?.status === "completed" && (
+      {/* Modal lifecycle is owned by showRating only — once open, it
+          stays open until the user submits or dismisses. We used to
+          also gate on trade?.status === "completed" but that caused
+          the modal to flicker shut whenever a router.refresh() mid-
+          submit briefly resolved trade to a different shape. */}
+      {showRating && trade?.id && (
         <RatingModal
           tradeId={trade.id}
           onClose={() => setShowRating(false)}

@@ -167,6 +167,29 @@ export function ChatRoom({
       )
       .subscribe();
 
+    // Trade-state channel — fires when a trade for this conversation
+    // is created (seller activates) or updated (buyer scans + confirms).
+    // We just refresh the server tree; the trade-controls component
+    // re-renders with the new initialTrade prop and either reveals the
+    // buyer's "Escanear QR" button or auto-opens the seller's rating
+    // modal. Without this, the live cross-device coordination doesn't
+    // work and people have to leave/re-enter the chat to see state.
+    const tradeChannel = supabase
+      .channel(`conv-trades:${conversationId}`)
+      .on(
+        "postgres_changes" as never,
+        {
+          event: "*",
+          schema: "public",
+          table: "trades",
+          filter: `conversation_id=eq.${conversationId}`,
+        },
+        () => {
+          router.refresh();
+        },
+      )
+      .subscribe();
+
     // Presence channel — each side tracks itself, both watch sync
     // events to know whether the other party is currently in the
     // chat. Powers the "En línea" / "Ausente" indicator below the
@@ -191,6 +214,7 @@ export function ChatRoom({
     return () => {
       supabase.removeChannel(channel);
       supabase.removeChannel(metaChannel);
+      supabase.removeChannel(tradeChannel);
       if (presenceChannel) supabase.removeChannel(presenceChannel);
     };
   }, [conversationId, currentUserId, otherUserId, router]);
