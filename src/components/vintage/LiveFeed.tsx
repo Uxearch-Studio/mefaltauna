@@ -7,7 +7,7 @@ import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { openConversationAction } from "@/app/[locale]/app/inbox/actions";
 import { deleteListingAction } from "@/app/[locale]/app/publish/actions";
 import { cn } from "@/lib/cn";
-import type { FeedItem, Sticker } from "@/lib/db";
+import { fetchFeedItemById, type FeedItem, type Sticker } from "@/lib/db";
 
 type Props = {
   initial: FeedItem[];
@@ -80,32 +80,23 @@ export function LiveFeed({ initial, catalog, locale, currentUserId }: Props) {
       .on(
         "postgres_changes" as never,
         { event: "INSERT", schema: "public", table: "listings" },
-        (payload: { new: Record<string, unknown> }) => {
-          const row = payload.new;
-          const stickerId = row.sticker_id as number;
-          const sticker = stickerById[stickerId];
-          if (!sticker) return;
-          const item: FeedItem = {
-            id: row.id as string,
-            user_id: row.user_id as string,
-            sticker_id: stickerId,
-            type: row.type as FeedItem["type"],
-            price_cop: (row.price_cop as number | null) ?? null,
-            status: "active",
-            created_at: row.created_at as string,
-            photo_url: (row.photo_url as string | null) ?? null,
-            sticker: {
-              code: sticker.code,
-              name: sticker.name,
-              team_code: sticker.team_code,
-              type: sticker.type,
-              number: sticker.number,
-            },
-            username: null,
-            display_name: null,
-            reputation: 0,
-          };
-          setItems((prev) => [item, ...prev].slice(0, 50));
+        async (payload: { new: Record<string, unknown> }) => {
+          const id = payload.new.id as string | undefined;
+          if (!id) return;
+          // The realtime payload only carries the raw listings row —
+          // no sticker name, no seller username/reputation. We have
+              // to look those up from the DB to render a complete card.
+          // Previously we fell back to a local sticker map populated
+          // from the page's RSC payload, but the feed page intentionally
+          // ships an empty catalog to keep the payload light, so the
+          // map was always empty in practice and brand-new listings
+          // never made it onto the feed without a manual reload.
+          const item = await fetchFeedItemById(supabase, id);
+          if (!item) return;
+          setItems((prev) => {
+            if (prev.some((i) => i.id === item.id)) return prev;
+            return [item, ...prev].slice(0, 50);
+          });
         },
       )
       .subscribe((status: string) => {
@@ -114,7 +105,7 @@ export function LiveFeed({ initial, catalog, locale, currentUserId }: Props) {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [stickerById]);
+  }, []);
 
   const filtered = useMemo(() => {
     return items.filter((item) => {

@@ -692,3 +692,58 @@ export async function fetchActiveListings(
     };
   });
 }
+
+/**
+ * Single-listing variant of fetchActiveListings, used by the LiveFeed
+ * realtime handler to enrich INSERT payloads (which only carry the
+ * raw row columns) with sticker + profile info before prepending the
+ * card to the feed.
+ */
+export async function fetchFeedItemById(
+  supabase: SupabaseClient,
+  id: string,
+): Promise<FeedItem | null> {
+  const { data } = await supabase
+    .from("listings")
+    .select(
+      `
+      id, user_id, sticker_id, type, price_cop, status, created_at, photo_url,
+      sticker:sticker_catalog!listings_sticker_id_fkey ( code, name, team_code, type, number )
+      `,
+    )
+    .eq("id", id)
+    .maybeSingle();
+  if (!data) return null;
+  const row = data as unknown as {
+    id: string;
+    user_id: string;
+    sticker_id: number;
+    type: ListingType;
+    price_cop: number | null;
+    status: ListingStatus;
+    created_at: string;
+    photo_url: string | null;
+    sticker: FeedItem["sticker"];
+  };
+  if (!row.sticker) return null;
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("username, display_name, reputation")
+    .eq("id", row.user_id)
+    .maybeSingle();
+  return {
+    id: row.id,
+    user_id: row.user_id,
+    sticker_id: row.sticker_id,
+    type: row.type,
+    price_cop: row.price_cop,
+    status: row.status,
+    created_at: row.created_at,
+    photo_url: row.photo_url,
+    sticker: row.sticker,
+    username: profile?.username ?? null,
+    display_name: profile?.display_name ?? null,
+    reputation: profile?.reputation ?? 0,
+  };
+}
