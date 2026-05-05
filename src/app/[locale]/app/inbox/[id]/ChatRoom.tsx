@@ -247,9 +247,11 @@ export function ChatRoom({
   }
 
   return (
-    // 100dvh (not vh) so iOS Safari with toolbar visible doesn't
-    // overshoot and let the composer cover the BottomNav.
-    <div className="flex flex-col h-[calc(100dvh-3.5rem-7rem)]">
+    // The chat view hides the BottomNav (handled by AppShell) so the
+    // column only has to leave room for the page header. 100dvh, not
+    // 100vh, so iOS Safari's dynamic toolbar doesn't push the composer
+    // off-screen when the URL bar is visible.
+    <div className="flex flex-col h-[calc(100dvh-3.5rem)]">
       {/* Online indicator — slides in just under the page header so
           the user knows whether the other party is in the chat right
           now. Quiet design: a small dot + label. */}

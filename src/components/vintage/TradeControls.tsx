@@ -237,6 +237,22 @@ export function TradeControls({
         </p>
       )}
 
+      {/* Diagnostic state line — surfaces *why* the activate button
+          might be in whatever state it's in. Without this the user
+          just sees a disabled button or no QR and can't tell whether
+          the action ran, errored, or never had anything to act on. */}
+      {!trade && role === "seller" && (
+        <div className="mx-3 mt-2 px-3 py-2 text-[11px] leading-snug bg-muted/40 border border-border rounded-xl text-muted-foreground">
+          {sellerActiveListings.length === 0
+            ? t("debugNoListings")
+            : pending
+              ? t("debugStarting")
+              : selected.size === 0
+                ? t("debugNoSelection")
+                : t("debugReady", { count: selected.size })}
+        </div>
+      )}
+
       {showPicker && !trade && role === "seller" && (
         <ListingPicker
           listings={sellerActiveListings}
