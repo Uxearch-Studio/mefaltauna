@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { archiveConversationAction } from "./actions";
@@ -30,8 +31,10 @@ export function InboxRow({
   relativeTime,
 }: Props) {
   const t = useTranslations("inbox");
+  const router = useRouter();
   const [removed, setRemoved] = useState(false);
   const [confirming, setConfirming] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const unread = unreadCount > 0;
 
@@ -45,9 +48,21 @@ export function InboxRow({
       setTimeout(() => setConfirming(false), 4000);
       return;
     }
+    setError(null);
     startTransition(async () => {
       const res = await archiveConversationAction(id);
-      if (res?.ok) setRemoved(true);
+      if (res?.ok) {
+        setRemoved(true);
+        // Pull a fresh server tree so the bottom-nav unread badge
+        // and any other consumers reflect the archive immediately.
+        router.refresh();
+      } else {
+        // Surface the failure instead of silently dropping the row —
+        // user reports of "I deleted but it came back" trace to this
+        // path. Now they see what happened.
+        setError(t("archiveFailed"));
+        setConfirming(false);
+      }
     });
   }
 
@@ -133,6 +148,15 @@ export function InboxRow({
           </svg>
         )}
       </button>
+
+      {error && (
+        <p
+          role="alert"
+          className="mt-1 mx-1 px-3 py-1.5 text-[11px] font-medium leading-snug bg-red-600/10 text-red-600 border border-red-600/30 rounded-lg"
+        >
+          {error}
+        </p>
+      )}
     </li>
   );
 }

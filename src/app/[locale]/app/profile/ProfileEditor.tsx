@@ -24,6 +24,7 @@ type Props = {
     national_id: string;
     whatsapp: string;
     city: string;
+    neighborhood: string;
     email: string | null;
   };
   stats: FifaProfileStats;
@@ -151,16 +152,29 @@ export function ProfileEditor({ locale, initial, stats, isMember }: Props) {
           </Field>
         </div>
 
-        <Field label={t("city")}>
-          <input
-            type="text"
-            name="city"
-            required
-            defaultValue={initial.city}
-            autoComplete="address-level2"
-            className="h-11 px-3 rounded-xl bg-background border border-border text-base focus:outline-none focus:border-accent"
-          />
-        </Field>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label={t("city")}>
+            <input
+              type="text"
+              name="city"
+              required
+              defaultValue={initial.city}
+              autoComplete="address-level2"
+              className="h-11 px-3 rounded-xl bg-background border border-border text-base focus:outline-none focus:border-accent"
+            />
+          </Field>
+          <Field label={t("neighborhood")}>
+            <input
+              type="text"
+              name="neighborhood"
+              required
+              defaultValue={initial.neighborhood}
+              autoComplete="address-level3"
+              placeholder="Chapinero"
+              className="h-11 px-3 rounded-xl bg-background border border-border text-base focus:outline-none focus:border-accent"
+            />
+          </Field>
+        </div>
 
         <Field label={t("nationalId")} locked>
           <p className="h-11 px-3 rounded-xl bg-muted/40 flex items-center text-sm text-muted-foreground truncate">

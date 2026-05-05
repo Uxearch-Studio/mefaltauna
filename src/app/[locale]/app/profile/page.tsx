@@ -87,6 +87,7 @@ export default async function ProfilePage({
     national_id: contact?.national_id ?? "",
     whatsapp: contact?.whatsapp ?? phoneFromEmail ?? "",
     city: contact?.city ?? profile?.city ?? "",
+    neighborhood: contact?.neighborhood ?? "",
     email: phoneFromEmail ? null : (user.email ?? null),
   };
 

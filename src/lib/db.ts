@@ -38,6 +38,7 @@ export type ProfileContact = {
   national_id: string;
   whatsapp: string;
   city: string;
+  neighborhood: string | null;
 };
 
 export async function fetchOwnContact(
@@ -46,7 +47,9 @@ export async function fetchOwnContact(
 ): Promise<ProfileContact | null> {
   const { data, error } = await supabase
     .from("profile_contact")
-    .select("user_id, first_name, last_name, national_id, whatsapp, city")
+    .select(
+      "user_id, first_name, last_name, national_id, whatsapp, city, neighborhood",
+    )
     .eq("user_id", userId)
     .maybeSingle();
   if (error) return null;

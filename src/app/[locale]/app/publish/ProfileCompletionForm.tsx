@@ -60,16 +60,28 @@ export function ProfileCompletionForm({ locale }: Props) {
           />
         </Field>
 
-        <Field label={t("city")}>
-          <input
-            type="text"
-            name="city"
-            required
-            autoComplete="address-level2"
-            placeholder="Bogotá"
-            className="h-11 px-3 rounded-xl bg-background border border-border text-base focus:outline-none focus:border-accent"
-          />
-        </Field>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label={t("city")}>
+            <input
+              type="text"
+              name="city"
+              required
+              autoComplete="address-level2"
+              placeholder="Bogotá"
+              className="h-11 px-3 rounded-xl bg-background border border-border text-base focus:outline-none focus:border-accent"
+            />
+          </Field>
+          <Field label={t("neighborhood")} hint={t("neighborhoodHint")}>
+            <input
+              type="text"
+              name="neighborhood"
+              required
+              autoComplete="address-level3"
+              placeholder="Chapinero"
+              className="h-11 px-3 rounded-xl bg-background border border-border text-base focus:outline-none focus:border-accent"
+            />
+          </Field>
+        </div>
 
         <Field label={t("whatsapp")}>
           <input
@@ -107,9 +119,11 @@ export function ProfileCompletionForm({ locale }: Props) {
 
 function Field({
   label,
+  hint,
   children,
 }: {
   label: string;
+  hint?: string;
   children: React.ReactNode;
 }) {
   return (
@@ -118,6 +132,9 @@ function Field({
         {label}
       </span>
       {children}
+      {hint && (
+        <span className="text-[10px] text-muted-foreground">{hint}</span>
+      )}
     </label>
   );
 }

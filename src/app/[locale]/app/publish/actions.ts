@@ -47,10 +47,18 @@ export async function saveContactAction(
   const lastName = String(formData.get("last_name") ?? "").trim();
   const nationalId = String(formData.get("national_id") ?? "").trim();
   const city = String(formData.get("city") ?? "").trim();
+  const neighborhood = String(formData.get("neighborhood") ?? "").trim();
   const whatsapp = String(formData.get("whatsapp") ?? "").trim();
   const locale = String(formData.get("locale") ?? "es");
 
-  if (!firstName || !lastName || !nationalId || !city || !whatsapp) {
+  if (
+    !firstName ||
+    !lastName ||
+    !nationalId ||
+    !city ||
+    !neighborhood ||
+    !whatsapp
+  ) {
     return { error: "missing_fields" };
   }
 
@@ -81,6 +89,7 @@ export async function saveContactAction(
       national_id: idDigits,
       whatsapp: phoneDigits,
       city,
+      neighborhood,
     },
     { onConflict: "user_id" },
   );
@@ -121,6 +130,7 @@ export async function saveContactAction(
       last_name: lastName,
       national_id: idDigits,
       city,
+      neighborhood,
       whatsapp: phoneDigits,
     },
   });

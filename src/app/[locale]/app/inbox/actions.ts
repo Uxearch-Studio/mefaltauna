@@ -91,12 +91,22 @@ export async function openConversationAction(
 
 /**
  * Soft-deletes the conversation from the current user's inbox. The
- * other party's view is unaffected — if they reply, the thread re-
- * appears for the user when openConversationAction reactivates it.
+ * other party's view is unaffected. The conversation only re-
+ * appears for this user if they themselves call openConversationAction
+ * again from a feed listing — a new message from the OTHER side
+ * does NOT resurface it.
+ *
+ * Returns the actual RPC error when something goes wrong instead of
+ * silently claiming success — earlier the action returned ok:true
+ * even when the underlying RPC failed, leading to "I deleted but it
+ * still shows up" reports.
  */
 export async function archiveConversationAction(
   conversationId: string,
-): Promise<{ ok?: true; error?: "not_configured" | "not_participant" }> {
+): Promise<{
+  ok?: true;
+  error?: "not_configured" | "not_participant" | "db_error";
+}> {
   const supabase = await createSupabaseServerClient();
   if (!supabase) return { error: "not_configured" };
 
@@ -105,7 +115,17 @@ export async function archiveConversationAction(
   } = await supabase.auth.getUser();
   if (!user) return { error: "not_participant" };
 
-  await supabase.rpc("archive_conversation", { conv_id: conversationId });
+  const { error } = await supabase.rpc("archive_conversation", {
+    conv_id: conversationId,
+  });
+  if (error) {
+    console.error("[archive_conversation] RPC failed", {
+      conversationId,
+      message: error.message,
+    });
+    return { error: "db_error" };
+  }
+
   revalidatePath("/[locale]/app/inbox", "page");
   revalidatePath("/[locale]/app", "layout");
   return { ok: true };
