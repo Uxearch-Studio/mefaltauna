@@ -127,32 +127,49 @@ export const TEAMS: Team[] = [
 ];
 
 // ────────────────────────────────────────────────────────────
-// 16 host venues
+// 16 host venues. `tzOffsetHours` is the venue's UTC offset during
+// the tournament window (June, with DST active). Used by
+// matchesByDay() to group fixtures under the day they actually
+// happen at the stadium, not the day in UTC — without it, an 8pm
+// kickoff in Mexico City (which is 02:00 UTC the next day) would
+// land on the wrong section header.
 // ────────────────────────────────────────────────────────────
 type Venue = {
   city: string;
   country: HostCountry;
   venue: string;
+  /** UTC offset in hours, negative for west of GMT. */
+  tzOffsetHours: number;
 };
 
 const V: Record<string, Venue> = {
-  azteca:    { city: "Ciudad de México", country: "MX", venue: "Estadio Azteca" },
-  akron:     { city: "Guadalajara",      country: "MX", venue: "Estadio Akron" },
-  bbva:      { city: "Monterrey",        country: "MX", venue: "Estadio BBVA" },
-  bmo:       { city: "Toronto",          country: "CA", venue: "BMO Field" },
-  bcplace:   { city: "Vancouver",        country: "CA", venue: "BC Place" },
-  metlife:   { city: "Nueva York / NJ",  country: "US", venue: "MetLife Stadium" },
-  sofi:      { city: "Inglewood",        country: "US", venue: "SoFi Stadium" },
-  hardrock:  { city: "Miami",            country: "US", venue: "Hard Rock Stadium" },
-  mercedes:  { city: "Atlanta",          country: "US", venue: "Mercedes-Benz Stadium" },
-  gillette:  { city: "Boston",           country: "US", venue: "Gillette Stadium" },
-  nrg:       { city: "Houston",          country: "US", venue: "NRG Stadium" },
-  lincoln:   { city: "Filadelfia",       country: "US", venue: "Lincoln Financial Field" },
-  att:       { city: "Arlington",        country: "US", venue: "AT&T Stadium" },
-  arrowhead: { city: "Kansas City",      country: "US", venue: "Arrowhead Stadium" },
-  levis:     { city: "Santa Clara",      country: "US", venue: "Levi's Stadium" },
-  lumen:     { city: "Seattle",          country: "US", venue: "Lumen Field" },
+  azteca:    { city: "Ciudad de México", country: "MX", venue: "Estadio Azteca",            tzOffsetHours: -6 },
+  akron:     { city: "Guadalajara",      country: "MX", venue: "Estadio Akron",             tzOffsetHours: -6 },
+  bbva:      { city: "Monterrey",        country: "MX", venue: "Estadio BBVA",              tzOffsetHours: -6 },
+  bmo:       { city: "Toronto",          country: "CA", venue: "BMO Field",                 tzOffsetHours: -4 },
+  bcplace:   { city: "Vancouver",        country: "CA", venue: "BC Place",                  tzOffsetHours: -7 },
+  metlife:   { city: "Nueva York / NJ",  country: "US", venue: "MetLife Stadium",           tzOffsetHours: -4 },
+  sofi:      { city: "Inglewood",        country: "US", venue: "SoFi Stadium",              tzOffsetHours: -7 },
+  hardrock:  { city: "Miami",            country: "US", venue: "Hard Rock Stadium",         tzOffsetHours: -4 },
+  mercedes:  { city: "Atlanta",          country: "US", venue: "Mercedes-Benz Stadium",     tzOffsetHours: -4 },
+  gillette:  { city: "Boston",           country: "US", venue: "Gillette Stadium",          tzOffsetHours: -4 },
+  nrg:       { city: "Houston",          country: "US", venue: "NRG Stadium",               tzOffsetHours: -5 },
+  lincoln:   { city: "Filadelfia",       country: "US", venue: "Lincoln Financial Field",   tzOffsetHours: -4 },
+  att:       { city: "Arlington",        country: "US", venue: "AT&T Stadium",              tzOffsetHours: -5 },
+  arrowhead: { city: "Kansas City",      country: "US", venue: "Arrowhead Stadium",         tzOffsetHours: -5 },
+  levis:     { city: "Santa Clara",      country: "US", venue: "Levi's Stadium",            tzOffsetHours: -7 },
+  lumen:     { city: "Seattle",          country: "US", venue: "Lumen Field",               tzOffsetHours: -7 },
 };
+
+/** Look up the venue's UTC offset (hours) by stadium name. Defaults
+ *  to -4 (Eastern) for the rare miss; -4 is the most common host TZ
+ *  during June so the section bucket is still close to right. */
+function venueOffsetHours(venueName: string): number {
+  for (const v of Object.values(V)) {
+    if (v.venue === venueName) return v.tzOffsetHours;
+  }
+  return -4;
+}
 
 // ────────────────────────────────────────────────────────────
 // Match constructor — keeps the 72-row table below readable
@@ -190,9 +207,9 @@ function m(
 // ────────────────────────────────────────────────────────────
 export const MATCHES: Match[] = [
   // ── Matchday 1 ─────────────────────────────────────────────
-  // Jun 11 — Group A opens at the Azteca
-  m("A", 1, "2026-06-12T01:00:00Z", "MEX", "RSA", V.azteca),  // Jun 11 19:00 CDMX
-  m("A", 1, "2026-06-11T22:00:00Z", "KOR", "CZE", V.akron),
+  // Jun 11 — Group A opens at the Azteca, Korea vs Czechia at night
+  m("A", 1, "2026-06-11T19:00:00Z", "MEX", "RSA", V.azteca),  // 1pm CDMX, 2pm Bogotá
+  m("A", 1, "2026-06-12T02:00:00Z", "KOR", "CZE", V.akron),   // 8pm CDMX June 11
 
   // Jun 12 — Groups B, D
   m("B", 1, "2026-06-12T19:00:00Z", "CAN", "BIH", V.bmo),
@@ -304,13 +321,15 @@ export function teamByCode(code: string): Team | undefined {
 }
 
 export function matchesByDay(matches: Match[]): Array<{
-  /** YYYY-MM-DD in UTC, used as the section key. */
+  /** YYYY-MM-DD computed in the venue's local timezone. A late
+   *  kickoff in Mexico City (e.g. 8 pm CDMX = 02:00 UTC next day)
+   *  still buckets under the FIFA-published date this way. */
   isoDate: string;
   matches: Match[];
 }> {
   const map = new Map<string, Match[]>();
   for (const match of matches) {
-    const day = match.kickoff.slice(0, 10);
+    const day = venueLocalDate(match);
     if (!map.has(day)) map.set(day, []);
     map.get(day)!.push(match);
   }
@@ -318,6 +337,17 @@ export function matchesByDay(matches: Match[]): Array<{
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([isoDate, ms]) => ({
       isoDate,
+      // Sort by UTC kickoff — that's the same chronological order in
+      // any TZ, so the user sees earliest-first regardless of where
+      // they are.
       matches: ms.sort((a, b) => a.kickoff.localeCompare(b.kickoff)),
     }));
+}
+
+/** Compute the venue-local date as YYYY-MM-DD given the match's
+ *  kickoff (UTC) and its venue offset. */
+function venueLocalDate(match: Match): string {
+  const offset = venueOffsetHours(match.venue);
+  const ms = new Date(match.kickoff).getTime() + offset * 3600 * 1000;
+  return new Date(ms).toISOString().slice(0, 10);
 }
