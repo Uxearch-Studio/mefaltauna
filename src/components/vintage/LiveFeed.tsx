@@ -46,6 +46,13 @@ export function LiveFeed({ initial, catalog, locale, currentUserId }: Props) {
   const [filterMaxPrice, setFilterMaxPrice] = useState<string>("");
   const [lightbox, setLightbox] = useState<string | null>(null);
 
+  // sticker lookup by id is only used to enrich realtime INSERTs with
+  // their full sticker data. The full catalog (1008 rows after the
+  // 2026 expansion) is way too heavy to ship via RSC on every feed
+  // navigation, so we derive what we can from the already-loaded
+  // listings and accept that brand-new realtime listings whose sticker
+  // we've never seen won't render. They'll appear correctly the next
+  // time the page reloads.
   const stickerById = useMemo(
     () => Object.fromEntries(catalog.map((s) => [s.id, s])),
     [catalog],
@@ -53,9 +60,17 @@ export function LiveFeed({ initial, catalog, locale, currentUserId }: Props) {
 
   const teamCodes = useMemo(() => {
     const set = new Set<string>();
+    // Prefer the explicit catalog when the caller passes one (e.g.
+    // pages that genuinely need full team coverage).
     for (const s of catalog) if (s.team_code) set.add(s.team_code);
+    // Otherwise fall back to the team codes that appear in the
+    // currently-loaded listings — gives the filter a reasonable
+    // dropdown without the heavy RSC payload.
+    if (set.size === 0) {
+      for (const it of items) if (it.sticker.team_code) set.add(it.sticker.team_code);
+    }
     return [...set].sort();
-  }, [catalog]);
+  }, [catalog, items]);
 
   useEffect(() => {
     const supabase = getSupabaseBrowserClient();

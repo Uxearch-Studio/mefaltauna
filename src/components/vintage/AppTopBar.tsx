@@ -1,4 +1,5 @@
-import { AppLogoLink } from "./AppLogoLink";
+import { Link } from "@/i18n/navigation";
+import { Logo } from "./Logo";
 import { InstallShortcut } from "./InstallShortcut";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 
@@ -21,7 +22,17 @@ export function AppTopBar({ title, trailing }: Props) {
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur">
       <div className="mx-auto max-w-3xl px-4 h-14 flex items-center justify-between gap-3">
-        <AppLogoLink title={title} />
+        <Link
+          href="/app/feed"
+          className="flex items-center gap-2 hover:opacity-70 transition-opacity min-w-0"
+        >
+          <Logo />
+          {title && (
+            <span className="ml-1.5 text-xs font-medium text-muted-foreground truncate hidden sm:inline">
+              · {title}
+            </span>
+          )}
+        </Link>
 
         <div className="flex items-center gap-2">
           <InstallShortcut />

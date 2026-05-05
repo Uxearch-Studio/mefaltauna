@@ -1,7 +1,7 @@
 "use client";
 
-import { useLocale, useTranslations } from "next-intl";
-import { usePathname } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
+import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/cn";
 import {
   FeedIcon,
@@ -36,7 +36,6 @@ type Props = {
 
 export function BottomNav({ unreadCount = 0 }: Props) {
   const t = useTranslations("appNav");
-  const locale = useLocale();
   const pathname = usePathname();
 
   return (
@@ -54,16 +53,10 @@ export function BottomNav({ unreadCount = 0 }: Props) {
             const isInbox = tab.key === "inbox";
             const Icon = tab.Icon;
 
-            // Plain anchor (not next-intl Link) so each tap triggers
-            // a full HTTP navigation. Client-side router transitions
-            // were intermittently failing on Safari with "page
-            // couldn't load" — until we fully diagnose, hard nav
-            // is safer for the bottom-nav backbone.
-            const localizedHref = `/${locale}${tab.href}`;
             return (
               <li key={tab.href} className="flex-1">
-                <a
-                  href={localizedHref}
+                <Link
+                  href={tab.href}
                   aria-current={active ? "page" : undefined}
                   aria-label={t(tab.key)}
                   title={t(tab.key)}
@@ -87,7 +80,7 @@ export function BottomNav({ unreadCount = 0 }: Props) {
                       {unreadCount > 9 ? "9+" : unreadCount}
                     </span>
                   )}
-                </a>
+                </Link>
               </li>
             );
           })}

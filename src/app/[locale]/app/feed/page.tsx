@@ -3,7 +3,7 @@ import { AppTopBar } from "@/components/vintage/AppTopBar";
 import { LiveFeed } from "@/components/vintage/LiveFeed";
 import { requireUser } from "@/lib/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { fetchActiveListings, fetchCatalog } from "@/lib/db";
+import { fetchActiveListings } from "@/lib/db";
 
 export default async function FeedPage({
   params,
@@ -16,28 +16,22 @@ export default async function FeedPage({
 
   const user = await requireUser({ locale, next: `/${locale}/app/feed` });
   const supabase = await createSupabaseServerClient();
-  const [listings, catalog] = await Promise.all([
-    supabase ? fetchActiveListings(supabase, 50) : Promise.resolve([]),
-    supabase ? fetchCatalog(supabase) : Promise.resolve([]),
-  ]);
-
-  const lightCatalog = catalog.map((s) => ({
-    id: s.id,
-    code: s.code,
-    name: s.name,
-    team_code: s.team_code,
-    type: s.type,
-    number: s.number,
-  }));
+  const listings = supabase
+    ? await fetchActiveListings(supabase, 50)
+    : [];
 
   return (
     <>
       <AppTopBar title={t("title")} />
       <div className="mx-auto max-w-3xl px-4 py-6 flex flex-col gap-5">
         <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
+        {/* catalog intentionally not passed: LiveFeed derives the
+            team filter dropdown from the listings we already have, so
+            the RSC payload stays tight. The full 1008-row catalog
+            would otherwise ship on every navigation. */}
         <LiveFeed
           initial={listings}
-          catalog={lightCatalog}
+          catalog={[]}
           locale={locale}
           currentUserId={user.id}
         />
