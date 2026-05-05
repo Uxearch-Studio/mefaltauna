@@ -13,16 +13,16 @@ export function AlbumPaywall() {
 
   const benefits: Array<{ icon: React.ReactNode; label: string }> = [
     {
-      icon: <BulletIconStack />,
-      label: t("benefitNoPaper"),
-    },
-    {
       icon: <BulletIconLive />,
       label: t("benefitProgress"),
     },
     {
       icon: <BulletIconPublish />,
       label: t("benefitPublish"),
+    },
+    {
+      icon: <BulletIconTrade />,
+      label: t("benefitTrade"),
     },
   ];
 
@@ -145,11 +145,10 @@ function FloatingSticker({
   );
 }
 
-function BulletIconStack() {
+function BulletIconTrade() {
   return (
     <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <rect x="4" y="3" width="13" height="17" rx="1.5" />
-      <rect x="7" y="6" width="13" height="17" rx="1.5" />
+      <path d="M3 7h13l-3-3M21 17H8l3 3" />
     </svg>
   );
 }

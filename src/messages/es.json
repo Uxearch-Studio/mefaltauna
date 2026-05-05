@@ -140,13 +140,13 @@
       "complete": "★ Álbum completo · MVP del Mundial"
     },
     "paywall": {
-      "kicker": "Tu álbum digital",
-      "title": "Olvídate del papel y el Excel.",
-      "subtitle": "Tu álbum del Mundial 2026 vive aquí. Lo llevas en el bolsillo, lo actualizas con un toque, y nunca más pierdes una repetida.",
-      "benefitNoPaper": "Adiós al álbum físico, adiós al Excel improvisado para llevar la cuenta.",
-      "benefitProgress": "Progreso en tiempo real — cuántas tienes, cuántas te faltan, cuáles repiten.",
-      "benefitPublish": "Publica tus repetidas directo desde la lámina, sin retomar fotos.",
-      "cta": "Comprar el pase"
+      "kicker": "Tu álbum, en el bolsillo",
+      "title": "Llena tu álbum más rápido.",
+      "subtitle": "Mefaltauna te ayuda con tu álbum del Mundial 2026: llevas el progreso en tiempo real, publicas las repetidas, e intercambias con otros coleccionistas.",
+      "benefitProgress": "Lleva el progreso de tu álbum en tiempo real.",
+      "benefitPublish": "Publica tus repetidas en segundos.",
+      "benefitTrade": "Intercambia láminas con otros coleccionistas.",
+      "cta": "Unirme al club"
     }
   },
   "publish": {
