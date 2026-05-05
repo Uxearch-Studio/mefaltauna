@@ -116,6 +116,22 @@ body {
   background: var(--background);
 }
 
+/* iOS Safari auto-zooms the viewport when an input/select/textarea is
+   focused with a font-size below 16px. The zoom never reverses cleanly
+   and breaks our floating layouts (BottomNav covered, sticky headers
+   shifted, etc.). Force every form control on touch devices to render
+   at 16px. The [class] attribute selector bumps specificity so this
+   rule wins against any Tailwind text-* utility a component might
+   apply — without it, `text-xs` would beat the type selector and the
+   zoom would come back. Desktops keep their designed type scale. */
+@media (hover: none) and (pointer: coarse) {
+  input[class]:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select[class],
+  textarea[class] {
+    font-size: 16px;
+  }
+}
+
 /* ─────────────────────────────────────────────
    Utility classes
    ───────────────────────────────────────────── */
