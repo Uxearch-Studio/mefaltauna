@@ -27,6 +27,9 @@ type Props = {
     email: string | null;
   };
   stats: FifaProfileStats;
+  /** Achievements are part of the paid pass; non-members see a
+   *  locked overlay over the grid with a CTA to /app/membership. */
+  isMember: boolean;
 };
 
 const INITIAL: ProfileEditState = {};
@@ -36,7 +39,7 @@ const INITIAL: ProfileEditState = {};
  * achievements grid. Tapping "Edit" expands the form (WhatsApp and
  * cédula stay locked since they're identity-bound).
  */
-export function ProfileEditor({ locale, initial, stats }: Props) {
+export function ProfileEditor({ locale, initial, stats, isMember }: Props) {
   const t = useTranslations("profile");
   const router = useRouter();
   const [state, action, pending] = useActionState(updateProfileAction, INITIAL);
@@ -71,7 +74,7 @@ export function ProfileEditor({ locale, initial, stats }: Props) {
           stats={stats}
           onEdit={() => setEditing(true)}
         />
-        <Achievements stats={stats} />
+        <Achievements stats={stats} isMember={isMember} />
         {state.ok && (
           <p className="text-xs text-accent text-center">{t("saved")}</p>
         )}

@@ -5,6 +5,7 @@ import { ThemeSwitcher } from "@/components/vintage/ThemeSwitcher";
 import { requireUser, emailToPhone } from "@/lib/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { fetchOwnContact } from "@/lib/db";
+import { fetchIsMember } from "@/lib/membership";
 import type { FifaProfileStats } from "@/components/vintage/FifaProfileCard";
 import { ProfileEditor } from "./ProfileEditor";
 
@@ -75,6 +76,8 @@ export default async function ProfilePage({
     duplicatesCount,
   };
 
+  const isMember = await fetchIsMember(supabase, user.id);
+
   const phoneFromEmail = emailToPhone(user.email);
   const initial = {
     username: profile?.username ?? null,
@@ -91,7 +94,12 @@ export default async function ProfilePage({
     <>
       <AppTopBar title={t("title")} />
       <div className="mx-auto max-w-md px-4 py-6 flex flex-col gap-5">
-        <ProfileEditor locale={locale} initial={initial} stats={stats} />
+        <ProfileEditor
+          locale={locale}
+          initial={initial}
+          stats={stats}
+          isMember={isMember}
+        />
 
         <section className="surface-card divide-y divide-border">
           <Row label={t("language")}>

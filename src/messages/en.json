@@ -320,6 +320,16 @@
   },
   "inbox": {
     "title": "Messages",
+    "paywall": {
+      "kicker": "Secure chat + trades",
+      "title": "Close deals without losing duplicates.",
+      "subtitle": "Talk to any collector, agree on the trade in chat, and seal it in person with our single-use QR. Your reputation grows with every closed deal.",
+      "benefitChat": "Direct chat with any collector from the feed.",
+      "benefitQr": "Secure QR system: seller generates, buyer scans, deal is sealed.",
+      "benefitReputation": "Build your reputation. Every closed trade adds stars everyone can see.",
+      "benefitSafe": "No spam, no phone-sharing. Everything stays on mefaltauna — we keep you safe.",
+      "cta": "Join the club"
+    },
     "paywallTitle": "Activate your pass to chat",
     "paywallBody": "Direct chat with collectors requires the club pass. One-time payment of $9,900 COP.",
     "paywallCta": "Join the club",
@@ -398,6 +408,8 @@
       "statActLong": "Activity",
       "achievements": "Achievements",
       "achievementsHint": "Unlock badges as you play",
+      "achievementsLockedTitle": "Achievements are part of the club pass.",
+      "achievementsLockedCta": "Join the club",
       "locked": "Locked",
       "ach": {
         "first_sticker": "First sticker",

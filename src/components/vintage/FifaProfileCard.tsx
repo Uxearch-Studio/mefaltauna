@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 
 export type FifaProfileStats = {
   /** How many distinct stickers the user owns. */
@@ -340,8 +341,12 @@ export type AchievementId =
 
 export function Achievements({
   stats,
+  isMember,
 }: {
   stats: FifaProfileStats;
+  /** Achievements are part of the paid pass — non-members see the
+   *  grid blurred behind a single locked overlay with a CTA. */
+  isMember: boolean;
 }) {
   const t = useTranslations("profile.fut");
   const [expanded, setExpanded] = useState<AchievementId | null>(null);
@@ -371,28 +376,38 @@ export function Achievements({
   ];
 
   return (
-    <section className="surface-card p-5">
+    <section className="surface-card p-5 relative overflow-hidden">
       <header className="flex items-baseline justify-between mb-3">
         <h2 className="text-base font-semibold tracking-tight">
           {t("achievements")}
         </h2>
         <span className="text-[11px] text-muted-foreground">
-          {achievements.filter((a) => a.unlocked).length}/{achievements.length}
+          {isMember
+            ? `${achievements.filter((a) => a.unlocked).length}/${achievements.length}`
+            : `0/${achievements.length}`}
         </span>
       </header>
       <p className="text-xs text-muted-foreground mb-4">
         {t("achievementsHint")}
       </p>
-      <ul className="grid grid-cols-4 gap-2">
+
+      <ul
+        className={`grid grid-cols-4 gap-2 ${isMember ? "" : "blur-sm pointer-events-none select-none"}`}
+        aria-hidden={!isMember}
+      >
         {achievements.map((a) => {
           const open = expanded === a.id;
+          // Non-members see every badge as locked regardless of the
+          // user's actual stats — it's part of the paid surface.
+          const unlocked = isMember && a.unlocked;
           return (
             <li key={a.id} className="contents">
               <button
                 type="button"
-                onClick={() => setExpanded(open ? null : a.id)}
+                onClick={() => isMember && setExpanded(open ? null : a.id)}
+                disabled={!isMember}
                 className={`relative aspect-square rounded-2xl flex flex-col items-center justify-center gap-1 transition-all active:scale-95 ${
-                  a.unlocked
+                  unlocked
                     ? "bg-gradient-to-br from-[var(--stage-yellow)]/20 to-[var(--stage-yellow)]/5 ring-1 ring-[var(--stage-yellow)]/40 text-[var(--stage-yellow)]"
                     : "bg-muted/40 ring-1 ring-border text-muted-foreground/50"
                 }`}
@@ -401,9 +416,9 @@ export function Achievements({
               >
                 <span className="text-2xl leading-none">{a.icon}</span>
                 <span className="text-[8px] font-semibold uppercase tracking-wider text-center px-1 leading-tight">
-                  {a.unlocked ? t(`ach.${a.id}`) : t("locked")}
+                  {unlocked ? t(`ach.${a.id}`) : t("locked")}
                 </span>
-                {!a.unlocked && (
+                {!unlocked && (
                   <span
                     aria-hidden
                     className="absolute top-1.5 right-1.5 size-3 text-muted-foreground/60"
@@ -419,6 +434,30 @@ export function Achievements({
           );
         })}
       </ul>
+
+      {/* Lock overlay for non-members. The grid below is blurred and
+          inert; this floats on top with the CTA. */}
+      {!isMember && (
+        <div className="absolute inset-0 flex items-end justify-center pb-5">
+          <div className="bg-background/95 backdrop-blur-sm rounded-2xl border border-border shadow-lg p-4 mx-5 flex flex-col items-center gap-3 text-center">
+            <span className="size-10 rounded-full bg-[var(--stage-yellow)]/15 text-[var(--stage-yellow)] flex items-center justify-center">
+              <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <rect x="5" y="11" width="14" height="9" rx="1.5" />
+                <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+              </svg>
+            </span>
+            <p className="text-sm font-semibold leading-snug max-w-[18rem]">
+              {t("achievementsLockedTitle")}
+            </p>
+            <Link
+              href="/app/membership"
+              className="h-9 px-4 rounded-full bg-[var(--stage-yellow)] text-[#1a0b3d] text-xs font-bold uppercase tracking-[0.2em] inline-flex items-center justify-center hover:opacity-90 transition-opacity"
+            >
+              {t("achievementsLockedCta")}
+            </Link>
+          </div>
+        </div>
+      )}
       {expanded && (
         <p className="mt-3 text-xs text-muted-foreground border-t border-border pt-3">
           <span className="font-semibold text-foreground">

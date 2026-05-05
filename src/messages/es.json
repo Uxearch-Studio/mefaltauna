@@ -320,6 +320,16 @@
   },
   "inbox": {
     "title": "Mensajes",
+    "paywall": {
+      "kicker": "Chat + intercambios seguros",
+      "title": "Cierra tratos sin perder repetidas.",
+      "subtitle": "Habla con cualquier coleccionista, acuerden el cambio en el chat, y séllenlo en persona con nuestro QR de un solo uso. Tu reputación crece con cada trato.",
+      "benefitChat": "Chat directo con cualquier coleccionista del feed.",
+      "benefitQr": "Sistema de QR seguro: el vendedor genera, el comprador escanea, y el trato queda cerrado.",
+      "benefitReputation": "Construye tu reputación. Cada trato cerrado suma estrellas que todos ven.",
+      "benefitSafe": "Sin spam, sin compartir teléfonos. Todo queda en mefaltauna, te protegemos.",
+      "cta": "Unirme al club"
+    },
     "paywallTitle": "Activa tu pase para chatear",
     "paywallBody": "El chat directo con coleccionistas requiere el pase del club. Único pago de $9.900 COP.",
     "paywallCta": "Unirme al club",
@@ -398,6 +408,8 @@
       "statActLong": "Actividad",
       "achievements": "Logros",
       "achievementsHint": "Desbloqueas insignias jugando",
+      "achievementsLockedTitle": "Los logros son parte del pase del club.",
+      "achievementsLockedCta": "Unirme al club",
       "locked": "Bloqueado",
       "ach": {
         "first_sticker": "Primera lámina",
