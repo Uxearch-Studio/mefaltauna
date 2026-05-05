@@ -258,6 +258,17 @@ export async function fetchUnreadTotal(
   return convs.reduce((sum, c) => sum + c.unread_count, 0);
 }
 
+export type ActiveTrade = {
+  id: string;
+  status: "pending" | "completed";
+  qr_token: string | null;
+  seller_id: string;
+  buyer_id: string;
+  /** Whether the current user has already submitted their rating
+   *  for this trade. Always false when status is `pending`. */
+  rated_by_me: boolean;
+};
+
 export async function fetchConversation(
   supabase: SupabaseClient,
   conversationId: string,
@@ -271,7 +282,14 @@ export async function fetchConversation(
     display_name: string | null;
     avatar_url: string | null;
   } | null;
+  /** When the conversation was started from a listing, this is the
+   *  listing owner's user_id — used by the trade flow to know who is
+   *  the seller vs the buyer. */
+  sellerId: string | null;
   listingStickerCode: string | null;
+  /** Most recent pending or just-completed-and-not-fully-rated trade
+   *  for this conversation, if any. */
+  activeTrade: ActiveTrade | null;
 } | null> {
   const { data: conv } = await supabase
     .from("conversations")
@@ -283,28 +301,91 @@ export async function fetchConversation(
 
   const otherId = conv.user_a === userId ? conv.user_b : conv.user_a;
 
-  const [{ data: msgs }, { data: profile }, listingRes] = await Promise.all([
-    supabase
-      .from("messages")
-      .select("id, conversation_id, sender_id, body, created_at")
-      .eq("conversation_id", conversationId)
-      .order("created_at", { ascending: true })
-      .limit(200),
-    supabase
-      .from("profiles")
-      .select("id, username, display_name, avatar_url")
-      .eq("id", otherId)
-      .maybeSingle(),
-    conv.listing_id
-      ? supabase
-          .from("listings")
-          .select(
-            "id, sticker:sticker_catalog!listings_sticker_id_fkey(code)",
-          )
-          .eq("id", conv.listing_id)
-          .maybeSingle()
-      : Promise.resolve({ data: null as { sticker: { code: string } | null } | null }),
-  ]);
+  const [{ data: msgs }, { data: profile }, listingRes, tradesRes] =
+    await Promise.all([
+      supabase
+        .from("messages")
+        .select("id, conversation_id, sender_id, body, created_at")
+        .eq("conversation_id", conversationId)
+        .order("created_at", { ascending: true })
+        .limit(200),
+      supabase
+        .from("profiles")
+        .select("id, username, display_name, avatar_url")
+        .eq("id", otherId)
+        .maybeSingle(),
+      conv.listing_id
+        ? supabase
+            .from("listings")
+            .select(
+              "id, user_id, sticker:sticker_catalog!listings_sticker_id_fkey(code)",
+            )
+            .eq("id", conv.listing_id)
+            .maybeSingle()
+        : Promise.resolve({
+            data: null as
+              | {
+                  id: string;
+                  user_id: string;
+                  sticker: { code: string } | null;
+                }
+              | null,
+          }),
+      // Most recent trade for this conversation. RLS ensures we only
+      // see trades where we are seller or buyer.
+      supabase
+        .from("trades")
+        .select("id, status, qr_token, seller_id, buyer_id")
+        .eq("conversation_id", conversationId)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+    ]);
+
+  const listing = listingRes.data as
+    | {
+        id: string;
+        user_id: string;
+        sticker: { code: string } | null;
+      }
+    | null;
+
+  let activeTrade: ActiveTrade | null = null;
+  const tradeRow = tradesRes.data as
+    | {
+        id: string;
+        status: "pending" | "completed" | "cancelled" | "expired";
+        qr_token: string;
+        seller_id: string;
+        buyer_id: string;
+      }
+    | null;
+  if (
+    tradeRow &&
+    (tradeRow.status === "pending" || tradeRow.status === "completed")
+  ) {
+    let ratedByMe = false;
+    if (tradeRow.status === "completed") {
+      const { data: rating } = await supabase
+        .from("trade_ratings")
+        .select("id")
+        .eq("trade_id", tradeRow.id)
+        .eq("rater_id", userId)
+        .maybeSingle();
+      ratedByMe = Boolean(rating);
+    }
+    activeTrade = {
+      id: tradeRow.id,
+      status: tradeRow.status,
+      // Hide the QR token from the buyer — only the seller renders
+      // it. This keeps the secret out of the buyer's RSC payload.
+      qr_token:
+        tradeRow.seller_id === userId ? tradeRow.qr_token : null,
+      seller_id: tradeRow.seller_id,
+      buyer_id: tradeRow.buyer_id,
+      rated_by_me: ratedByMe,
+    };
+  }
 
   return {
     conversation: conv as Conversation,
@@ -318,9 +399,9 @@ export async function fetchConversation(
           avatar_url: (profile as { avatar_url: string | null }).avatar_url,
         }
       : null,
-    listingStickerCode:
-      (listingRes.data as { sticker: { code: string } | null } | null)?.sticker
-        ?.code ?? null,
+    sellerId: listing?.user_id ?? null,
+    listingStickerCode: listing?.sticker?.code ?? null,
+    activeTrade,
   };
 }
 

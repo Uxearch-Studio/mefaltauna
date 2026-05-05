@@ -82,6 +82,18 @@ export default async function ConversationPage({
         currentUserId={user.id}
         otherUsername={otherLabel}
         initialMessages={conv.messages}
+        sellerId={conv.sellerId}
+        listingId={conv.conversation.listing_id}
+        initialTrade={
+          conv.activeTrade
+            ? {
+                id: conv.activeTrade.id,
+                status: conv.activeTrade.status,
+                qrToken: conv.activeTrade.qr_token,
+                ratedByMe: conv.activeTrade.rated_by_me,
+              }
+            : null
+        }
       />
     </>
   );

@@ -162,6 +162,18 @@ body {
   animation: paywall-bob 3.4s ease-in-out infinite;
 }
 
+/* Trade rating celebration — confetti dots that pop and drift
+   behind the trophy. Each dot uses the same keyframe with a
+   staggered animation-delay set inline. */
+@keyframes confetti {
+  0%   { transform: translate(0,0) scale(0); opacity: 0; }
+  20%  { transform: translate(0,0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--cx, 0), var(--cy, -40px)) scale(0.6); opacity: 0; }
+}
+.anim-confetti {
+  animation: confetti 1.6s ease-out infinite;
+}
+
 /* Install hint — pulsing halo behind the iOS Safari share button so
    users can spot it in the toolbar mock. */
 @keyframes share-pulse {

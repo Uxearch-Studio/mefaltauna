@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { sendMessageAction, markConversationReadAction } from "../actions";
+import { TradeControls } from "@/components/vintage/TradeControls";
 import type { Message } from "@/lib/db";
 
 type Props = {
@@ -12,6 +13,14 @@ type Props = {
   currentUserId: string;
   otherUsername: string | null;
   initialMessages: Message[];
+  sellerId: string | null;
+  listingId: string | null;
+  initialTrade: {
+    id: string;
+    status: "pending" | "completed";
+    qrToken: string | null;
+    ratedByMe: boolean;
+  } | null;
 };
 
 export function ChatRoom({
@@ -19,6 +28,9 @@ export function ChatRoom({
   currentUserId,
   otherUsername,
   initialMessages,
+  sellerId,
+  listingId,
+  initialTrade,
 }: Props) {
   const t = useTranslations("inbox");
   const router = useRouter();
@@ -164,6 +176,14 @@ export function ChatRoom({
 
   return (
     <div className="flex flex-col h-[calc(100vh-3.5rem-7rem)]">
+      <TradeControls
+        conversationId={conversationId}
+        sellerId={sellerId}
+        currentUserId={currentUserId}
+        listingId={listingId}
+        initialTrade={initialTrade}
+      />
+
       {/* Safety disclaimer — visible on every chat so users can't say
           they didn't know contact info isn't allowed. */}
       <div
