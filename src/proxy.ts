@@ -12,5 +12,9 @@ export default async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next|_vercel|auth/callback|.*\\..*).*)"],
+  // /reset is excluded so the next-intl middleware doesn't rewrite
+  // it to /es/reset — the reset route is a self-contained cache /
+  // service-worker wiper that has to live at the literal path the
+  // user types into their address bar.
+  matcher: ["/((?!api|_next|_vercel|auth/callback|reset|.*\\..*).*)"],
 };
