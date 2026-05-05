@@ -3,7 +3,11 @@ import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { requireUser } from "@/lib/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { fetchConversation } from "@/lib/db";
+import {
+  fetchConversation,
+  fetchSellerActiveListings,
+  fetchTradeItems,
+} from "@/lib/db";
 import { ChatRoom } from "./ChatRoom";
 
 export default async function ConversationPage({
@@ -21,6 +25,20 @@ export default async function ConversationPage({
 
   const conv = await fetchConversation(supabase, id, user.id);
   if (!conv) notFound();
+
+  // Multi-listing trade flow: the seller picks which of their active
+  // listings to bundle into a single trade. We always fetch the
+  // seller's whole active inventory so the picker is fully populated,
+  // and the items currently bundled into any pending/completed trade
+  // so the chat can render "este trato cubre estas N láminas".
+  const [sellerActiveListings, tradeItems] = await Promise.all([
+    conv.sellerId
+      ? fetchSellerActiveListings(supabase, conv.sellerId)
+      : Promise.resolve([]),
+    conv.activeTrade
+      ? fetchTradeItems(supabase, conv.activeTrade.id)
+      : Promise.resolve([]),
+  ]);
 
   // Username (the "Nombre público" input) is the canonical public
   // name. display_name (auto-generated from first_name + last
@@ -97,6 +115,8 @@ export default async function ConversationPage({
               }
             : null
         }
+        sellerActiveListings={sellerActiveListings}
+        tradeItems={tradeItems}
         initialLastReadAtOther={conv.lastReadAtOther}
       />
     </>

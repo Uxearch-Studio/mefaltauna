@@ -449,6 +449,107 @@ export async function fetchConversation(
   };
 }
 
+export type TradeListingItem = {
+  id: string;
+  sticker: ConversationListingPreview;
+};
+
+/**
+ * The seller's active listings, with sticker preview info, used by
+ * the trade-controls picker so the seller can bundle multiple stickers
+ * into a single trade. Sorted by sticker number for steady ordering.
+ */
+export async function fetchSellerActiveListings(
+  supabase: SupabaseClient,
+  sellerId: string,
+): Promise<TradeListingItem[]> {
+  const { data } = await supabase
+    .from("listings")
+    .select(
+      "id, photo_url, price_cop, sticker:sticker_catalog!listings_sticker_id_fkey(code, name, team_code, type, number)",
+    )
+    .eq("user_id", sellerId)
+    .eq("status", "active")
+    .order("created_at", { ascending: false })
+    .limit(60);
+  const rows = (data ?? []) as unknown as Array<{
+    id: string;
+    photo_url: string | null;
+    price_cop: number | null;
+    sticker: {
+      code: string;
+      name: string;
+      team_code: string | null;
+      type: StickerType;
+      number: number | null;
+    } | null;
+  }>;
+  return rows
+    .filter((r) => r.sticker !== null)
+    .map((r) => ({
+      id: r.id,
+      sticker: {
+        code: r.sticker!.code,
+        name: r.sticker!.name,
+        team_code: r.sticker!.team_code,
+        type: r.sticker!.type,
+        number: r.sticker!.number,
+        photo_url: r.photo_url,
+        price_cop: r.price_cop,
+      },
+    }));
+}
+
+/**
+ * Listings bundled into a trade. Returned with full sticker preview
+ * info so the chat can render "Compra acordada por estas N láminas: …".
+ * RLS only lets the trade's seller or buyer read these rows.
+ */
+export async function fetchTradeItems(
+  supabase: SupabaseClient,
+  tradeId: string,
+): Promise<TradeListingItem[]> {
+  const { data: items } = await supabase
+    .from("trade_items")
+    .select("listing_id")
+    .eq("trade_id", tradeId);
+  const ids = (items ?? []).map((r) => r.listing_id as string);
+  if (ids.length === 0) return [];
+
+  const { data } = await supabase
+    .from("listings")
+    .select(
+      "id, photo_url, price_cop, sticker:sticker_catalog!listings_sticker_id_fkey(code, name, team_code, type, number)",
+    )
+    .in("id", ids);
+  const rows = (data ?? []) as unknown as Array<{
+    id: string;
+    photo_url: string | null;
+    price_cop: number | null;
+    sticker: {
+      code: string;
+      name: string;
+      team_code: string | null;
+      type: StickerType;
+      number: number | null;
+    } | null;
+  }>;
+  return rows
+    .filter((r) => r.sticker !== null)
+    .map((r) => ({
+      id: r.id,
+      sticker: {
+        code: r.sticker!.code,
+        name: r.sticker!.name,
+        team_code: r.sticker!.team_code,
+        type: r.sticker!.type,
+        number: r.sticker!.number,
+        photo_url: r.photo_url,
+        price_cop: r.price_cop,
+      },
+    }));
+}
+
 export type ListingType = "trade" | "sale" | "both";
 export type ListingStatus = "active" | "sold" | "cancelled";
 

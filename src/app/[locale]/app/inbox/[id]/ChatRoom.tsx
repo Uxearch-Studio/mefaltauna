@@ -6,7 +6,11 @@ import { useTranslations } from "next-intl";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { sendMessageAction, markConversationReadAction } from "../actions";
 import { TradeControls } from "@/components/vintage/TradeControls";
-import type { ConversationListingPreview, Message } from "@/lib/db";
+import type {
+  ConversationListingPreview,
+  Message,
+  TradeListingItem,
+} from "@/lib/db";
 
 const COP = new Intl.NumberFormat("es-CO");
 
@@ -25,6 +29,12 @@ type Props = {
     qrToken: string | null;
     ratedByMe: boolean;
   } | null;
+  /** All of the seller's currently active listings — feeds the
+   *  multi-select picker the seller uses when activating a trade. */
+  sellerActiveListings: TradeListingItem[];
+  /** Listings already bundled into the active trade, when one exists.
+   *  Empty otherwise. */
+  tradeItems: TradeListingItem[];
   initialLastReadAtOther: string | null;
 };
 
@@ -38,6 +48,8 @@ export function ChatRoom({
   listingId,
   listingPreview,
   initialTrade,
+  sellerActiveListings,
+  tradeItems,
   initialLastReadAtOther,
 }: Props) {
   const t = useTranslations("inbox");
@@ -268,6 +280,8 @@ export function ChatRoom({
         currentUserId={currentUserId}
         listingId={listingId}
         initialTrade={initialTrade}
+        sellerActiveListings={sellerActiveListings}
+        tradeItems={tradeItems}
       />
 
       {/* Safety disclaimer — visible on every chat so users can't say

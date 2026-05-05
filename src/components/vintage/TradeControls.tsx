@@ -11,45 +11,43 @@ import {
   confirmTradeAction,
   rateTradeAction,
 } from "@/app/[locale]/app/inbox/trade-actions";
+import type { TradeListingItem } from "@/lib/db";
+
+const COP = new Intl.NumberFormat("es-CO");
 
 type Role = "seller" | "buyer";
 
 type Props = {
   conversationId: string;
-  /** Owner of the listing this chat is about. Defines who's the
+  /** Owner of the listing the conversation is about. Defines who's the
    *  seller; the other party is the buyer. */
   sellerId: string | null;
   currentUserId: string;
+  /** The listing the conversation was last opened from (the chat's
+   *  "current context"). Used as the default-checked item in the
+   *  picker so the typical case stays one-click. */
   listingId: string | null;
-  /** Latest pending or just-completed trade for this conversation,
-   *  if any. Drives which panel is shown. */
+  /** Latest pending or just-completed trade for this conversation. */
   initialTrade: {
     id: string;
     status: "pending" | "completed";
     qrToken: string | null;
     ratedByMe: boolean;
   } | null;
+  /** All of the seller's active listings — picker source. */
+  sellerActiveListings: TradeListingItem[];
+  /** Listings already bundled into the active trade. */
+  tradeItems: TradeListingItem[];
 };
 
-/**
- * Trade flow controls inserted at the top of the chat.
- *
- * State machine:
- *   no trade + seller → "Activar compra" button → creates the trade
- *   pending + seller  → QR shown INLINE in the chat (no modal — modals
- *                       were getting hidden under iOS portal/z-index
- *                       quirks; an inline card is always visible)
- *   pending + buyer   → "Escanear QR" button → camera overlay (modal,
- *                       because it needs fullscreen for the camera)
- *   completed + !rated → rating modal opens
- *   completed + rated  → "Trato cerrado" badge
- */
 export function TradeControls({
   conversationId,
   sellerId,
   currentUserId,
   listingId,
   initialTrade,
+  sellerActiveListings,
+  tradeItems,
 }: Props) {
   const t = useTranslations("trade");
   const router = useRouter();
@@ -60,6 +58,7 @@ export function TradeControls({
         ? "buyer"
         : null;
   const [trade, setTrade] = useState(initialTrade);
+  const [showPicker, setShowPicker] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
   const [showRating, setShowRating] = useState(
     initialTrade?.status === "completed" && !initialTrade.ratedByMe,
@@ -67,17 +66,45 @@ export function TradeControls({
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
+  // Initial selection: the conv's current listing if it's still active,
+  // otherwise nothing — the seller will tick what they want manually.
+  const initialSelected = (() => {
+    const set = new Set<string>();
+    if (
+      listingId &&
+      sellerActiveListings.some((l) => l.id === listingId)
+    ) {
+      set.add(listingId);
+    }
+    return set;
+  })();
+  const [selected, setSelected] = useState<Set<string>>(initialSelected);
+
   if (!role) return null;
+
+  function toggle(id: string) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
 
   function startTrade() {
     setError(null);
+    const ids = [...selected];
     console.log("[TradeControls] startTrade clicked", {
       conversationId,
-      listingId,
+      listingIds: ids,
       role,
     });
+    if (ids.length === 0) {
+      setError(t("errors.no_listings"));
+      return;
+    }
     startTransition(async () => {
-      const res = await startTradeAction(conversationId, listingId);
+      const res = await startTradeAction(conversationId, ids);
       console.log("[TradeControls] startTradeAction result", res);
       if (res.ok && res.trade) {
         setTrade({
@@ -86,6 +113,10 @@ export function TradeControls({
           qrToken: res.trade.qrToken,
           ratedByMe: false,
         });
+        setShowPicker(false);
+        // Server-side revalidate already ran, but refresh so tradeItems
+        // reflect the just-bundled selection on next render.
+        router.refresh();
       } else if (res.error) {
         setError(t(`errors.${res.error}`));
       }
@@ -132,7 +163,7 @@ export function TradeControls({
           {!trade && role === "seller" && (
             <button
               type="button"
-              onClick={startTrade}
+              onClick={() => setShowPicker((v) => !v)}
               disabled={pending}
               className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full bg-foreground text-background text-xs font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
             >
@@ -142,7 +173,7 @@ export function TradeControls({
                 <rect x="2" y="9" width="5" height="5" rx="1" />
                 <path d="M9 9h2v2H9zM13 9v2M9 13v1h5v-3" />
               </svg>
-              {pending ? t("starting") : t("startCta")}
+              {showPicker ? t("hidePicker") : t("startCta")}
             </button>
           )}
 
@@ -178,14 +209,22 @@ export function TradeControls({
         </p>
       )}
 
+      {showPicker && !trade && role === "seller" && (
+        <ListingPicker
+          listings={sellerActiveListings}
+          selected={selected}
+          onToggle={toggle}
+          onActivate={startTrade}
+          pending={pending}
+        />
+      )}
+
       {showInlineQr && trade.qrToken && (
-        <InlineQrCard token={trade.qrToken} />
+        <InlineQrCard token={trade.qrToken} items={tradeItems} />
       )}
 
       {trade?.status === "pending" && role === "buyer" && (
-        <div className="mx-3 mt-2 px-3 py-2 text-xs font-medium leading-snug bg-amber-500/10 text-amber-700 border border-amber-500/30 rounded-xl">
-          {t("buyerHint")}
-        </div>
+        <BuyerPendingCard items={tradeItems} />
       )}
 
       {showScanner && (
@@ -207,9 +246,112 @@ export function TradeControls({
 }
 
 // ────────────────────────────────────────────────────────────
-// Inline QR card (seller view) — sits in the chat itself, no modal.
+// Listing picker (seller view) — multi-select before activating
 // ────────────────────────────────────────────────────────────
-function InlineQrCard({ token }: { token: string }) {
+function ListingPicker({
+  listings,
+  selected,
+  onToggle,
+  onActivate,
+  pending,
+}: {
+  listings: TradeListingItem[];
+  selected: Set<string>;
+  onToggle: (id: string) => void;
+  onActivate: () => void;
+  pending: boolean;
+}) {
+  const t = useTranslations("trade");
+
+  if (listings.length === 0) {
+    return (
+      <div className="mx-3 mt-3 p-4 rounded-2xl border border-border bg-muted/30 text-center text-xs text-muted-foreground">
+        {t("noActiveListings")}
+      </div>
+    );
+  }
+
+  return (
+    <div className="mx-3 mt-3 p-4 rounded-2xl border border-border bg-muted/30 flex flex-col gap-3">
+      <div className="flex flex-col gap-1">
+        <h3 className="text-sm font-semibold tracking-tight">
+          {t("pickerTitle")}
+        </h3>
+        <p className="text-xs text-muted-foreground leading-relaxed">
+          {t("pickerBody")}
+        </p>
+      </div>
+      <ul className="flex flex-col gap-1.5 max-h-72 overflow-y-auto -mx-1 px-1">
+        {listings.map((l) => {
+          const isOn = selected.has(l.id);
+          const stickerLabel =
+            (l.sticker.team_code ?? l.sticker.code.split("-")[0]) +
+            (l.sticker.number !== null ? ` #${l.sticker.number}` : "") +
+            ` · ${l.sticker.name}`;
+          return (
+            <li key={l.id}>
+              <button
+                type="button"
+                onClick={() => onToggle(l.id)}
+                className={`w-full flex items-center gap-3 p-2 rounded-xl border transition-colors text-left ${
+                  isOn
+                    ? "border-foreground bg-background"
+                    : "border-border hover:bg-background"
+                }`}
+              >
+                <span
+                  className={`size-5 shrink-0 rounded-md flex items-center justify-center border ${
+                    isOn
+                      ? "bg-foreground border-foreground text-background"
+                      : "border-border bg-background"
+                  }`}
+                  aria-hidden
+                >
+                  {isOn && (
+                    <svg viewBox="0 0 16 16" className="size-3" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M3 8l3 3 7-7" />
+                    </svg>
+                  )}
+                </span>
+                <span className="flex-1 min-w-0">
+                  <span className="block text-xs font-medium truncate">
+                    {stickerLabel}
+                  </span>
+                  {l.sticker.price_cop !== null && (
+                    <span className="block text-[11px] text-muted-foreground tabular-nums">
+                      ${COP.format(l.sticker.price_cop)} COP
+                    </span>
+                  )}
+                </span>
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+      <button
+        type="button"
+        onClick={onActivate}
+        disabled={pending || selected.size === 0}
+        className="h-10 rounded-full bg-[var(--stage-yellow)] text-[#1a0b3d] text-xs font-bold uppercase tracking-wider hover:opacity-90 transition-opacity disabled:opacity-40"
+      >
+        {pending
+          ? t("starting")
+          : t("activateWithCount", { count: selected.size })}
+      </button>
+    </div>
+  );
+}
+
+// ────────────────────────────────────────────────────────────
+// Inline QR card (seller view) — also lists what's being settled
+// ────────────────────────────────────────────────────────────
+function InlineQrCard({
+  token,
+  items,
+}: {
+  token: string;
+  items: TradeListingItem[];
+}) {
   const t = useTranslations("trade");
   const [dataUrl, setDataUrl] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
@@ -239,6 +381,19 @@ function InlineQrCard({ token }: { token: string }) {
       <p className="text-xs text-muted-foreground leading-relaxed max-w-sm">
         {t("qrBody")}
       </p>
+      {items.length > 0 && (
+        <ul className="flex flex-wrap gap-1.5 justify-center">
+          {items.map((it) => (
+            <li
+              key={it.id}
+              className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full bg-foreground text-background tabular-nums"
+            >
+              {it.sticker.team_code ?? it.sticker.code.split("-")[0]}
+              {it.sticker.number !== null ? ` #${it.sticker.number}` : ""}
+            </li>
+          ))}
+        </ul>
+      )}
       <div className="rounded-2xl border border-border p-2 bg-white">
         {dataUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -257,8 +412,32 @@ function InlineQrCard({ token }: { token: string }) {
 }
 
 // ────────────────────────────────────────────────────────────
-// Camera scanner (buyer view) — modal because the camera needs
-// fullscreen. Portal target is the document body.
+// Buyer hint card — what the seller is settling
+// ────────────────────────────────────────────────────────────
+function BuyerPendingCard({ items }: { items: TradeListingItem[] }) {
+  const t = useTranslations("trade");
+  return (
+    <div className="mx-3 mt-2 px-3 py-3 text-xs leading-snug bg-amber-500/10 text-amber-800 border border-amber-500/30 rounded-xl flex flex-col gap-2">
+      <p className="font-medium">{t("buyerHint")}</p>
+      {items.length > 0 && (
+        <ul className="flex flex-wrap gap-1.5">
+          {items.map((it) => (
+            <li
+              key={it.id}
+              className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full bg-amber-700 text-white tabular-nums"
+            >
+              {it.sticker.team_code ?? it.sticker.code.split("-")[0]}
+              {it.sticker.number !== null ? ` #${it.sticker.number}` : ""}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+// ────────────────────────────────────────────────────────────
+// Camera scanner (buyer view)
 // ────────────────────────────────────────────────────────────
 function ScannerOverlay({
   onClose,

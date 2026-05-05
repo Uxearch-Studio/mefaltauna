@@ -25,12 +25,13 @@ export type StartTradeState = {
     | "not_participant"
     | "caller_not_seller"
     | "listing_not_found"
+    | "no_listings"
     | "db_error";
 };
 
 export async function startTradeAction(
   conversationId: string,
-  listingId: string | null,
+  listingIds: string[],
 ): Promise<StartTradeState> {
   const supabase = await createSupabaseServerClient();
   if (!supabase) return { error: "not_configured" };
@@ -40,21 +41,20 @@ export async function startTradeAction(
   } = await supabase.auth.getUser();
   if (!user) return { error: "unauthenticated" };
 
+  if (!listingIds.length) return { error: "no_listings" };
+
   const { data, error } = await supabase
     .rpc("start_trade", {
       p_conversation_id: conversationId,
-      p_listing_id: listingId,
+      p_listing_ids: listingIds,
     })
     .single<{ trade_id: string; qr_token: string }>();
 
   if (error) {
     const msg = error.message ?? "";
-    // Log the full PG error to the server logs — the chat just shows
-    // "no pudimos procesar" which is useless for diagnosing why the
-    // RPC failed (RLS, constraint, function definition, etc.).
     console.error("[startTradeAction] rpc start_trade failed", {
       conversationId,
-      listingId,
+      listingIds,
       code: (error as { code?: string }).code,
       message: msg,
       details: (error as { details?: string }).details,
@@ -63,6 +63,7 @@ export async function startTradeAction(
     if (msg.includes("not_participant")) return { error: "not_participant" };
     if (msg.includes("caller_not_seller")) return { error: "caller_not_seller" };
     if (msg.includes("listing_not_found")) return { error: "listing_not_found" };
+    if (msg.includes("no_listings")) return { error: "no_listings" };
     return { error: "db_error" };
   }
 
