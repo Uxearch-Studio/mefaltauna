@@ -50,7 +50,7 @@ export async function generateMetadata({
   return {
     title: t("title"),
     description: t("description"),
-    metadataBase: new URL("https://www.mefaltauna.com"),
+    metadataBase: new URL("https://mefaltauna.com"),
     manifest: "/manifest.webmanifest",
     icons: {
       icon: "/icon.svg",
