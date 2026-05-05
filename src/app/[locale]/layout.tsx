@@ -13,6 +13,7 @@ import { themeBootScript } from "@/components/vintage/ThemeSwitcher";
 import { ServiceWorkerRegistrar } from "@/components/vintage/ServiceWorkerRegistrar";
 import { ThemeColorMeta } from "@/components/vintage/ThemeColorMeta";
 import { BootSplash } from "@/components/vintage/BootSplash";
+import { ChunkLoadErrorBoundary } from "@/components/vintage/ChunkLoadErrorBoundary";
 import "../globals.css";
 
 const inter = Inter({
@@ -105,6 +106,7 @@ export default async function LocaleLayout({
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
         <ThemeColorMeta />
         <ServiceWorkerRegistrar />
+        <ChunkLoadErrorBoundary />
       </body>
     </html>
   );

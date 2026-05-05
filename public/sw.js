@@ -1,17 +1,23 @@
 // mefaltauna service worker — installability stub.
 //
-// Chrome/Edge/Android refuse to fire `beforeinstallprompt` unless the
-// site has a registered service worker that handles `fetch`. This SW
-// does the bare minimum to satisfy that requirement:
-//   - takes control immediately on install/activate
-//   - passes every fetch through to the network
+// Chrome historically refused to fire `beforeinstallprompt` unless
+// the site had a service worker with a fetch listener. We register
+// this minimal one purely to satisfy that check.
 //
-// We deliberately don't cache anything yet; offline mode is a
-// separate workstream and would risk shipping stale UI silently.
+// Earlier versions of this file proxied every request through
+// `event.respondWith(fetch(event.request))`, which is a passthrough
+// in theory but in practice can interfere with Next's RSC payload
+// requests during client-side navigation — users were seeing
+// "página no se puede cargar" between routes that vanished after a
+// reload. This version no longer calls respondWith, so the browser
+// handles every request the way it normally would.
+//
+// We intentionally don't cache anything: offline mode is a separate
+// workstream and would risk shipping stale UI silently.
 
 self.addEventListener("install", (event) => {
-  // Skip the waiting phase so an updated SW takes effect on the next
-  // navigation instead of requiring all tabs to close first.
+  // Take effect on the next page load instead of waiting for every
+  // tab to close.
   self.skipWaiting();
 });
 
@@ -19,9 +25,7 @@ self.addEventListener("activate", (event) => {
   event.waitUntil(self.clients.claim());
 });
 
-self.addEventListener("fetch", (event) => {
-  // No-op handler — Chrome's installability check requires a fetch
-  // listener even if it just falls through to the network. We must
-  // attach the listener to the event for the criterion to count.
-  event.respondWith(fetch(event.request));
-});
+// Empty fetch listener satisfies Chrome's installability checks. We
+// deliberately do NOT call event.respondWith — the browser handles
+// the request as if no SW existed.
+self.addEventListener("fetch", () => {});
