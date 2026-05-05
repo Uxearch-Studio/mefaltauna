@@ -314,6 +314,8 @@
     "qrFooter": "Único e irrepetible. No lo compartas por chat.",
     "scannerTitle": "Escanea el QR del vendedor",
     "scannerHint": "Acerca el código al recuadro. Detectamos cuando aparece y cerramos solos.",
+    "scanFailedTitle": "No pudimos cerrar el trato",
+    "scanFailedBackToInbox": "Volver a Mensajes",
     "ratingTitle": "¡Trato cerrado!",
     "ratingSubtitle": "Tu reputación es lo más valioso. Califica al otro coleccionista para que la comunidad sepa con quién juega.",
     "commentLabel": "Comentario (opcional)",

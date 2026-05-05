@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useTransition } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import QRCode from "qrcode";
 import { Scanner } from "@yudiel/react-qr-scanner";
 import {
@@ -268,7 +268,10 @@ export function TradeControls({
       )}
 
       {showInlineQr && trade.qrToken && (
-        <InlineQrCard token={trade.qrToken} items={tradeItems} />
+        <InlineQrCardWithLocale
+          token={trade.qrToken}
+          items={tradeItems}
+        />
       )}
 
       {trade?.status === "pending" && role === "buyer" && (
@@ -384,19 +387,38 @@ function ListingPicker({
 // ────────────────────────────────────────────────────────────
 // Inline QR card (seller view) — also lists what's being settled
 // ────────────────────────────────────────────────────────────
+function InlineQrCardWithLocale(props: {
+  token: string;
+  items: TradeListingItem[];
+}) {
+  const locale = useLocale();
+  return <InlineQrCard {...props} locale={locale} />;
+}
+
 function InlineQrCard({
   token,
   items,
+  locale,
 }: {
   token: string;
   items: TradeListingItem[];
+  locale: string;
 }) {
   const t = useTranslations("trade");
   const [dataUrl, setDataUrl] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
-    QRCode.toDataURL(token, {
+    // Encode a deep-link URL so external QR scanner apps (Google
+    // Lens, the system camera, third-party scanners) show a tappable
+    // link that opens mefaltauna directly. The in-app scanner also
+    // accepts URLs — it extracts the last path segment as the token.
+    const origin =
+      typeof window !== "undefined"
+        ? window.location.origin
+        : "https://mefaltauna.com";
+    const payload = `${origin}/${locale}/app/scan/${token}`;
+    QRCode.toDataURL(payload, {
       errorCorrectionLevel: "M",
       margin: 1,
       width: 360,
@@ -410,7 +432,7 @@ function InlineQrCard({
         console.error("[InlineQrCard] QR generation failed", e);
         setErr(String(e?.message ?? e ?? "qr_failed"));
       });
-  }, [token]);
+  }, [token, locale]);
 
   return (
     <div className="mx-3 mt-3 mb-1 p-4 rounded-2xl border border-[var(--stage-yellow)]/50 bg-gradient-to-br from-[var(--stage-yellow)]/15 to-transparent flex flex-col items-center gap-3 text-center">
@@ -527,7 +549,20 @@ function ScannerOverlay({
             const value = detected?.[0]?.rawValue;
             if (!value) return;
             handledRef.current = true;
-            onScanned(value);
+            // The QR encodes a deep-link URL like
+            // https://mefaltauna.com/<locale>/app/scan/<token>; pull
+            // the last path segment as the token. Bare-token QRs
+            // (older trades, manually-entered tokens) still work.
+            let token = value;
+            try {
+              const url = new URL(value);
+              const parts = url.pathname.split("/").filter(Boolean);
+              const last = parts[parts.length - 1];
+              if (last) token = last;
+            } catch {
+              // not a URL — use the raw value
+            }
+            onScanned(token);
           }}
           onError={() => {}}
           constraints={{ facingMode: "environment" }}
