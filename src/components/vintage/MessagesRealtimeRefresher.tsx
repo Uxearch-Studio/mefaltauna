@@ -5,25 +5,31 @@ import { useRouter } from "next/navigation";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 
 type Props = {
-  /** The signed-in user. We listen for messages addressed to them
-   *  (i.e. inserted into a conversation they're in but where they
-   *  aren't the sender) and refresh the server tree so the
-   *  bottom-nav unread badge updates without a navigation. */
+  /** Signed-in user. We listen for new messages addressed to them so
+   *  the bottom-nav unread badge and the inbox list update without a
+   *  manual reload. */
   currentUserId: string;
 };
 
 /**
- * App-wide listener that subscribes to the global `messages` INSERT
- * stream and triggers `router.refresh()` whenever a NEW message
- * arrives that the current user hasn't sent themselves. The cost is
- * one RSC re-render — no realtime presence, no per-row state — so
- * the unread badge in the BottomNav becomes effectively live without
- * us having to mirror the badge count into client state.
+ * App-wide listener that triggers `router.refresh()` whenever a
+ * conversation the user participates in is touched (which the
+ * `messages_update_conversation` trigger does on every new message).
  *
- * Mounted from the app shell layout so every signed-in page gets
- * the live update. Inside the chat itself, the existing
- * conversation-scoped channel handles the in-place message render
- * (and is left alone here) so we don't double-process.
+ * Implementation note: we previously listened to an unfiltered
+ * `messages` INSERT stream and relied on RLS to filter it down to the
+ * caller. In practice that proved unreliable — Supabase Realtime
+ * silently drops events for unfiltered subscriptions in some
+ * configurations, so users who navigated AWAY from a conversation
+ * never saw their badge tick up when a new message arrived.
+ *
+ * Two filtered channels (one for `user_a=eq.<uid>`, one for
+ * `user_b=eq.<uid>`) on `conversations` UPDATE are far more reliable
+ * because each one specifies exactly which rows to watch — no RLS
+ * evaluation is required at broadcast time.
+ *
+ * As an extra safety net, we also re-refresh on tab visibility
+ * change so a phone waking up from background catches up immediately.
  */
 export function MessagesRealtimeRefresher({ currentUserId }: Props) {
   const router = useRouter();
@@ -32,29 +38,61 @@ export function MessagesRealtimeRefresher({ currentUserId }: Props) {
     const supabase = getSupabaseBrowserClient();
     if (!supabase) return;
 
-    const channel = supabase
-      .channel(`messages-feed:${currentUserId}`)
+    const log = (...args: unknown[]) =>
+      console.log("[MessagesRealtimeRefresher]", ...args);
+
+    // Two channels so the filter can be a single equality expression
+    // — Realtime postgres_changes filters do not support OR.
+    const channelA = supabase
+      .channel(`conv-bumps-a:${currentUserId}`)
       .on(
         "postgres_changes" as never,
         {
-          event: "INSERT",
+          event: "UPDATE",
           schema: "public",
-          table: "messages",
+          table: "conversations",
+          filter: `user_a=eq.${currentUserId}`,
         },
-        (payload: { new: Record<string, unknown> }) => {
-          const senderId = payload.new.sender_id as string | undefined;
-          // Only react to messages from OTHER people. Our own sends
-          // are handled by the chat-scoped channel + optimistic UI.
-          if (!senderId || senderId === currentUserId) return;
-          // Server tree refresh — repopulates the unread badge in
-          // the bottom nav, the inbox list ordering, etc.
+        () => {
+          log("conversation bump (user_a)");
           router.refresh();
         },
       )
-      .subscribe();
+      .subscribe((status: string) => log("channelA status:", status));
+
+    const channelB = supabase
+      .channel(`conv-bumps-b:${currentUserId}`)
+      .on(
+        "postgres_changes" as never,
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "conversations",
+          filter: `user_b=eq.${currentUserId}`,
+        },
+        () => {
+          log("conversation bump (user_b)");
+          router.refresh();
+        },
+      )
+      .subscribe((status: string) => log("channelB status:", status));
+
+    // Belt-and-suspenders: when the tab becomes visible again after
+    // having been backgrounded (phone unlock, OS-level pause, etc.)
+    // do a one-shot refresh so we don't show stale state from before
+    // the device went to sleep.
+    const onVisible = () => {
+      if (document.visibilityState === "visible") {
+        log("visibilitychange → refresh");
+        router.refresh();
+      }
+    };
+    document.addEventListener("visibilitychange", onVisible);
 
     return () => {
-      supabase.removeChannel(channel);
+      supabase.removeChannel(channelA);
+      supabase.removeChannel(channelB);
+      document.removeEventListener("visibilitychange", onVisible);
     };
   }, [currentUserId, router]);
 
