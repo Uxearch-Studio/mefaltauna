@@ -12,6 +12,7 @@ import { routing } from "@/i18n/routing";
 import { themeBootScript } from "@/components/vintage/ThemeSwitcher";
 import { ThemeColorMeta } from "@/components/vintage/ThemeColorMeta";
 import { ChunkLoadErrorBoundary } from "@/components/vintage/ChunkLoadErrorBoundary";
+import { ServiceWorkerRegistrar } from "@/components/vintage/ServiceWorkerRegistrar";
 import "../globals.css";
 
 const inter = Inter({
@@ -95,6 +96,7 @@ export default async function LocaleLayout({
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
         <ThemeColorMeta />
         <ChunkLoadErrorBoundary />
+        <ServiceWorkerRegistrar />
       </body>
     </html>
   );

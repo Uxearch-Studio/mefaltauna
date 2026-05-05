@@ -148,6 +148,27 @@ body {
   animation: pop-up 700ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
+/* Install hint — pulsing halo behind the iOS Safari share button so
+   users can spot it in the toolbar mock. */
+@keyframes share-pulse {
+  0%, 100% { transform: scale(1);    opacity: 0.6; }
+  50%      { transform: scale(1.15); opacity: 1; }
+}
+.anim-share-pulse {
+  animation: share-pulse 1.4s ease-in-out infinite;
+}
+
+/* Install hint — downward arrow that bobs to point at the highlighted
+   share button. */
+@keyframes arrow-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(6px); }
+}
+.anim-arrow-bob {
+  animation: arrow-bob 1.4s ease-in-out infinite;
+  display: inline-flex;
+}
+
 @keyframes live-pulse {
   0%, 100% { transform: scale(1);   opacity: 1; }
   50%      { transform: scale(1.5); opacity: 0.5; }

@@ -183,35 +183,130 @@ function InstallHintModal({ onClose }: { onClose: () => void }) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-background text-foreground rounded-3xl p-6 max-w-md w-full flex flex-col gap-4 shadow-2xl border border-border"
+        className="bg-background text-foreground rounded-3xl p-6 max-w-md w-full flex flex-col gap-5 shadow-2xl border border-border"
       >
         <div className="flex items-start justify-between gap-2">
-          <h2 className="text-base font-semibold tracking-tight">
+          <h2 className="text-lg font-semibold tracking-tight">
             {t("iosTitle")}
           </h2>
           <button
             type="button"
             onClick={onClose}
             aria-label={t("close")}
-            className="size-8 -mt-1 -mr-1 rounded-full hover:bg-muted flex items-center justify-center"
+            className="size-8 -mt-1 -mr-1 rounded-full hover:bg-muted flex items-center justify-center text-muted-foreground"
           >
             ✕
           </button>
         </div>
-        <ol className="flex flex-col gap-3 text-sm text-muted-foreground">
+
+        {/* Animated visual: stylized Safari toolbar with the share
+            button highlighted by an arrow that bobs up and down to
+            draw the eye. Vector-only, no images, fast. */}
+        <div className="relative rounded-2xl border border-border bg-muted/40 px-4 pt-5 pb-3 overflow-hidden">
+          <div className="flex items-center justify-between gap-3 mb-2">
+            <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
+              Safari
+            </span>
+            <span className="text-[10px] tabular-nums text-muted-foreground">
+              mefaltauna.com
+            </span>
+          </div>
+
+          {/* Mock toolbar buttons row */}
+          <div className="relative flex items-center justify-between gap-2 px-1 pb-2">
+            <ToolbarIcon>
+              <path d="M19 12H5M12 19l-7-7 7-7" />
+            </ToolbarIcon>
+            <ToolbarIcon>
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </ToolbarIcon>
+
+            {/* The share button — highlighted */}
+            <div className="relative">
+              <span
+                aria-hidden
+                className="absolute -inset-1 rounded-xl bg-accent/30 anim-share-pulse"
+              />
+              <div className="relative size-10 rounded-xl bg-accent text-accent-foreground flex items-center justify-center shadow-md">
+                <svg
+                  viewBox="0 0 24 24"
+                  className="size-5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden
+                >
+                  <path d="M12 3v12" />
+                  <path d="M7 8l5-5 5 5" />
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                </svg>
+              </div>
+            </div>
+
+            <ToolbarIcon>
+              <path d="M3 7h18M3 12h18M3 17h18" />
+            </ToolbarIcon>
+            <ToolbarIcon>
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+            </ToolbarIcon>
+          </div>
+
+          {/* Animated downward arrow pointing at the share button */}
+          <div className="flex justify-center pt-1">
+            <span className="anim-arrow-bob text-accent" aria-hidden>
+              <svg
+                viewBox="0 0 24 24"
+                className="size-7"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M12 5v14M5 12l7 7 7-7" />
+              </svg>
+            </span>
+          </div>
+        </div>
+
+        {/* Step-by-step instructions, keeping the inline icons so
+            users can match the glyphs to what they see in Safari. */}
+        <ol className="flex flex-col gap-3.5 text-sm">
           <li className="flex items-start gap-3">
-            <span className="font-bold text-foreground">1.</span>
-            <span>{t("iosStep1")}</span>
+            <span className="size-6 shrink-0 rounded-full bg-accent text-accent-foreground text-xs font-bold flex items-center justify-center">
+              1
+            </span>
+            <span className="leading-snug text-muted-foreground">
+              {t("iosStep1")}
+            </span>
           </li>
           <li className="flex items-start gap-3">
-            <span className="font-bold text-foreground">2.</span>
-            <span>{t("iosStep2")}</span>
+            <span className="size-6 shrink-0 rounded-full bg-accent text-accent-foreground text-xs font-bold flex items-center justify-center">
+              2
+            </span>
+            <span className="leading-snug text-muted-foreground inline-flex items-baseline gap-1.5 flex-wrap">
+              <span>{t("iosStep2")}</span>
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-muted text-foreground text-[11px] font-medium">
+                <svg viewBox="0 0 24 24" className="size-3" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <rect x="4" y="3" width="16" height="18" rx="2" />
+                  <path d="M12 8v8M8 12h8" />
+                </svg>
+                Añadir a inicio
+              </span>
+            </span>
           </li>
           <li className="flex items-start gap-3">
-            <span className="font-bold text-foreground">3.</span>
-            <span>{t("iosStep3")}</span>
+            <span className="size-6 shrink-0 rounded-full bg-accent text-accent-foreground text-xs font-bold flex items-center justify-center">
+              3
+            </span>
+            <span className="leading-snug text-muted-foreground">
+              {t("iosStep3")}
+            </span>
           </li>
         </ol>
+
         <button
           type="button"
           onClick={onClose}
@@ -222,5 +317,15 @@ function InstallHintModal({ onClose }: { onClose: () => void }) {
       </div>
     </div>,
     document.body,
+  );
+}
+
+function ToolbarIcon({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="size-8 rounded-lg bg-background border border-border flex items-center justify-center text-muted-foreground/60">
+      <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+        {children}
+      </svg>
+    </span>
   );
 }
