@@ -64,6 +64,7 @@ export function TradeControls({
   );
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [debug, setDebug] = useState<string | null>(null);
 
   // Pre-select the conv's listing if it's still active. Otherwise fall
   // back to the seller's first active listing so the "Activar compra"
@@ -101,6 +102,7 @@ export function TradeControls({
 
   function startTrade() {
     setError(null);
+    setDebug(null);
     const ids = [...selected];
     console.log("[TradeControls] startTrade clicked", {
       conversationId,
@@ -122,11 +124,10 @@ export function TradeControls({
           ratedByMe: false,
         });
         setShowPicker(false);
-        // Server-side revalidate already ran, but refresh so tradeItems
-        // reflect the just-bundled selection on next render.
         router.refresh();
       } else if (res.error) {
         setError(t(`errors.${res.error}`));
+        if (res.debug) setDebug(res.debug);
       }
     });
   }
@@ -229,12 +230,17 @@ export function TradeControls({
       </div>
 
       {error && (
-        <p
+        <div
           role="alert"
-          className="mx-3 mt-2 px-3 py-2 text-xs font-medium leading-snug bg-red-600/10 text-red-600 border border-red-600/30 rounded-xl"
+          className="mx-3 mt-2 px-3 py-2 text-xs font-medium leading-snug bg-red-600/10 text-red-600 border border-red-600/30 rounded-xl flex flex-col gap-1"
         >
-          {error}
-        </p>
+          <span>{error}</span>
+          {debug && (
+            <span className="text-[10px] font-mono text-red-500/80 break-all">
+              [debug] {debug}
+            </span>
+          )}
+        </div>
       )}
 
       {/* Diagnostic state line — surfaces *why* the activate button

@@ -27,6 +27,11 @@ export type StartTradeState = {
     | "listing_not_found"
     | "no_listings"
     | "db_error";
+  /** The raw PG error message, surfaced to the chat UI as a debug
+   *  diagnostic so we can tell *why* the RPC failed without needing
+   *  Vercel logs. Stripped before showing to end users in
+   *  production-y conditions. */
+  debug?: string;
 };
 
 export async function startTradeAction(
@@ -52,19 +57,25 @@ export async function startTradeAction(
 
   if (error) {
     const msg = error.message ?? "";
+    const code = (error as { code?: string }).code;
+    const details = (error as { details?: string }).details;
+    const hint = (error as { hint?: string }).hint;
     console.error("[startTradeAction] rpc start_trade failed", {
       conversationId,
       listingIds,
-      code: (error as { code?: string }).code,
+      code,
       message: msg,
-      details: (error as { details?: string }).details,
-      hint: (error as { hint?: string }).hint,
+      details,
+      hint,
     });
-    if (msg.includes("not_participant")) return { error: "not_participant" };
-    if (msg.includes("caller_not_seller")) return { error: "caller_not_seller" };
-    if (msg.includes("listing_not_found")) return { error: "listing_not_found" };
-    if (msg.includes("no_listings")) return { error: "no_listings" };
-    return { error: "db_error" };
+    // Build a compact debug string we surface to the UI. Lets the
+    // user (or me) see the real reason without trawling Vercel logs.
+    const debug = [code, msg, details, hint].filter(Boolean).join(" · ");
+    if (msg.includes("not_participant")) return { error: "not_participant", debug };
+    if (msg.includes("caller_not_seller")) return { error: "caller_not_seller", debug };
+    if (msg.includes("listing_not_found")) return { error: "listing_not_found", debug };
+    if (msg.includes("no_listings")) return { error: "no_listings", debug };
+    return { error: "db_error", debug };
   }
 
   revalidatePath(`/[locale]/app/inbox/${conversationId}`, "page");
