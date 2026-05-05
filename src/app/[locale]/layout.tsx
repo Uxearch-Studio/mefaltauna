@@ -96,28 +96,47 @@ export default async function LocaleLayout({
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
-        {/* Emergency cleanup — runs on every page load until removed.
-            Unregisters every service worker and wipes every cache so
-            clients that got wedged on a previous deploy's intercepting
-            SW recover within one navigation. Safe to leave in: doesn't
-            block render (fire-and-forget promises) and is no-op once
-            no SW / no caches exist. Will be removed in a follow-up
-            once the wedge wave has cleared. */}
+        {/* Emergency cleanup — runs on every page load.
+            Per spec, unregister() resolves immediately but the SW
+            stays active over current clients until they navigate
+            away. So a wedged tab keeps hitting the old SW's broken
+            fetch interception even after unregister. We solve that
+            by force-reloading once after a successful unregister,
+            guarded by a sessionStorage flag so we never loop. */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
 (function(){
   try {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations().then(function(rs){
-        rs.forEach(function(r){ r.unregister(); });
-      }).catch(function(){});
+    if (sessionStorage.getItem('mfu:sw-purged')) return;
+    if (!('serviceWorker' in navigator)) {
+      sessionStorage.setItem('mfu:sw-purged', '1');
+      return;
     }
-    if (typeof caches !== 'undefined') {
-      caches.keys().then(function(keys){
-        keys.forEach(function(k){ caches.delete(k); });
-      }).catch(function(){});
-    }
+    navigator.serviceWorker.getRegistrations().then(function(rs){
+      if (!rs || rs.length === 0) {
+        sessionStorage.setItem('mfu:sw-purged', '1');
+        return;
+      }
+      // Found a registered SW. Unregister, wipe caches, then force
+      // a hard reload so this tab stops being controlled by it.
+      Promise.all(rs.map(function(r){ return r.unregister(); }))
+        .then(function(){
+          if (typeof caches === 'undefined') return [];
+          return caches.keys().then(function(keys){
+            return Promise.all(keys.map(function(k){ return caches.delete(k); }));
+          });
+        })
+        .catch(function(){})
+        .then(function(){
+          sessionStorage.setItem('mfu:sw-purged', '1');
+          // Hard reload — bypasses the still-controlling SW because
+          // the new request goes through the fresh registration state.
+          window.location.reload();
+        });
+    }).catch(function(){
+      sessionStorage.setItem('mfu:sw-purged', '1');
+    });
   } catch (e) {}
 })();
 `,
